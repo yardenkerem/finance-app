@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ספריית כסף — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .book-section {
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      border-right: 5px solid;
+    }
+    .book-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .book-section p {
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: rgba(245,240,235,0.85);
+      margin: 0 0 10px;
+    }
+    .book-section p:last-child { margin-bottom: 0; }
+    .book-section strong { color: #fff; }
+
+    .checklist-section {
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 12px;
+      border-right: 5px solid;
+    }
+    .checklist-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 8px 0;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: rgba(245,240,235,0.85);
+      border-bottom: 1px solid rgba(245,240,235,0.06);
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-box {
+      width: 18px; height: 18px;
+      border-radius: 4px;
+      border: 2px solid;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .book-header-card {
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      margin-bottom: 32px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(201,169,110,0.15) 0%, rgba(107,155,90,0.1) 100%);
+      border: 1px solid rgba(201,169,110,0.3);
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container-sm">
+
+    <div class="page-header">
+      <h1 class="page-title">ספריית הכסף</h1>
+      <p class="page-subtitle">ידע שמשנה את מערכת היחסים שלך עם כסף</p>
+    </div>
+
+    <!-- Book 1 -->
+    <div class="book-header-card">
+      <div style="font-size:2.5rem; margin-bottom:12px;">📖</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:var(--accent); margin-bottom:8px;">
+        מדע ההתעשרות
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted);">Wallace D. Wattles</div>
+    </div>
+
+    <!-- Section 1 - amber -->
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">השורה התחתונה</div>
+      <p style="font-size:1.15rem; font-weight:700; color:#D4AF37;">כסף זה לא מותרות — זה חמצן.</p>
+      <p>ווטלס פותח בסטירה לפרצוף של כל מי שחושב שלהיות עני זה רוחני.</p>
+    </div>
+
+    <!-- Section 2 - green -->
+    <div class="book-section" style="background:rgba(109,191,138,0.08); border-color:#6DBF8A;">
+      <div class="book-section-title" style="color:#6DBF8A;">הזכות להיות עשיר</div>
+      <p>אתה לא יכול לחיות באמת, לממש את הפוטנציאל שלך או להתפתח רוחנית אם אתה תפוס בגרון בלי כסף. כדי לפתח כישרון, צריך כלים. כדי שיהיו כלים, צריך כסף.</p>
+      <p><strong>המסר:</strong> תפסיק להתנצל על הרצון להיות עשיר. זה הרצון הכי טבעי של החיים — לגדול ולהתרחב.</p>
+    </div>
+
+    <!-- Section 3 - purple -->
+    <div class="book-section" style="background:rgba(176,127,224,0.08); border-color:#B07FE0;">
+      <div class="book-section-title" style="color:#B07FE0;">המנוע: "החומר חסר הצורה"</div>
+      <p>ווטלס טוען שהיקום עשוי מ"חומר חושב" מקורי. כל מה שאתה רואה סביבך היה קודם כל מחשבה בחומר הזה.</p>
+      <p><strong>איך זה עובד:</strong> כשאתה משדר מחשבה ברורה וחזקה לחומר הזה, הוא מתחיל לייצר את מה שביקשת.</p>
+      <p><strong>הקאץ':</strong> זה לא קסם של "שב על הספה וייפול עליך שק כסף". זה החיבור בין ה-WiFi של המוח שלך למדפסת התלת-ממד של היקום.</p>
+    </div>
+
+    <!-- Section 4 - blue -->
+    <div class="book-section" style="background:rgba(91,168,212,0.08); border-color:#5BA8D4;">
+      <div class="book-section-title" style="color:#5BA8D4;">קריטי: יצירה VS תחרות</div>
+      <p>זה אולי הכלל הכי חשוב בספר, ואיפה שרוב האנשים נופלים.</p>
+      <p><strong>צא מהמשחק של "לקחת מאחרים":</strong> אם אתה חושב שיש כמות מוגבלת של כסף ושאתה צריך להילחם עליו — הפסדת.</p>
+      <p><strong>הגישה הנכונה (המישור היצירתי):</strong> אתה כאן כדי ליצור ערך חדש, לא להתחרות על מה שכבר קיים. אל תנסה להיות יותר טוב ממישהו אחר, תנסה להיות הגרסה הכי טובה של עצמך.</p>
+      <p><strong>חוק ברזל:</strong> תמיד תן לאנשים יותר "ערך שימוש" ממה שלקחת מהם ב"ערך כספי". ככה אתה הופך לצינור של שפע בעולם.</p>
+    </div>
+
+    <!-- Section 5 - rose -->
+    <div class="book-section" style="background:rgba(224,112,144,0.08); border-color:#E07090;">
+      <div class="book-section-title" style="color:#E07090;">התדר: הכרת תודה</div>
+      <p>זה לא סתם נימוס, זה טכני לחלוטין. הכרת תודה היא מה ששומר אותך מחובר למקור (לאותו "חומר חושב").</p>
+      <p>אם אתה מתמרמר על מה שאין לך, או מבקר את הפוליטיקה/הכלכלה — ניתקת את הקו. אתה משדר "חוסר", והיקום מחזיר לך "חוסר".</p>
+      <p>תהיה אסיר תודה על מה שיש ועל מה שבדרך, כאילו הוא כבר כאן.</p>
+    </div>
+
+    <!-- Section 6 - teal -->
+    <div class="book-section" style="background:rgba(77,191,191,0.08); border-color:#4DBFBF;">
+      <div class="book-section-title" style="color:#4DBFBF;">הפרקטיקה: לחשוב ולעשות "בדרך מסוימת"</div>
+      <p>ווטלס חוזר על הביטוי הזה שוב ושוב. זה השילוב הקטלני:</p>
+      <p><strong>החזון (הראש):</strong> אתה חייב תמונה ברורה בטירוף של מה שאתה רוצה. לא "בא לי הרבה כסף", אלא "אני רוצה את הבית הזה, את העסק הזה, את החופש הזה". תחזיק את התמונה הזו בראש כל הזמן, כמו מלח שרואה את הנמל באופק.</p>
+      <p><strong>הפעולה (הרגליים):</strong> מחשבה מביאה את הכסף אליך, פעולה היא מה שגורם לך לקבל אותו.</p>
+      <p><strong>אל תחכה ל"רגע המושלם":</strong> תפעל עכשיו. איפה שאתה נמצא. עם מה שיש לך.</p>
+      <p><strong>פעולה יעילה:</strong> אל תהיה עסוק בלהיות עסוק. כל פעולה שאתה עושה צריכה להיעשות בצורה מושלמת ויעילה. כל יום צריך להיות הצלחה בפני עצמה.</p>
+    </div>
+
+    <!-- Summary - gold -->
+    <div class="book-section" style="background:rgba(201,169,110,0.1); border-color:var(--accent);">
+      <div class="book-section-title" style="color:var(--accent);">לסיכום — המניפסט של ווטלס</div>
+      <p>יש "חומר חושב" שרוצה שתהיי עשירה.</p>
+      <p>תגדירי בדיוק מה את רוצה (חזון).</p>
+      <p>תעברי מתודעה של תחרות לתודעה של יצירה.</p>
+      <p>תגידי תודה מכל הלב (תדר).</p>
+      <p>תפעלי עכשיו, בצורה יעילה, למילוי המקום הנוכחי שלך עד שיהיה צר מלהכיל אותך.</p>
+    </div>
+
+    <!-- Checklist -->
+    <div style="margin-top:32px; margin-bottom:12px;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:700; color:var(--accent);">
+        🌅 הצ'ק-ליסט היומי — לחיות ב"דרך המסוימת"
+      </div>
+    </div>
+
+    <div class="checklist-section" style="background:rgba(212,175,55,0.07); border-color:#D4AF37;">
+      <div class="checklist-title" style="color:#D4AF37;">בוקר: איפוס תדר (התנעת מנועים)</div>
+      <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">לפני שאת נוגעת בטלפון או בחדשות:</div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#D4AF37;"></div>
+        <span><strong>הכרת תודה אגרסיבית:</strong> מצאי 3 דברים שאת באמת אסירת תודה עליהם. תרגישי את זה בבטן, לא בראש.</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#D4AF37;"></div>
+        <span><strong>הקרנת הסרט:</strong> עצמי עיניים ל-2 דקות וראי את התמונה הסופית של מה שאת רוצה.</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#D4AF37;"></div>
+        <span><strong>הצהרת כוונה:</strong> "היום אני הולכת להתקדם לעבר החזון שלי, ואני אעשה כל פעולה בצורה מושלמת."</span>
+      </div>
+    </div>
+
+    <div class="checklist-section" style="background:rgba(77,191,191,0.07); border-color:#4DBFBF;">
+      <div class="checklist-title" style="color:#4DBFBF;">🔨 במהלך היום: עשייה יעילה</div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#4DBFBF;"></div>
+        <span><strong>פוקוס כאן ועכשיו:</strong> היי 100% במה שאת עושה ברגע זה.</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#4DBFBF;"></div>
+        <span><strong>חוק ה-Over-Delivery:</strong> בכל אינטראקציה, ודאי שנתת תחושה של "התרחבות".</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#4DBFBF;"></div>
+        <span><strong>בלי תחרות:</strong> "המלאי אינסופי. אני יוצרת, אני לא מתחרה."</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#4DBFBF;"></div>
+        <span><strong>כל פעולה נחשבת:</strong> עשית משהו? עשי אותו הכי טוב שאפשר.</span>
+      </div>
+    </div>
+
+    <div class="checklist-section" style="background:rgba(176,127,224,0.07); border-color:#B07FE0;">
+      <div class="checklist-title" style="color:#B07FE0;">🛡️ היגיינה מנטלית: חומת אש</div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#B07FE0;"></div>
+        <span><strong>סינון רעשים:</strong> אל תשתתפי בשיחות על עוני. זה רעל לתדר שלך.</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#B07FE0;"></div>
+        <span><strong>הריגת הספק:</strong> עלה ספק או פחד? החליפי אותו מיידית בתמונה של החזון שלך.</span>
+      </div>
+    </div>
+
+    <div class="checklist-section" style="background:rgba(224,112,144,0.07); border-color:#E07090;">
+      <div class="checklist-title" style="color:#E07090;">🌙 לילה: סגירת מעגל</div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#E07090;"></div>
+        <span><strong>סקירת ניצחונות:</strong> מה עשית היום שקידם אותך? תני לעצמך קרדיט.</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-box" style="border-color:#E07090;"></div>
+        <span><strong>הירדמות באמונה:</strong> לכי לישון עם התחושה שהדבר שאת רוצה כבר בדרך אליך.</span>
+      </div>
+    </div>
+
+    <div class="card mt-24" style="border-color:var(--border-accent); text-align:center; padding:20px;">
+      <div style="font-size:0.88rem; color:var(--text-muted);">💡 טיפ של אלופות: אל תנסי להיות מושלמת בהכל בבת אחת.<br/>קחי את סעיף "בלי תחרות" ותתמקדי בו חזק מחר.</div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 2 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(176,127,224,0.15) 0%, rgba(91,168,212,0.1) 100%); border-color:rgba(176,127,224,0.3);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">📕</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#B07FE0; margin-bottom:8px;">
+        חשוב והתעשר
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">Napoleon Hill · 1937</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:480px; margin:0 auto; line-height:1.7;">
+        20 שנות מחקר על 500 האנשים המצליחים ביותר באמריקה — כדי לזקק את "הסוד" לנוסחה מעשית.
+      </div>
+    </div>
+
+    <!-- Thesis -->
+    <div class="book-section" style="background:rgba(176,127,224,0.08); border-color:#B07FE0;">
+      <div class="book-section-title" style="color:#B07FE0;">התזה המרכזית: "מחשבות הן דברים"</div>
+      <p>המוח האנושי הוא מעין מגנט; כאשר אנו מחזיקים במחשבה דומיננטית, אנו מושכים אלינו את הכוחות, האנשים והנסיבות ההרמוניים לאותה מחשבה.</p>
+      <p style="font-size:1.05rem; font-weight:700; color:#B07FE0;">כל מה שהמוח האנושי יכול להגות ולהאמין בו — הוא יכול להשיג.</p>
+    </div>
+
+    <!-- Steps 1-3 -->
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">שלבים 1–3: הבסיס הפנימי</div>
+      <p><strong style="color:#D4AF37;">1. תשוקה (Desire)</strong> — לא "משאלה" או "תקווה", אלא תשוקה בוערת שהופכת לאובססיה. צעד ראשון: כתבי הצהרה ברורה עם סכום מדויק, תמורה, תאריך יעד — וקראי אותה בקול פעמיים ביום.</p>
+      <p><strong style="color:#D4AF37;">2. אמונה (Faith)</strong> — המצב התודעתי שמאפשר לתדר המחשבה להגיע ל"אינטליגנציה האינסופית". אמונה היא האנטידוט לכישלון.</p>
+      <p><strong style="color:#D4AF37;">3. אוטוסוגסטיה (Auto-suggestion)</strong> — אין תועלת בקריאת מטרות בצורה יבשה; חייבים לערב <strong>רגש</strong>. הרגש הוא מה שמוליך את המחשבה לתת-המודע.</p>
+    </div>
+
+    <!-- Steps 4-6 -->
+    <div class="book-section" style="background:rgba(77,191,191,0.08); border-color:#4DBFBF;">
+      <div class="book-section-title" style="color:#4DBFBF;">שלבים 4–6: כלי הבנייה</div>
+      <p><strong style="color:#4DBFBF;">4. ידע ייחודי (Specialized Knowledge)</strong> — ידע הוא רק כוח פוטנציאלי. הוא הופך לכוח אמיתי רק כשהוא מאורגן בתוכנית פעולה המכוונת למטרה ספציפית.</p>
+      <p><strong style="color:#4DBFBF;">5. דמיון (Imagination)</strong> — הסדנה של המוח. דמיון סינתטי: סידור מחדש של רעיונות קיימים. דמיון יצירתי: קליטת רעיונות חדשים מהאינטליגנציה האינסופית.</p>
+      <p><strong style="color:#4DBFBF;">6. תכנון מאורגן (Organized Planning)</strong> — הפיכת התשוקה לפעולה קונקרטית. אם התוכנית הראשונה נכשלת — החלף אותה באחרת. אל תוותרי על המטרה.</p>
+    </div>
+
+    <!-- Steps 7-9 -->
+    <div class="book-section" style="background:rgba(91,168,212,0.08); border-color:#5BA8D4;">
+      <div class="book-section-title" style="color:#5BA8D4;">שלבים 7–9: כוח הפעולה</div>
+      <p><strong style="color:#5BA8D4;">7. החלטה (Decision)</strong> — אנשים עשירים מקבלים החלטות מהר ומשנים אותן לאט. אנשים עניים מקבלים החלטות לאט ומשנים אותן מהר.</p>
+      <p><strong style="color:#5BA8D4;">8. התמדה (Persistence)</strong> — רוב האנשים מוותרים בסימן הראשון של חוסר מזל. התמדה היא מצב תודעתי שניתן לפתח — לא תכונה שנולדים איתה.</p>
+      <p><strong style="color:#5BA8D4;">9. כוח המוח המשותף (Master Mind)</strong> — כאשר מוחות מתחברים ברוח הרמוניה, נוצר "מוח שלישי" בעל עוצמה גדולה מסך חלקיו.</p>
+    </div>
+
+    <!-- Steps 10-13 -->
+    <div class="book-section" style="background:rgba(167,139,202,0.08); border-color:#A78BCA;">
+      <div class="book-section-title" style="color:#A78BCA;">שלבים 10–13: העומק</div>
+      <p><strong style="color:#A78BCA;">10. התמרת אנרגיה (Sex Transmutation)</strong> — האנרגיה היצירתית הכי חזקה של האדם. הסטה שלה לביטוי יצירתי מניבה הישגים יוצאי דופן.</p>
+      <p><strong style="color:#A78BCA;">11. תת-המודע</strong> — עובד 24/7 ומקבל כל מחשבה (חיובית או שלילית) ומתרגם אותה למציאות פיזית. מה שאת שותלת — צומח.</p>
+      <p><strong style="color:#A78BCA;">12. המוח כרדיו</strong> — ככל שהרגש חזק יותר, השידור והקליטה חזקים יותר. ​תדר גבוה = קליטה גבוהה.</p>
+      <p><strong style="color:#A78BCA;">13. החוש השישי</strong> — החיבור הישיר ל"אינטליגנציה האינסופית". כאן מתקבלת האינטואיציה — הידיעה שמגיעה לפני שיש לה הסבר הגיוני.</p>
+    </div>
+
+    <!-- 6 Fears -->
+    <div class="book-section" style="background:rgba(224,112,144,0.08); border-color:#E07090;">
+      <div class="book-section-title" style="color:#E07090;">המחסום הגדול: 6 רוחות הרפאים של הפחד</div>
+      <p><strong>פחד מעוני</strong> — ההרסני ביותר. גורם לחוסר החלטיות וספק עצמי.</p>
+      <p><strong>פחד מביקורת</strong> — הורג את הדמיון ומונע יוזמה אישית.</p>
+      <p><strong>פחד מחולי</strong> — היפוכונדריה שנובעת מרצון לאהדה.</p>
+      <p><strong>פחד מאובדן אהבה</strong> — קנאה והיסטריה שמרוקנות אנרגיה.</p>
+      <p><strong>פחד מזקנה</strong> — פחד מהתנוונות ומחוסר רלוונטיות.</p>
+      <p><strong>פחד ממוות</strong> — חוסר הוודאות לגבי מה שקורה אחרי.</p>
+    </div>
+
+    <!-- Summary -->
+    <div class="book-section" style="background:rgba(201,169,110,0.1); border-color:var(--accent);">
+      <div class="book-section-title" style="color:var(--accent);">סיכום אופרטיבי</div>
+      <p>כדי להתעשר, עליך קודם כל להיות "אדם המסוגל להתעשר". התהליך הוא פנימה-החוצה:</p>
+      <p><strong>מחשבה</strong> (מוצתת על ידי תשוקה) ← <strong>אמונה</strong> (מחוזקת על ידי אוטוסוגסטיה) ← <strong>תכנון</strong> (בעזרת ידע ודמיון) ← <strong>פעולה</strong> (מגובה בהתמדה ו-Master Mind)</p>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 3 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(232,149,74,0.15) 0%, rgba(212,175,55,0.1) 100%); border-color:rgba(232,149,74,0.3);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">📙</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#E8954A; margin-bottom:8px;">
+        עקרונות ההתעשרות
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">Bob Proctor</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:480px; margin:0 auto; line-height:1.7;">
+        כסף הוא לא תוצאה של עבודה קשה בלבד — אלא בעיקר תוצאה של תודעה. שנה את מה שיושב בתת-מודע, והכסף יזרום באופן טבעי.
+      </div>
+    </div>
+
+    <!-- Law of Compensation -->
+    <div class="book-section" style="background:rgba(109,191,138,0.08); border-color:#6DBF8A;">
+      <div class="book-section-title" style="color:#6DBF8A;">1. חוק התמורה (The Law of Compensation)</div>
+      <p>כמות הכסף שתרוויחי תהיה תמיד ביחס ישיר לשלושה דברים בלבד:</p>
+      <p><strong>הצורך במה שאת עושה</strong> — האם יש ביקוש בשוק?</p>
+      <p><strong>היכולת שלך לבצע זאת</strong> — עד כמה את טובה במה שאת עושה? <strong style="color:#6DBF8A;">(זה המשתנה העיקרי שבידיים שלך.)</strong></p>
+      <p><strong>הקושי להחליף אותך</strong> — אם את מצטיינת ומספקת ערך ייחודי, ההכנסה שלך תעלה.</p>
+    </div>
+
+    <!-- Paradigms -->
+    <div class="book-section" style="background:rgba(232,149,74,0.08); border-color:#E8954A;">
+      <div class="book-section-title" style="color:#E8954A;">2. שינוי הפרדיגמה (Paradigms)</div>
+      <p>רוב האנשים חסומים כלכלית בגלל "פרדיגמות" — אוסף של הרגלים ואמונות שיושבים בתת-מודע. כמו: "כסף לא גדל על העצים" או "צריך לעבוד קשה כדי להרוויח".</p>
+      <p><strong>העיקרון:</strong> לא משנה כמה תלמדי אסטרטגיות עסקיות — אם ה"תרמוסטט" הפנימי שלך מכוון לעוני או בינוניות, תמיד תחזרי לשם.</p>
+      <p><strong style="color:#E8954A;">הפתרון:</strong> חייבים "לכתוב מחדש" את התוכנה במוח באמצעות חזרתיות (Repetition) של רעיונות חדשים על שפע.</p>
+    </div>
+
+    <!-- MSI -->
+    <div class="book-section" style="background:rgba(77,191,191,0.08); border-color:#4DBFBF;">
+      <div class="book-section-title" style="color:#4DBFBF;">3. תודעת שפע ומקורות הכנסה מרובים (MSI)</div>
+      <p>עשירות לא עובדות בשביל כסף — הן גורמות לכסף לעבוד בשבילן.</p>
+      <p>פרוקטור הדגיש את החשיבות של יצירת <strong>Multiple Sources of Income</strong>. אין גבול לכמות הכסף שאפשר להרוויח, וכדאי לייצר אפיקי הכנסה פסיביים שמכניסים כסף גם כשאת ישנה.</p>
+    </div>
+
+    <!-- Vibration -->
+    <div class="book-section" style="background:rgba(224,112,144,0.08); border-color:#E07090;">
+      <div class="book-section-title" style="color:#E07090;">4. חוק המשיכה והרטט (Vibration)</div>
+      <p>הכסף הוא אנרגיה. כדי למשוך כסף, את חייבת להיות ב"תדר" (Vibration) של שפע.</p>
+      <p>אם את דואגת מחובות — את משדרת תדר של חוסר, ולכן תמשכי עוד חובות.</p>
+      <p><strong style="color:#E07090;">הכלי:</strong> ראי את עצמך בדמיון <em>כבר עכשיו</em> מחזיקה בסכום שאת רוצה, והרגישי את התחושה הנלווית לכך. התחושה מגיעה לפני המציאות.</p>
+    </div>
+
+    <!-- Type C Goals -->
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">5. הצבת יעדים "מסוג C"</div>
+      <p><strong>סוג A:</strong> דברים שאת יודעת איך לעשות.</p>
+      <p><strong>סוג B:</strong> דברים שאת חושבת שאת יכולה לעשות.</p>
+      <p><strong style="color:#D4AF37;">סוג C (המומלץ):</strong> יעד שאת רוצה באמת, אבל אין לך שום מושג איך להשיג אותו.</p>
+      <p>היעד נועד לגרום לך לגדול, לא רק "להשיג" משהו. כשאת מחויבת ליעד ענק, הדרך ("האיך") תתגלה תוך כדי תנועה.</p>
+    </div>
+
+    <!-- Goal card -->
+    <div class="book-section" style="background:rgba(201,169,110,0.1); border-color:var(--accent);">
+      <div class="book-section-title" style="color:var(--accent);">כלי פרקטי: כרטיס המטרה</div>
+      <p>כתבי את המטרה הפיננסית שלך על כרטיס קטן, בלשון הווה:</p>
+      <p style="font-style:italic; font-size:1.05rem; color:var(--accent); text-align:center; padding:12px 0;">
+        "אני כל כך מאושרת ואסירת תודה עכשיו ש..."
+      </p>
+      <p>קראי אותו מספר פעמים ביום. הלשון הווה + הרגש הם מה שמוליכים את המסר לתת-מודע.</p>
+      <p style="font-size:0.95rem; color:var(--text-muted); border-top:1px solid var(--border); padding-top:14px; margin-top:6px; font-style:italic;">
+        "אתה לא צריך להיות חכם כדי להתעשר — אתה צריך להיות זהיר במה שאתה חושב עליו."
+      </p>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 4 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(109,191,138,0.15) 0%, rgba(77,191,191,0.1) 100%); border-color:rgba(109,191,138,0.3);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">📗</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#6DBF8A; margin-bottom:8px;">
+        Secrets of the Millionaire Mind
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">T. Harv Eker</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.7;">
+        אם ווטלס הוא התיאוריה המיסטית — אקר הוא המוסכניק שנכנס לך מתחת למכסה המנוע של המוח ומחליף חלקים.
+      </div>
+    </div>
+
+    <!-- Roots -->
+    <div class="book-section" style="background:rgba(109,191,138,0.08); border-color:#6DBF8A;">
+      <div class="book-section-title" style="color:#6DBF8A;">🌳 שורשים יוצרים פירות — העיקרון הכי חשוב</div>
+      <p>אם החיים הכלכליים שלך (הפירות) רקובים או קטנים — הבעיה היא לא בחוץ (כלכלה, בוס, מזל). הבעיה היא בשורשים: האמונות שלך, המחשבות שלך.</p>
+      <p style="color:#6DBF8A; font-weight:700;">החוק: העולם הפנימי יוצר את העולם החיצוני.</p>
+      <p>את לא יכולה לשנות את המינוס בבנק אם לא תכנתת מחדש את המוח שלך קודם. לנסות לעשות כסף עם מיינדסט של עני — זה כמו ללחוץ על הגז כשבלם היד מורם.</p>
+    </div>
+
+    <!-- Thermostat -->
+    <div class="book-section" style="background:rgba(77,191,191,0.08); border-color:#4DBFBF;">
+      <div class="book-section-title" style="color:#4DBFBF;">🌡️ "התרמוסטט הפיננסי" שלך</div>
+      <p>לכל אחת מאיתנו יש "מזגן" פנימי מכוון לסכום מסוים. אם את מכוונת למינימום ופתאום מרוויחה בוכטה — המוח ימצא דרך להיפטר מהכסף ולהחזיר אותך לטמפרטורה המוכרת (תראי מה קורה לזוכי לוטו).</p>
+      <p>אם את מכוונת למיליונים ומפסידה הכל — תחזירי את הכל מהר מאוד, כי התרמוסטט מכוון לשם.</p>
+      <p style="color:#4DBFBF; font-weight:700;">המשימה: לשנות את הכיול של התרמוסטט ל"גבוה מאוד".</p>
+    </div>
+
+    <!-- Rich vs Poor -->
+    <div class="book-section" style="background:rgba(91,168,212,0.08); border-color:#5BA8D4;">
+      <div class="book-section-title" style="color:#5BA8D4;">🧠 עשירות VS עניות: "תיקי המחשבה"</div>
+      <p><strong style="color:#5BA8D4;">שליטה מול קורבנות:</strong> עשירות: "אני יוצרת את החיים שלי." עניות: "החיים קורים לי." — מאשימות (Blaming), מצטדקות (Justifying), מתלוננות (Complaining).</p>
+      <p><strong style="color:#5BA8D4;">לשחק כדי לנצח:</strong> עשירות משחקות למטרת שפע ועושר. עניות משחקות כדי לא להפסיד — המטרה: לשרוד ולשלם חשבונות.</p>
+      <p><strong style="color:#5BA8D4;">התמקדות בהזדמנויות:</strong> עשירות רואות הזדמנויות ופוטנציאל רווח. עניות רואות מכשולים ופוטנציאל הפסד.</p>
+      <p><strong style="color:#5BA8D4;">הערצה מול קנאה:</strong> עשירות מעריצות עשירות אחרות — "אם היא יכולה, גם אני יכולה." עניות סולדות מעשירות. <strong>חוק ברזל: את לא יכולה להיות מה שאת שונאת.</strong></p>
+      <p><strong style="color:#5BA8D4;">תשלום לפי תוצאות:</strong> עשירות רוצות לקבל לפי התוצאות שלהן (עסקים, עמלות, אחוזים). עניות רוצות לקבל לפי הזמן שלהן (משכורת קבועה).</p>
+    </div>
+
+    <!-- Jars -->
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">💰 ניהול הכסף: שיטת הכדים</div>
+      <p style="font-style:italic; color:var(--text-muted);">"עד שלא תוכיחי שאת יודעת לנהל את מה שיש לך — לא תקבלי עוד."</p>
+      <p>אקר מציע לחלק כל שקל שנכנס (נטו) מיד ל-6 כדים:</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;">
+        <div style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); border-radius:10px; padding:14px;">
+          <div style="font-weight:700; color:#D4AF37; margin-bottom:4px;">55% — צרכים הכרחיים</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">שכ"ד, אוכל, חשבונות, דלק — הבסיס הקיומי</div>
+        </div>
+        <div style="background:rgba(109,191,138,0.1); border:1px solid rgba(109,191,138,0.3); border-radius:10px; padding:14px;">
+          <div style="font-weight:700; color:#6DBF8A; margin-bottom:4px;">10% — חופש כלכלי (FFA)</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">השקעות בלבד. לא נוגעים בקרן לעולם.</div>
+        </div>
+        <div style="background:rgba(224,112,144,0.1); border:1px solid rgba(224,112,144,0.3); border-radius:10px; padding:14px;">
+          <div style="font-weight:700; color:#E07090; margin-bottom:4px;">10% — בילויים (Play)</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">חובה לפנק את עצמך! כדי להרגיש עשירה עכשיו.</div>
+        </div>
+        <div style="background:rgba(91,168,212,0.1); border:1px solid rgba(91,168,212,0.3); border-radius:10px; padding:14px;">
+          <div style="font-weight:700; color:#5BA8D4; margin-bottom:4px;">10% — חסכון ארוך טווח</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">רכישות גדולות, רכב, נופש, מקרי חירום.</div>
+        </div>
+        <div style="background:rgba(77,191,191,0.1); border:1px solid rgba(77,191,191,0.3); border-radius:10px; padding:14px;">
+          <div style="font-weight:700; color:#4DBFBF; margin-bottom:4px;">10% — השכלה</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">קורסים, ספרים, מנטורים. להשקיע בעצמך.</div>
+        </div>
+        <div style="background:rgba(176,127,224,0.1); border:1px solid rgba(176,127,224,0.3); border-radius:10px; padding:14px;">
+          <div style="font-weight:700; color:#B07FE0; margin-bottom:4px;">5% — נתינה (Give)</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">צדקה, מתנות, תרומות. להישאר מחוברות לשפע.</div>
+        </div>
+      </div>
+      <p style="margin-top:14px; font-size:0.83rem; color:var(--text-muted);">💡 זו הבסיס לשיטת הכדים שבאפליקציה הזו — אנחנו הרחבנו אותה ל-10 כדים מותאמים לחיים הישראלים.</p>
+    </div>
+
+    <!-- Declarations technique -->
+    <div class="book-section" style="background:rgba(224,112,144,0.08); border-color:#E07090;">
+      <div class="book-section-title" style="color:#E07090;">💪 הטכניקה: הצהרות (Declarations)</div>
+      <p>אקר מאמין בפיזיות. בכל פעם שאת מזהה מחשבה ענייה ("זה יקר לי") — אמרי בקול רם:</p>
+      <p style="font-size:1.1rem; font-weight:700; color:#E07090; text-align:center; padding:8px 0;">"יש לי מוח של מיליונר!"</p>
+      <p style="text-align:center; color:var(--text-muted); font-size:0.85rem;">ותגעי בראש תוך כדי אמירה.</p>
+      <p style="margin-top:12px;"><strong>השורה התחתונה:</strong> את חיה לפי "תוכנית כספית" שצרובה לך בראש מההורים ומהילדות. תשני את התוכנית — והכסף יגיע.</p>
+    </div>
+
+    <!-- 5 Declarations -->
+    <div class="book-section" style="background:rgba(176,127,224,0.08); border-color:#B07FE0;">
+      <div class="book-section-title" style="color:#B07FE0;">🎤 5 ההצהרות החזקות — כל בוקר מול המראה</div>
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:4px;">
+        <div style="border-right:3px solid #B07FE0; padding-right:16px;">
+          <div style="font-size:0.72rem; color:var(--text-faint); margin-bottom:4px;">הצהרה #1</div>
+          <div style="font-size:1rem; font-weight:600;">"העולם הפנימי שלי יוצר את העולם החיצוני שלי."</div>
+        </div>
+        <div style="border-right:3px solid #B07FE0; padding-right:16px;">
+          <div style="font-size:0.72rem; color:var(--text-faint); margin-bottom:4px;">הצהרה #2</div>
+          <div style="font-size:1rem; font-weight:600;">"אני מחויבת להיות עשירה."</div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">לא רק "רוצה" — אלא "מחויבת".</div>
+        </div>
+        <div style="border-right:3px solid #B07FE0; padding-right:16px;">
+          <div style="font-size:0.72rem; color:var(--text-faint); margin-bottom:4px;">הצהרה #3</div>
+          <div style="font-size:1rem; font-weight:600;">"אני חושבת בגדול. אני בוחרת לעזור לאלפי אנשים."</div>
+        </div>
+        <div style="border-right:3px solid #B07FE0; padding-right:16px; background:rgba(176,127,224,0.06); border-radius:6px; padding:12px 16px;">
+          <div style="font-size:0.72rem; color:#B07FE0; margin-bottom:4px; font-weight:600;">הצהרה #4 — הכי חשובה</div>
+          <div style="font-size:1rem; font-weight:600;">"אני פועלת למרות הפחד. אני פועלת למרות הספק. אני פועלת למרות אי הנוחות."</div>
+        </div>
+        <div style="border-right:3px solid #B07FE0; padding-right:16px;">
+          <div style="font-size:0.72rem; color:var(--text-faint); margin-bottom:4px;">הצהרה #5 — עם יד על הראש</div>
+          <div style="font-size:1.15rem; font-weight:700; color:#B07FE0;">"יש לי מוח של מיליונר!"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 5 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(232,97,74,0.15) 0%, rgba(212,175,55,0.1) 100%); border-color:rgba(232,97,74,0.3);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">📘</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#E8614A; margin-bottom:8px;">
+        אבא עשיר, אבא עני
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">Robert Kiyosaki</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.7;">
+        בית הספר לא מלמד אותך על כסף. אם תעשי מה שכולם עושים — לימודים ← עבודה בטוחה ← פנסיה — תפסידי.
+      </div>
+    </div>
+
+    <!-- Two dads -->
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">🧠 הקונפליקט המרכזי: שני אבות</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;">
+        <div style="background:rgba(224,112,144,0.08); border:1px solid rgba(224,112,144,0.3); border-radius:10px; padding:16px;">
+          <div style="font-weight:700; color:#E07090; margin-bottom:10px;">אבא עני (הביולוגי)</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.8;">
+            דוקטור, משכיל, עובד מדינה.<br/>
+            <em>"תלמד טוב כדי שתמצאי עבודה בחברה טובה."</em><br/>
+            <strong>התוצאה:</strong> תמיד במינוס, עובד בשביל כסף.
+          </div>
+        </div>
+        <div style="background:rgba(109,191,138,0.08); border:1px solid rgba(109,191,138,0.3); border-radius:10px; padding:16px;">
+          <div style="font-weight:700; color:#6DBF8A; margin-bottom:10px;">אבא עשיר (של החבר)</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.8;">
+            נשר מבי"ס, איש עסקים.<br/>
+            <em>"תלמדי איך עובד כסף כדי שהכסף יעבוד בשבילך."</em><br/>
+            <strong>התוצאה:</strong> אחד האנשים העשירים בהוואי.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Asset vs Liability -->
+    <div class="book-section" style="background:rgba(232,97,74,0.08); border-color:#E8614A;">
+      <div class="book-section-title" style="color:#E8614A;">💎 חוק הברזל: נכס VS התחייבות</div>
+      <p>זה השיעור הכי חשוב בספר. רוב האנשים (כולל רואי חשבון) טועים בהגדרה הזו.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:14px 0;">
+        <div style="background:rgba(109,191,138,0.1); border:1.5px solid #6DBF8A; border-radius:10px; padding:16px;">
+          <div style="font-weight:700; color:#6DBF8A; font-size:1rem; margin-bottom:8px;">✓ נכס (Asset)</div>
+          <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.8;">משהו שמכניס לך כסף לכיס<br/>דירה להשכרה, מניות, עסק, קניין רוחני</div>
+        </div>
+        <div style="background:rgba(224,112,144,0.1); border:1.5px solid #E07090; border-radius:10px; padding:16px;">
+          <div style="font-weight:700; color:#E07090; font-size:1rem; margin-bottom:8px;">✗ התחייבות (Liability)</div>
+          <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.8;">משהו שמוציא לך כסף מהכיס<br/>הבית שגרה בו, הרכב, מנוי לנטפליקס</div>
+        </div>
+      </div>
+      <p><strong style="color:#E8614A;">הטעות של מעמד הביניים:</strong> קונות התחייבויות וחושבות שהן נכסים. "הבית שלי הוא ההשקעה הכי גדולה שלי" = שקר. הבית שלך לוקח משכנתא, ארנונה, חשמל ותיקונים. הוא התחייבות.</p>
+    </div>
+
+    <!-- Rat Race -->
+    <div class="book-section" style="background:rgba(232,149,74,0.08); border-color:#E8954A;">
+      <div class="book-section-title" style="color:#E8954A;">🏃 מרוץ העכברים (The Rat Race)</div>
+      <p>המלכודת ש-90% מהאנשים חיים בה:</p>
+      <div style="display:flex; flex-direction:column; gap:8px; margin:14px 0;">
+        <div style="display:flex; align-items:center; gap:12px; background:rgba(232,149,74,0.06); border-radius:8px; padding:10px 14px;">
+          <div style="width:24px; height:24px; border-radius:50%; background:#E8954A; color:#000; font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">1</div>
+          <span style="font-size:0.9rem;">הולכות לעבודה ← מקבלות משכורת</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; background:rgba(232,149,74,0.06); border-radius:8px; padding:10px 14px;">
+          <div style="width:24px; height:24px; border-radius:50%; background:#E8954A; color:#000; font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">2</div>
+          <span style="font-size:0.9rem;">קונות דברים (רכב חדש, טלפון) ← ההוצאות גדלות</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; background:rgba(232,149,74,0.06); border-radius:8px; padding:10px 14px;">
+          <div style="width:24px; height:24px; border-radius:50%; background:#E8954A; color:#000; font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">3</div>
+          <span style="font-size:0.9rem;">צריכות עוד כסף ← עובדות יותר קשה / מחפשות קידום</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; background:rgba(232,149,74,0.06); border-radius:8px; padding:10px 14px;">
+          <div style="width:24px; height:24px; border-radius:50%; background:#E8954A; color:#000; font-weight:700; font-size:0.8rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">4</div>
+          <span style="font-size:0.9rem;">מקבלות העלאה ← קונות בית יותר גדול ← ההוצאות שוב גדלות</span>
+        </div>
+      </div>
+      <p style="color:#E8954A; font-weight:700;">המסקנה: לא משנה כמה תרוויחי — אם לא תקני נכסים, תישארי תמיד עבדת המשכורת.</p>
+    </div>
+
+    <!-- How to escape -->
+    <div class="book-section" style="background:rgba(77,191,191,0.08); border-color:#4DBFBF;">
+      <div class="book-section-title" style="color:#4DBFBF;">🚀 איך יוצאים מזה?</div>
+      <p><strong style="color:#4DBFBF;">תפסיקי לעבוד בשביל כסף</strong> — תתחילי לעבוד בשביל ללמוד (במכירות, בשיווק, בהשקעות).</p>
+      <p><strong style="color:#4DBFBF;">תדאגי לעסק של עצמך</strong> — שמרי על העבודה ביום, אבל בערב בני את עמודת הנכסים שלך.</p>
+    </div>
+
+    <!-- Tax -->
+    <div class="book-section" style="background:rgba(176,127,224,0.08); border-color:#B07FE0;">
+      <div class="book-section-title" style="color:#B07FE0;">העשירות לא משלמות מיסים (כמעט)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;">
+        <div style="background:rgba(224,112,144,0.07); border:1px solid rgba(224,112,144,0.25); border-radius:10px; padding:14px;">
+          <div style="font-weight:700; color:#E07090; margin-bottom:8px;">שכירה</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:2;">
+            מרוויחה<br/>↓ משלמת מס<br/>↓ מבזבזת מה שנשאר
+          </div>
+        </div>
+        <div style="background:rgba(176,127,224,0.07); border:1px solid rgba(176,127,224,0.25); border-radius:10px; padding:14px;">
+          <div style="font-weight:700; color:#B07FE0; margin-bottom:8px;">חברה בע"מ (עשירה)</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:2;">
+            מרוויחה<br/>↓ מוציאה הוצאות (רכב, דלק, טיסות)<br/>↓ משלמת מס על מה שנשאר
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 6 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(160,100,200,0.15) 0%, rgba(232,149,74,0.1) 100%); border-color:rgba(160,100,200,0.3);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">📒</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#A064C8; margin-bottom:8px;">
+        הנזיר שמכר את הפרארי
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">Robin Sharma</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.7;">
+        הצלחה חיצונית — כסף, מעמד, פרארי אדומה — לא שווה כלום אם את ריקה מבפנים, שחוקה ועומדת לקבל התקף לב.
+      </div>
+    </div>
+
+    <!-- Story -->
+    <div class="book-section" style="background:rgba(160,100,200,0.08); border-color:#A064C8;">
+      <div class="book-section-title" style="color:#A064C8;">🧘 הסיפור בקצרה</div>
+      <p>ג'וליאן מנטל הוא עו"ד תותח, עשיר בטירוף, שחי על קפה, סטייקים ולחץ. יום אחד הוא חוטף התקף לב באמצע בית משפט.</p>
+      <p>הוא מוכר הכל (כולל הפרארי האדומה), נוסע להודו, וחוזר כנזיר צעיר, בריא וחכם — כדי ללמד את הסודות שלמד מ"חכמי סיוואנה".</p>
+    </div>
+
+    <!-- Principle 1 -->
+    <div class="book-section" style="background:rgba(224,112,144,0.08); border-color:#E07090;">
+      <div class="book-section-title" style="color:#E07090;">1. 🌸 הגן — המוח שלך</div>
+      <p>מה שאת מכניסה למוח גדל. אם תכניסי דאגות ורעל — יהיו קוצים. אם תכניסי השראה ופוקוס — יהיו פרחים.</p>
+      <p><strong style="color:#E07090;">תכל'ס:</strong> שמרי בשער של המוח שלך כמו סלקטורית במועדון. אל תיתני למחשבה שלילית אחת להיכנס בלי לבדוק אותה.</p>
+    </div>
+
+    <!-- Principle 2 -->
+    <div class="book-section" style="background:rgba(91,168,212,0.08); border-color:#5BA8D4;">
+      <div class="book-section-title" style="color:#5BA8D4;">2. 🗼 המגדלור — המטרה</div>
+      <p>לחיים חייבת להיות מטרה ברורה (Dharma). בלי יעד, את סתם סירה שנסחפת.</p>
+      <p><strong style="color:#5BA8D4;">תכל'ס:</strong> תגדירי מטרות כתובות. מוח שלא יודע לאן הוא הולך — לא מגיע לשום מקום.</p>
+    </div>
+
+    <!-- Principle 3 -->
+    <div class="book-section" style="background:rgba(232,149,74,0.08); border-color:#E8954A;">
+      <div class="book-section-title" style="color:#E8954A;">3. 🤼 מתאבק הסומו — קאיזן</div>
+      <p>Kaizen — שיפור עצמי מתמיד ובלתי פוסק. לא קפיצה ענקית אחת אלא צעד קטן כל יום.</p>
+      <p><strong style="color:#E8954A;">תכל'ס:</strong> עשי כל יום משהו אחד שמחזק אותך — פיזית, מנטלית, רוחנית. תהי חזקה מבפנים כדי ששום דבר בחוץ לא ישבור אותך.</p>
+    </div>
+
+    <!-- Principle 4 -->
+    <div class="book-section" style="background:rgba(176,127,224,0.08); border-color:#B07FE0;">
+      <div class="book-section-title" style="color:#B07FE0;">4. 🎀 כבל התיל — משמעת</div>
+      <p>כבל דק אבל חזק שמחזיק הכל. כוח הרצון והמשמעת העצמית.</p>
+      <p><strong style="color:#B07FE0;">תכל'ס — חוק ה-21 יום:</strong> עשי משהו 21 ימים רצוף — והוא יהפוך להרגל. שריר המשמעת צריך אימון, בדיוק כמו שריר אמיתי.</p>
+    </div>
+
+    <!-- Principle 5 -->
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">5. ⏱️ שעון הזהב — הזמן</div>
+      <p>הזמן הוא המשאב הכי יקר שיש. הוא לא חוזר.</p>
+      <p><strong style="color:#D4AF37;">תכל'ס:</strong> כל שעה שאת מבזבזת על גלילה אינסופית, דרמות מיותרות ועיסוק בטריוויה — לא חוזרת. אי-פעם.</p>
+    </div>
+
+    <!-- Principle 6 -->
+    <div class="book-section" style="background:rgba(232,97,74,0.08); border-color:#E8614A;">
+      <div class="book-section-title" style="color:#E8614A;">6. 🌹 הוורדים — נתינה</div>
+      <p>לתת לאחרים בלי לצפות לתמורה. נתינה מגדילה אותנו.</p>
+      <p><strong style="color:#E8614A;">תכל'ס:</strong> תעזרי לאנשים — לא בשביל כרמה ולא בשביל תודה. כי זה מה שמעלה את איכות החיים שלך.</p>
+    </div>
+
+    <!-- Principle 7 -->
+    <div class="book-section" style="background:rgba(109,191,138,0.08); border-color:#6DBF8A;">
+      <div class="book-section-title" style="color:#6DBF8A;">7. 🛤️ השביל — חיים בהווה</div>
+      <p>תחיי את הרגע (NOW). אל תחכי ל"כשאני אהיה עשירה אני אהיה מאושרת".</p>
+      <p><strong style="color:#6DBF8A;">תכל'ס:</strong> תהני מהדרך — מהקפה של הבוקר, מהחיוך של הילדים, מהשקט של הבוקר המוקדם. האושר הוא במסע, לא רק ביעד.</p>
+    </div>
+
+    <!-- Kiyosaki vs Sharma -->
+    <div class="book-section" style="background:rgba(201,169,110,0.1); border-color:var(--accent);">
+      <div class="book-section-title" style="color:var(--accent);">🥊 סיכום קרב: קיוסאקי VS שארמה</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;">
+        <div style="background:rgba(232,97,74,0.08); border:1px solid rgba(232,97,74,0.3); border-radius:10px; padding:16px; text-align:center;">
+          <div style="font-weight:700; color:#E8614A; font-size:1rem; margin-bottom:10px;">קיוסאקי</div>
+          <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.8;">יתן לך את הכלים לבנות ארנק שמן ולברוח מהעבדות המודרנית.</div>
+        </div>
+        <div style="background:rgba(160,100,200,0.08); border:1px solid rgba(160,100,200,0.3); border-radius:10px; padding:16px; text-align:center;">
+          <div style="font-weight:700; color:#A064C8; font-size:1rem; margin-bottom:10px;">שארמה</div>
+          <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.8;">יתן לך את הכלים לבנות נפש חסינה וחיים ששווה לחיות אותם.</div>
+        </div>
+      </div>
+      <p style="text-align:center; margin-top:16px; font-size:0.9rem; color:var(--text-muted);">את צריכה את שניהם.</p>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 7 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(201,160,50,0.18) 0%, rgba(180,120,30,0.1) 100%); border-color:rgba(201,160,50,0.35);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">🏛️</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#C9A032; margin-bottom:8px;">
+        האיש העשיר בבבל
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">George S. Clason</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.7;">
+        חוקי הכסף לא השתנו מאז בבל העתיקה. המדריך הפשוט והנצחי ביותר לבניית עושר — דרך משלים עתיקים שעובדים עד היום.
+      </div>
+    </div>
+
+    <!-- Intro -->
+    <div class="book-section" style="background:rgba(201,160,50,0.08); border-color:#C9A032;">
+      <div class="book-section-title" style="color:#C9A032;">שבעת החוקים לריפוי ארנק רזה</div>
+      <p>קלאסון מספר סיפורים מבבל העתיקה שמלמדים עקרונות פיננסיים נצחיים. הגיבור הראשי, ארקאד, הפך לאיש העשיר ביותר בבבל — לא בגלל מזל, אלא בגלל שלמד את חוקי הכסף.</p>
+    </div>
+
+    <!-- 7 Laws -->
+    <div class="book-section" style="background:rgba(109,191,138,0.08); border-color:#6DBF8A;">
+      <div class="book-section-title" style="color:#6DBF8A;">1. שלמי לעצמך קודם</div>
+      <p>מכל שקל שנכנס — שמרי לפחות 10% לעצמך לפני שאת משלמת לכל השאר. זה לא מה שנשאר בסוף החודש — זה מה שיוצא ראשון.</p>
+      <p style="font-style:italic; color:#6DBF8A;">"חלק מכל מה שאת מרוויחה שייך לך לשמור."</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(232,149,74,0.08); border-color:#E8954A;">
+      <div class="book-section-title" style="color:#E8954A;">2. שלטי בהוצאות שלך</div>
+      <p>אל תבלבלי בין צרכים לרצונות. תקצבי את ההוצאות שלך ותוודאי שאת חיה מ-90% מההכנסה. ככל שמרוויחים יותר, ההוצאות נוטות לתפוח — אל תתני להן.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">3. הפכי את הכסף שלך לעובד</div>
+      <p>כסף שיושב בצד הוא כסף מת. השקיעי את החיסכון שלך כדי שיוליד עוד כסף.</p>
+      <p style="font-style:italic; color:#D4AF37;">"עושר הוא כמו עץ — הוא גדל מזרע קטן."</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(91,168,212,0.08); border-color:#5BA8D4;">
+      <div class="book-section-title" style="color:#5BA8D4;">4. שמרי על הקרן שלך</div>
+      <p>לפני שאת משקיעה — ודאי שהקרן מוגנת. אל תיקחי סיכונים שיכולים למחוק את כל מה שחסכת.</p>
+      <p style="font-style:italic; color:#5BA8D4;">"עדיף תשואה קטנה ובטוחה מאשר הרפתקה מסוכנת."</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(77,191,191,0.08); border-color:#4DBFBF;">
+      <div class="book-section-title" style="color:#4DBFBF;">5. הפכי את הבית שלך להשקעה</div>
+      <p>בעלות על הבית מפחיתה הוצאות ומגדילה ביטחון. שלמי על בית משלך במקום לשלם שכירות לאחרים.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(176,127,224,0.08); border-color:#B07FE0;">
+      <div class="book-section-title" style="color:#B07FE0;">6. הבטיחי הכנסה עתידית</div>
+      <p>תכנני לימים שבהם לא תוכלי לעבוד. בני פנסיה והגנה למשפחה — כי הזקנה מגיעה לכולם.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(224,112,144,0.08); border-color:#E07090;">
+      <div class="book-section-title" style="color:#E07090;">7. השקיעי בעצמך</div>
+      <p>הנכס הכי גדול שלך הוא היכולת שלך להרוויח. למדי, התפתחי, שפרי את הכישורים שלך.</p>
+      <p style="font-style:italic; color:#E07090;">"ככל שאת יודעת יותר — את יכולה להרוויח יותר."</p>
+    </div>
+
+    <!-- 5 Gold Laws -->
+    <div class="book-section" style="background:rgba(201,160,50,0.1); border-color:#C9A032;">
+      <div class="book-section-title" style="color:#C9A032;">🏛️ חמשת חוקי הזהב</div>
+      <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:14px;">לאלה שכבר חוסכות ורוצות להשקיע:</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; gap:14px; align-items:flex-start; padding:10px 14px; background:rgba(201,160,50,0.07); border-radius:8px;">
+          <div style="color:#C9A032; font-weight:700; font-size:1rem; flex-shrink:0;">I</div>
+          <span style="font-size:0.9rem;">זהב מגיע בשמחה למי ששם בצד 10% מהכנסתה.</span>
+        </div>
+        <div style="display:flex; gap:14px; align-items:flex-start; padding:10px 14px; background:rgba(201,160,50,0.07); border-radius:8px;">
+          <div style="color:#C9A032; font-weight:700; font-size:1rem; flex-shrink:0;">II</div>
+          <span style="font-size:0.9rem;">זהב עובד בחריצות למי שמוצאת לו תעסוקה רווחית.</span>
+        </div>
+        <div style="display:flex; gap:14px; align-items:flex-start; padding:10px 14px; background:rgba(201,160,50,0.07); border-radius:8px;">
+          <div style="color:#C9A032; font-weight:700; font-size:1rem; flex-shrink:0;">III</div>
+          <span style="font-size:0.9rem;">זהב נשאר עם מי שמקשיבה לעצת חכמים.</span>
+        </div>
+        <div style="display:flex; gap:14px; align-items:flex-start; padding:10px 14px; background:rgba(201,160,50,0.07); border-radius:8px;">
+          <div style="color:#C9A032; font-weight:700; font-size:1rem; flex-shrink:0;">IV</div>
+          <span style="font-size:0.9rem;">זהב בורח ממי שמשקיעה בדברים שהיא לא מבינה.</span>
+        </div>
+        <div style="display:flex; gap:14px; align-items:flex-start; padding:10px 14px; background:rgba(201,160,50,0.07); border-radius:8px;">
+          <div style="color:#C9A032; font-weight:700; font-size:1rem; flex-shrink:0;">V</div>
+          <span style="font-size:0.9rem;">זהב בורח ממי שמחפשת תשואות בלתי אפשריות או עסקאות מפוקפקות.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Central message -->
+    <div class="book-section" style="background:rgba(201,169,110,0.1); border-color:var(--accent);">
+      <div class="book-section-title" style="color:var(--accent);">💎 המסר המרכזי</div>
+      <p style="font-style:italic; font-size:1.02rem; line-height:2;">"אנשים שהחליטו לשמור חלק מהכנסתם — יהיה זה כמה שיהיה — ימצאו שזהב מגיע אליהם. וככל שהם חוסכים יותר, הזהב מגיע מהר יותר."</p>
+      <p style="font-weight:600; color:var(--accent);">הסוד לא מסובך. הוא פשוט. הבעיה היא שרוב האנשים לא עושות את הפשוט.</p>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 8 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(77,191,191,0.15) 0%, rgba(91,168,212,0.1) 100%); border-color:rgba(77,191,191,0.35);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">⚛️</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#4DBFBF; margin-bottom:8px;">
+        הרגלים אטומיים
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">James Clear</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.7;">
+        את לא עולה לרמת המטרות שלך — את נופלת לרמת המערכות (ההרגלים) שלך.
+      </div>
+    </div>
+
+    <!-- 1% -->
+    <div class="book-section" style="background:rgba(77,191,191,0.08); border-color:#4DBFBF;">
+      <div class="book-section-title" style="color:#4DBFBF;">⚛️ העיקרון המרכזי: שיפור של 1%</div>
+      <p>אל תחפשי מהפכות. אם תשתפרי ב-1% כל יום — בסוף השנה תהי טובה פי 37.</p>
+      <p style="font-weight:700; color:#4DBFBF; font-size:1.05rem;">לא המטרה קובעת — המערכת קובעת.</p>
+    </div>
+
+    <!-- 4 laws -->
+    <div class="book-section" style="background:rgba(109,191,138,0.08); border-color:#6DBF8A;">
+      <div class="book-section-title" style="color:#6DBF8A;">1. תעשי את זה ברור (Make it Obvious)</div>
+      <p>אל תגידי "אני אעשה ספורט". שימי את נעלי הספורט באמצע הסלון בלילה שלפני.</p>
+      <p><strong style="color:#6DBF8A;">צימוד הרגלים:</strong> "אחרי הקפה של הבוקר — אני שמה נעליים." תצמידי הרגל חדש להרגל קיים.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">2. תעשי את זה אטרקטיבי (Make it Attractive)</div>
+      <p>חברי את ההרגל למשהו כיף שאת אוהבת.</p>
+      <p style="font-style:italic; color:#D4AF37;">"אני שומעת את הפודקאסט האהוב עליי רק כשאני הולכת לאימון."</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(232,149,74,0.08); border-color:#E8954A;">
+      <div class="book-section-title" style="color:#E8954A;">3. תעשי את זה קל (Make it Easy)</div>
+      <p><strong style="color:#E8954A;">חוק ה-2 דקות:</strong> אל תתכנני לרוץ 10 ק"מ. המטרה שלך היא רק לנעול נעליים ולצאת מהדלת.</p>
+      <p>ברגע שהתחלת — הכי קשה עבר. הגוף כבר יודע מה לעשות.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(176,127,224,0.08); border-color:#B07FE0;">
+      <div class="book-section-title" style="color:#B07FE0;">4. תעשי את זה מספק (Make it Satisfying)</div>
+      <p>סמני V ביומן מיד אחרי. התחושה של הניצחון הקטן נותנת דלק לפעם הבאה.</p>
+      <p>המוח זוכר מה שהרגיש טוב — ורוצה לחזור לשם.</p>
+    </div>
+
+    <!-- Identity -->
+    <div class="book-section" style="background:rgba(201,169,110,0.1); border-color:var(--accent);">
+      <div class="book-section-title" style="color:var(--accent);">🧠 העומק: השינוי האמיתי הוא בזהות</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:14px 0;">
+        <div style="background:rgba(224,112,144,0.08); border:1px solid rgba(224,112,144,0.3); border-radius:10px; padding:14px; text-align:center;">
+          <div style="font-size:0.75rem; color:#E07090; margin-bottom:8px; letter-spacing:0.05em;">מה שלא עובד</div>
+          <div style="font-size:0.95rem; color:var(--text-muted); font-style:italic;">"אני מנסה להפסיק לעשן."</div>
+        </div>
+        <div style="background:rgba(77,191,191,0.08); border:1px solid rgba(77,191,191,0.3); border-radius:10px; padding:14px; text-align:center;">
+          <div style="font-size:0.75rem; color:#4DBFBF; margin-bottom:8px; letter-spacing:0.05em;">מה שעובד</div>
+          <div style="font-size:0.95rem; color:var(--text); font-weight:700;">"אני לא מעשנת."</div>
+        </div>
+      </div>
+      <p>ברגע ששינית את איך שאת תופסת את עצמך — ההרגלים יבואו לבד. <strong style="color:var(--accent);">הזהות קודמת להרגל.</strong></p>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 9 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(91,120,180,0.15) 0%, rgba(77,191,191,0.08) 100%); border-color:rgba(91,120,180,0.35);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">🧠</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#6B82D4; margin-bottom:8px;">
+        הפסיכולוגיה של הכסף
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">Morgan Housel</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.7;">
+        הצלחה פיננסית היא לא עניין של IQ — היא עניין של התנהגות. ואת ההתנהגות קשה ללמד בכיתה.
+      </div>
+    </div>
+
+    <div class="book-section" style="background:rgba(107,130,212,0.08); border-color:#6B82D4;">
+      <div class="book-section-title" style="color:#6B82D4;">מזל וסיכון הם אחים תאומים</div>
+      <p>אנשים שהצליחו מייחסים את ההצלחה לכישרון. אנשים שנכשלו מייחסים את הכישלון למזל רע. האמת? שניהם צודקים חלקית.</p>
+      <p><strong style="color:#6B82D4;">המסקנה:</strong> היי ענווה עם ההצלחות שלך ורחמנית עם הכישלונות של אחרות. הנסיבות משחקות תפקיד עצום שאף אחד לא רוצה להודות בו.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(77,191,191,0.08); border-color:#4DBFBF;">
+      <div class="book-section-title" style="color:#4DBFBF;">להיות עשירה VS להיראות עשירה</div>
+      <p>העושר הוא מה שאת <strong>לא</strong> רואה. זה הרכב שלא קנית, השיפוץ שדחית, הכסף שנשאר בחשבון.</p>
+      <p>"הרבה אנשים קונים דברים שהם לא צריכים, עם כסף שאין להם, כדי לרשים אנשים שלא אכפת להם מהם."</p>
+      <p><strong style="color:#4DBFBF;">פרדוקס הרכב:</strong> כשאת רואה מישהי ברכב יוקרתי, את חושבת "וואו" — אבל לא על הבעלים. את חושבת על עצמך שם. אף אחד לא מעריץ את העושר שלך כמו שאת מדמיינת.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(109,191,138,0.08); border-color:#6DBF8A;">
+      <div class="book-section-title" style="color:#6DBF8A;">הריבית דריבית — הקסם שמחכה לסבלנות</div>
+      <p>וורן באפט צבר 99.7% מהעושר שלו אחרי גיל 50. לא כי הוא המשקיע הכי טוב בעולם — אלא כי הוא התחיל מוקדם ולא הפסיק.</p>
+      <p><strong style="color:#6DBF8A;">הכלל:</strong> זמן הוא הנשק הכי חזק בפיננסים. צעד קטן + הרבה זמן = תוצאות שנראות בלתי אפשריות.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">"מספיק" — המילה שמשנה הכל</div>
+      <p>אחת הבעיות הכי גדולות של עשירים: הם לא יודעים מתי לעצור. הם ממשיכים לקחת סיכונים — עד שהם מאבדים הכל.</p>
+      <p><strong style="color:#D4AF37;">שאלי את עצמך:</strong> מהו ה"מספיק" שלי? כמה כסף, כמה הצלחה, כמה הכרה — יגרום לי להרגיש שהגעתי? בלי תשובה לשאלה הזו, שום סכום לא יספיק אף פעם.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(232,149,74,0.08); border-color:#E8954A;">
+      <div class="book-section-title" style="color:#E8954A;">חסכון — לא למטרה, אלא לחופש</div>
+      <p>רוב האנשים חוסכות "בשביל משהו" — בית, רכב, חופשה. הול טוען שזה חשיבה מוגבלת.</p>
+      <p><strong style="color:#E8954A;">הגישה הנכונה:</strong> חסכי כי חסכון נותן לך <strong>אפשרויות</strong>. היכולת לומר "לא" לעבודה רעה, לאיש לא נעים, למצב לחוץ — זה החופש האמיתי שכסף קונה.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(201,169,110,0.1); border-color:var(--accent);">
+      <div class="book-section-title" style="color:var(--accent);">היי סבירה, לא מושלמת</div>
+      <p>אסטרטגיה פיננסית "מושלמת" שאת לא מצליחה לדבוק בה — גרועה מאסטרטגיה "טובה" שאת מיישמת עשרות שנים.</p>
+      <p><strong style="color:var(--accent);">השורה התחתונה:</strong> אל תחפשי את ההחלטה הפיננסית המושלמת. חפשי את ההחלטה שאת יכולה לחיות איתה לאורך זמן — גם כשהשוק יורד, גם כשקשה.</p>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--border); margin:48px 0;"></div>
+
+    <!-- Book 10 -->
+    <div class="book-header-card" style="background:linear-gradient(135deg, rgba(224,112,144,0.18) 0%, rgba(232,149,74,0.12) 100%); border-color:rgba(224,112,144,0.35);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">💥</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:#E07090; margin-bottom:8px;">
+        את אלופה בעשיית כסף
+      </div>
+      <div style="font-size:1rem; color:var(--text-muted); margin-bottom:8px;">Jen Sincero · You Are a Badass at Making Money</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); max-width:500px; margin:0 auto; line-height:1.7;">
+        את לא עשירה לא כי אין לך הזדמנויות — אלא כי חלק ממך לא חושב שמגיע לך להיות עשירה.
+      </div>
+    </div>
+
+    <div class="book-section" style="background:rgba(224,112,144,0.08); border-color:#E07090;">
+      <div class="book-section-title" style="color:#E07090;">הכסף לא מסריח — האמונות שלך כן</div>
+      <p>כולנו גדלנו עם משפטים כמו: "כסף לא גדל על העצים", "עשירים הם חמדנים", "לי אין ראש לכסף".</p>
+      <p>אלה לא עובדות — אלה סיפורים. וסיפורים אפשר לשנות.</p>
+      <p><strong style="color:#E07090;">תרגיל:</strong> רשמי 5 דברים שהאמנת עליהם כשגדלת לגבי כסף. אחד אחד — בדקי אם הם באמת נכונים, או שמישהו פשוט אמר לך אותם פעם.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(232,149,74,0.08); border-color:#E8954A;">
+      <div class="book-section-title" style="color:#E8954A;">תחליטי כמה את רוצה — ותהי ספציפית</div>
+      <p>לא "אני רוצה יותר כסף". אלא: "אני רוצה להרוויח ₪25,000 בחודש עד דצמבר."</p>
+      <p>המוח עובד עם מטרות ספציפיות. ערפל יוצר ערפל. בהירות יוצרת תנועה.</p>
+      <p><strong style="color:#E8954A;">ולמה את רוצה את זה?</strong> הסיבה חשובה יותר מהמספר. "כדי שלא אצטרך לבדוק את היתרה לפני שאני קונה גבינה" — זו סיבה אמיתית שמניעה.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(176,127,224,0.08); border-color:#B07FE0;">
+      <div class="book-section-title" style="color:#B07FE0;">תיתני לעצמך רשות לרצות הרבה</div>
+      <p>נשים במיוחד מתנצלות על הרצון שלהן. "אני לא צריכה הרבה", "כל עוד יש לנו בריאות...", "אני לא חומרנית".</p>
+      <p>סינקרו קוראת לזה <strong>"כיווץ עצמי"</strong>. את מקטינה את עצמך כדי שאחרים ירגישו בנוח.</p>
+      <p><strong style="color:#B07FE0;">האמת:</strong> ככל שאת עשירה יותר — את יכולה לעזור יותר, לתת יותר, לחיות מלאה יותר. הרצון להתעשר הוא לא אנוכי. זה אחראי.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(212,175,55,0.08); border-color:#D4AF37;">
+      <div class="book-section-title" style="color:#D4AF37;">תפעלי מתוך אמונה, לא מתוך פחד</div>
+      <p>רוב הנשים מחכות ל"להרגיש מוכנה" לפני שהן פועלות. הבעיה: הרגשת המוכנות מגיעה <strong>אחרי</strong> הפעולה, לא לפניה.</p>
+      <p><strong style="color:#D4AF37;">הכלל:</strong> תעשי את הדבר שמפחיד אותך — ואז הפחד נעלם. תחכי שהפחד יעלם — ואת תחכי לנצח.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(109,191,138,0.08); border-color:#6DBF8A;">
+      <div class="book-section-title" style="color:#6DBF8A;">תהי עם אנשים שמרוויחים יותר ממך</div>
+      <p>הסביבה שלך היא תקרת ההכנסה שלך. אם כל האנשים סביבך מרוויחים X — המוח שלך יחשוב ש-X זה "נורמלי" ו"מספיק".</p>
+      <p><strong style="color:#6DBF8A;">צעד אחד:</strong> מצאי קבוצה, קהילה, מנטורית — שמכנסת נשים שמרוויחות פי 2 ממה שאת מרוויחה עכשיו. הנורמה שלהן תהפוך לנורמה שלך.</p>
+    </div>
+
+    <div class="book-section" style="background:rgba(201,169,110,0.1); border-color:var(--accent);">
+      <div class="book-section-title" style="color:var(--accent);">השורה התחתונה של סינקרו</div>
+      <p>היקום שפע ואין מחסור. הכסף זורם לכיוון מי שמאמינה שהיא ראויה לו ופועלת מתוך אמונה.</p>
+      <p style="font-weight:700; color:var(--accent); font-size:1.05rem;">את לא עשירה כי החלטת שאת לא עשירה. תחליטי אחרת.</p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  initNav('books');
+</script>
+</body>
+</html>

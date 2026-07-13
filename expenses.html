@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>הוצאות — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .flow-panel {
+      border: 1px solid rgba(232,201,126,0.25);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 32px;
+      background: rgba(232,201,126,0.03);
+    }
+    .flow-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .flow-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      font-size: 0.92rem;
+    }
+    .flow-row.base {
+      font-size: 1rem;
+      font-weight: 600;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+    .flow-row.deduct {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 4px 0 4px 12px;
+    }
+    .flow-row.after {
+      font-size: 0.88rem;
+      padding: 4px 0 10px 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+    .flow-row.final {
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding-top: 14px;
+      border-top: 2px solid rgba(124,185,160,0.4);
+      margin-top: 6px;
+    }
+    .flow-amount-red { color: var(--red); }
+    .flow-amount-gold { color: var(--accent); }
+    .flow-amount-muted { color: var(--text-muted); }
+    .flow-amount-green { color: var(--green); font-size: 1.2rem; }
+    .flow-no-income {
+      font-size: 0.82rem;
+      color: var(--text-faint);
+      text-align: center;
+      padding: 8px 0 4px;
+    }
+
+    /* Section color coding — subtle colored rectangles */
+    .expense-section--state,
+    .expense-section--business,
+    .expense-section--optional {
+      border-radius: var(--radius);
+      padding: 20px 18px;
+    }
+
+    .expense-section--state {
+      border: 1px solid rgba(201,123,123,0.3);
+      background: rgba(201,123,123,0.03);
+    }
+    .expense-section--state .expense-section-title { color: #C97B7B; }
+
+    .expense-section--business {
+      border: 1px solid rgba(100,162,201,0.3);
+      background: rgba(100,162,201,0.03);
+    }
+    .expense-section--business .expense-section-title { color: #64A2C9; }
+
+    .expense-section--optional {
+      border: 1px solid rgba(124,185,160,0.3);
+      background: rgba(124,185,160,0.03);
+    }
+    .expense-section--optional .expense-section-title { color: #7CB9A0; }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="page-label">ניהול הוצאות</div>
+      <h1 class="page-title">הוצאות העסק</h1>
+      <p class="page-subtitle">שלוש קטגוריות — כדי שתדעי בדיוק לאן הולך הכסף</p>
+    </div>
+
+    <!-- Financial flow panel -->
+    <div class="flow-panel">
+      <div class="flow-title">התמונה הכלכלית שלך החודש</div>
+
+      <div id="flow-no-income" class="flow-no-income" style="display:none;">
+        טרם רשמת הכנסות החודש — <a href="income.html" style="color:var(--accent);">לרישום הכנסה →</a>
+      </div>
+
+      <div class="flow-row base">
+        <span>הכנסות נטו החודש <span style="font-size:0.78rem; font-weight:400; color:var(--text-muted);">(אחרי מע"מ ומס הכנסה)</span></span>
+        <span id="flow-net" class="flow-amount-gold">₪0</span>
+      </div>
+
+      <div class="flow-row deduct">
+        <span>פחות חובות המדינה</span>
+        <span id="flow-minus-state" class="flow-amount-red">- ₪0</span>
+      </div>
+      <div class="flow-row after">
+        <span style="color:var(--text-muted);">נשאר</span>
+        <span id="flow-after-state" class="flow-amount-muted">₪0</span>
+      </div>
+
+      <div class="flow-row deduct">
+        <span>פחות הוצאות עסק חובה</span>
+        <span id="flow-minus-business" class="flow-amount-red">- ₪0</span>
+      </div>
+      <div class="flow-row after">
+        <span style="color:var(--text-muted);">נשאר</span>
+        <span id="flow-after-business" class="flow-amount-muted">₪0</span>
+      </div>
+
+      <div class="flow-row deduct">
+        <span>פחות הוצאות עסק רשות</span>
+        <span id="flow-minus-optional" class="flow-amount-red">- ₪0</span>
+      </div>
+      <div class="flow-row final">
+        <span>מה שבאמת נשאר לך</span>
+        <span id="flow-final" class="flow-amount-green">₪0</span>
+      </div>
+    </div>
+
+    <!-- Hidden totals for sections (used by renderAll) -->
+    <span id="total-state" style="display:none;">0</span>
+    <span id="total-business" style="display:none;">0</span>
+    <span id="total-optional" style="display:none;">0</span>
+    <span id="total-all" style="display:none;">0</span>
+
+    <div style="text-align:center; margin-bottom:24px;">
+      <div style="font-size:0.75rem; color:var(--text-faint); margin-bottom:8px; letter-spacing:0.05em;">רק אם את רוצה — שיח התמקדות קצר</div>
+      <button class="btn btn-ghost btn-sm" style="font-size:0.85rem; color:var(--text-muted); border-color:var(--border);" onclick="showHardToLookFocusing()">🌿 קשה לי להסתכל על המספרים</button>
+    </div>
+
+    <!-- Section 1: State obligations -->
+    <div class="expense-section expense-section--state">
+      <div class="expense-section-header">
+        <span class="expense-section-icon">🏛️</span>
+        <div>
+          <div class="expense-section-title">חובות המדינה</div>
+          <div class="text-muted" style="font-size:0.8rem;">הוצאות שהחוק מחייב — ביטוח לאומי, רואה חשבון, פנסיה</div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>שם ההוצאה</th>
+                <th>תאריך</th>
+                <th>אמצעי תשלום</th>
+                <th>תדירות</th>
+                <th>סכום</th>
+                <th>לחודש</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="table-state"></tbody>
+          </table>
+          <div id="empty-state-exp" class="empty-state" style="padding:28px 0;">
+            <p style="font-size:0.85rem;">הוסיפי הוצאות חובה של המדינה</p>
+          </div>
+        </div>
+
+        <div class="expense-add-row" style="flex-wrap:wrap;">
+          <div class="form-group" style="flex:2; min-width:140px; margin-bottom:0;">
+            <input type="text" class="form-input" id="state-name" placeholder="שם ההוצאה (למשל: ביטוח לאומי)"/>
+          </div>
+          <div class="form-group" style="flex:0 0 130px; margin-bottom:0;">
+            <input type="date" class="form-input" id="state-date"/>
+          </div>
+          <div class="form-group" style="flex:1; min-width:100px; margin-bottom:0;">
+            <select class="form-select" id="state-period">
+              <option value="" disabled selected>תדירות תשלום</option>
+              <option value="monthly">חודשי</option>
+              <option value="annual">שנתי</option>
+              <option value="onetime">חד פעמי</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1; min-width:120px; margin-bottom:0;">
+            <select class="form-select" id="state-method">
+              <option value="">אמצעי תשלום</option>
+              <option value="bit">ביט</option>
+              <option value="paybox">פייבוקס</option>
+              <option value="credit">כרטיס אשראי</option>
+              <option value="cash">מזומן</option>
+              <option value="check">שיק</option>
+              <option value="transfer">העברה בנקאית</option>
+              <option value="direct">הוראת קבע</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1; min-width:80px; margin-bottom:0;">
+            <input type="number" class="form-input" id="state-amount" placeholder="₪" min="0"/>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addExpense('state')" style="white-space:nowrap;">+ הוסיפי</button>
+        </div>
+      </div>
+
+      <!-- Suggestions -->
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:0.75rem; color:var(--text-faint);">הצעות:</span>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('state','ביטוח לאומי','monthly')">ביטוח לאומי</button>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('state','רואה חשבון','monthly')">רואה חשבון</button>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('state','פנסיה','monthly')">פנסיה</button>
+      </div>
+    </div>
+
+    <!-- Section 2: Business mandatory -->
+    <div class="expense-section expense-section--business">
+      <div class="expense-section-header">
+        <span class="expense-section-icon">💼</span>
+        <div>
+          <div class="expense-section-title">הוצאות עסק — חובה</div>
+          <div class="text-muted" style="font-size:0.8rem;">דברים שהעסק לא יכול בלעדיהם</div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>שם ההוצאה</th>
+                <th>תאריך</th>
+                <th>אמצעי תשלום</th>
+                <th>תדירות</th>
+                <th>סכום</th>
+                <th>לחודש</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="table-business"></tbody>
+          </table>
+          <div id="empty-business-exp" class="empty-state" style="padding:28px 0;">
+            <p style="font-size:0.85rem;">הוסיפי הוצאות עסק חיוניות</p>
+          </div>
+        </div>
+
+        <div class="expense-add-row" style="flex-wrap:wrap;">
+          <div class="form-group" style="flex:2; min-width:140px; margin-bottom:0;">
+            <input type="text" class="form-input" id="business-name" placeholder="שם ההוצאה (למשל: שכירות קליניקה)"/>
+          </div>
+          <div class="form-group" style="flex:0 0 130px; margin-bottom:0;">
+            <input type="date" class="form-input" id="business-date"/>
+          </div>
+          <div class="form-group" style="flex:1; min-width:100px; margin-bottom:0;">
+            <select class="form-select" id="business-period">
+              <option value="" disabled selected>תדירות תשלום</option>
+              <option value="monthly">חודשי</option>
+              <option value="annual">שנתי</option>
+              <option value="onetime">חד פעמי</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1; min-width:120px; margin-bottom:0;">
+            <select class="form-select" id="business-method">
+              <option value="">אמצעי תשלום</option>
+              <option value="bit">ביט</option>
+              <option value="paybox">פייבוקס</option>
+              <option value="credit">כרטיס אשראי</option>
+              <option value="cash">מזומן</option>
+              <option value="check">שיק</option>
+              <option value="transfer">העברה בנקאית</option>
+              <option value="direct">הוראת קבע</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1; min-width:80px; margin-bottom:0;">
+            <input type="number" class="form-input" id="business-amount" placeholder="₪" min="0"/>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addExpense('business')" style="white-space:nowrap;">+ הוסיפי</button>
+        </div>
+      </div>
+
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:0.75rem; color:var(--text-faint);">הצעות:</span>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('business','שכירות קליניקה','monthly')">שכירות קליניקה</button>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('business','ביטוח מקצועי','annual')">ביטוח מקצועי</button>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('business','תוכנת ניהול','monthly')">תוכנת ניהול</button>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('business','אתר אינטרנט','monthly')">אתר אינטרנט</button>
+      </div>
+    </div>
+
+    <!-- Section 3: Optional -->
+    <div class="expense-section expense-section--optional">
+      <div class="expense-section-header">
+        <span class="expense-section-icon">🌱</span>
+        <div>
+          <div class="expense-section-title">הוצאות עסק — רשות</div>
+          <div class="text-muted" style="font-size:0.8rem;">דברים שרצויים אבל לא הכרחיים</div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>שם ההוצאה</th>
+                <th>תאריך</th>
+                <th>אמצעי תשלום</th>
+                <th>תדירות</th>
+                <th>סכום</th>
+                <th>לחודש</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="table-optional"></tbody>
+          </table>
+          <div id="empty-optional-exp" class="empty-state" style="padding:28px 0;">
+            <p style="font-size:0.85rem;">הוסיפי הוצאות לא חיוניות</p>
+          </div>
+        </div>
+
+        <div class="expense-add-row" style="flex-wrap:wrap;">
+          <div class="form-group" style="flex:2; min-width:140px; margin-bottom:0;">
+            <input type="text" class="form-input" id="optional-name" placeholder="שם ההוצאה (למשל: פרסום ברשתות)"/>
+          </div>
+          <div class="form-group" style="flex:0 0 130px; margin-bottom:0;">
+            <input type="date" class="form-input" id="optional-date"/>
+          </div>
+          <div class="form-group" style="flex:1; min-width:100px; margin-bottom:0;">
+            <select class="form-select" id="optional-period">
+              <option value="" disabled selected>תדירות תשלום</option>
+              <option value="monthly">חודשי</option>
+              <option value="annual">שנתי</option>
+              <option value="onetime">חד פעמי</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1; min-width:120px; margin-bottom:0;">
+            <select class="form-select" id="optional-method">
+              <option value="">אמצעי תשלום</option>
+              <option value="bit">ביט</option>
+              <option value="paybox">פייבוקס</option>
+              <option value="credit">כרטיס אשראי</option>
+              <option value="cash">מזומן</option>
+              <option value="check">שיק</option>
+              <option value="transfer">העברה בנקאית</option>
+              <option value="direct">הוראת קבע</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1; min-width:80px; margin-bottom:0;">
+            <input type="number" class="form-input" id="optional-amount" placeholder="₪" min="0"/>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addExpense('optional')" style="white-space:nowrap;">+ הוסיפי</button>
+        </div>
+      </div>
+
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:0.75rem; color:var(--text-faint);">הצעות:</span>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('optional','פרסום ברשתות','monthly')">פרסום ברשתות</button>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('optional','סדנת העשרה מקצועית','annual')">סדנת העשרה</button>
+        <button class="btn btn-ghost btn-sm" onclick="quickAdd('optional','ציוד משרדי','monthly')">ציוד משרדי</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
+
+  function getExpenses() {
+    return JSON.parse(localStorage.getItem('ff_expenses') || '{"state":[],"business":[],"optional":[]}');
+  }
+
+  function saveExpenses(exp) { localStorage.setItem('ff_expenses', JSON.stringify(exp)); }
+
+  function monthlyAmount(exp) {
+    if (exp.period === 'annual') return exp.amount / 12;
+    return exp.amount;
+  }
+
+  const METHOD_LABELS = { bit:'ביט', paybox:'פייבוקס', credit:'כרטיס אשראי', cash:'מזומן', check:'שיק', transfer:'העברה בנקאית', direct:'הוראת קבע' };
+  const MONTHS_SHORT = ['ינו','פבר','מרץ','אפר','מאי','יוני','יולי','אוג','ספט','אוק','נוב','דצמ'];
+
+  function todayStr() { return new Date().toLocaleDateString('en-CA'); }
+
+  function fmtExpDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.getDate() + ' ' + MONTHS_SHORT[d.getMonth()];
+  }
+
+  function addExpense(section) {
+    const name   = document.getElementById(section+'-name').value.trim();
+    const date   = document.getElementById(section+'-date').value;
+    const period = document.getElementById(section+'-period').value;
+    const method = document.getElementById(section+'-method').value;
+    const amount = parseFloat(document.getElementById(section+'-amount').value);
+
+    if (!name) { alert('אנא הכניסי שם להוצאה'); return; }
+    if (!amount || amount <= 0) { alert('אנא הכניסי סכום תקין'); return; }
+
+    const exp = getExpenses();
+    exp[section].push({ id: Date.now().toString(), name, date, period, method, amount });
+    saveExpenses(exp);
+
+    document.getElementById(section+'-name').value = '';
+    document.getElementById(section+'-amount').value = '';
+    document.getElementById(section+'-method').value = '';
+    document.getElementById(section+'-date').value = todayStr();
+
+    renderAll();
+  }
+
+  function quickAdd(section, name, period) {
+    document.getElementById(section+'-name').value = name;
+    document.getElementById(section+'-period').value = period;
+    document.getElementById(section+'-amount').focus();
+  }
+
+  function deleteExpense(section, id) {
+    if (!confirm('למחוק הוצאה זו?')) return;
+    const exp = getExpenses();
+    exp[section] = exp[section].filter(e => e.id !== id);
+    saveExpenses(exp);
+    renderAll();
+  }
+
+  function editExpense(section, id) {
+    const exp = getExpenses();
+    const item = exp[section].find(e => e.id === id);
+    if (!item) return;
+    const row = document.getElementById(`row-${section}-${id}`);
+    if (!row) return;
+
+    const S = 'background:rgba(245,240,235,0.08);border:1px solid var(--border-accent);border-radius:6px;padding:6px 10px;color:var(--text);font-family:\'Assistant\',sans-serif;font-size:0.85rem;';
+    row.innerHTML = `
+      <td><input type="text" id="en-${id}" value="${item.name}" style="width:100%;${S}direction:rtl;"/></td>
+      <td><input type="date" id="ed-${id}" value="${item.date||''}" style="width:130px;${S}direction:ltr;"/></td>
+      <td><select id="emth-${id}" style="${S}background:#1a2e22;">
+        <option value="">ללא</option>
+        <option value="bit" ${item.method==='bit'?'selected':''}>ביט</option>
+        <option value="paybox" ${item.method==='paybox'?'selected':''}>פייבוקס</option>
+        <option value="credit" ${item.method==='credit'?'selected':''}>כרטיס אשראי</option>
+        <option value="cash" ${item.method==='cash'?'selected':''}>מזומן</option>
+        <option value="check" ${item.method==='check'?'selected':''}>שיק</option>
+        <option value="transfer" ${item.method==='transfer'?'selected':''}>העברה בנקאית</option>
+        <option value="direct" ${item.method==='direct'?'selected':''}>הוראת קבע</option>
+      </select></td>
+      <td><select id="ep-${id}" style="${S}background:#1a2e22;">
+        <option value="monthly" ${item.period==='monthly'?'selected':''}>חודשי</option>
+        <option value="annual" ${item.period==='annual'?'selected':''}>שנתי</option>
+        <option value="onetime" ${item.period==='onetime'?'selected':''}>חד פעמי</option>
+      </select></td>
+      <td><input type="number" id="ea-${id}" value="${item.amount}" min="0" style="width:90px;${S}direction:ltr;"/></td>
+      <td id="em-${id}" style="font-size:0.8rem;color:var(--text-faint);">יחושב מחדש</td>
+      <td style="display:flex;gap:6px;">
+        <button class="btn btn-primary btn-sm" onclick="saveExpenseEdit('${section}','${id}')">שמרי</button>
+        <button class="btn btn-ghost btn-sm" onclick="renderAll()">ביטול</button>
+      </td>`;
+  }
+
+  function saveExpenseEdit(section, id) {
+    const name   = document.getElementById('en-'   + id).value.trim();
+    const date   = document.getElementById('ed-'   + id).value;
+    const method = document.getElementById('emth-' + id).value;
+    const period = document.getElementById('ep-'   + id).value;
+    const amount = parseFloat(document.getElementById('ea-' + id).value);
+
+    if (!name || !amount || amount <= 0) { alert('אנא מלאי את כל השדות'); return; }
+
+    const exp = getExpenses();
+    exp[section] = exp[section].map(e => e.id === id ? { ...e, name, date, method, period, amount } : e);
+    saveExpenses(exp);
+    renderAll();
+  }
+
+  function renderSection(section, tbodyId, emptyId) {
+    const exp = getExpenses();
+    const items = exp[section];
+    const tbody = document.getElementById(tbodyId);
+    const empty = document.getElementById(emptyId);
+
+    if (items.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      tbody.innerHTML = items.map(e => {
+        const monthly = monthlyAmount(e);
+        return `<tr id="row-${section}-${e.id}">
+          <td style="font-weight:500;">${e.name}</td>
+          <td style="font-size:0.83rem;color:var(--text-muted);">${fmtExpDate(e.date)}</td>
+          <td style="font-size:0.82rem;color:var(--text-muted);">${METHOD_LABELS[e.method] || '—'}</td>
+          <td><span class="badge ${e.period==='monthly'?'badge-gold':e.period==='annual'?'badge-green':'badge-red'}">${e.period==='monthly'?'חודשי':e.period==='annual'?'שנתי':'חד פעמי'}</span></td>
+          <td>${fmt(e.amount)}</td>
+          <td style="font-weight:600;">${fmt(monthly)}</td>
+          <td style="display:flex;gap:6px;">
+            <button onclick="editExpense('${section}','${e.id}')" title="ערכי" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:0.9rem;padding:4px 6px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-faint)'">✎</button>
+            <button onclick="deleteExpense('${section}','${e.id}')" title="מחקי" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:1rem;padding:4px 6px;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-faint)'">✕</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    return items.reduce((s,e) => s + monthlyAmount(e), 0);
+  }
+
+  function getNetIncome() {
+    const incomes = JSON.parse(localStorage.getItem('ff_incomes') || '[]');
+    const settings = JSON.parse(localStorage.getItem('ff_settings') || '{"incomeTaxRate":0}');
+    const now = new Date();
+    const monthIncomes = incomes.filter(i => {
+      const d = new Date(i.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    const gross = monthIncomes.reduce((s, i) => s + i.amount, 0);
+    const vat = gross * 0.18;
+    const afterVat = gross - vat;
+    const tax = afterVat * ((settings.incomeTaxRate || 0) / 100);
+    return { gross, net: afterVat - tax, hasIncome: monthIncomes.length > 0 };
+  }
+
+  function renderAll() {
+    const s1 = renderSection('state', 'table-state', 'empty-state-exp');
+    const s2 = renderSection('business', 'table-business', 'empty-business-exp');
+    const s3 = renderSection('optional', 'table-optional', 'empty-optional-exp');
+
+    const { net, hasIncome } = getNetIncome();
+    const afterState    = net - s1;
+    const afterBusiness = afterState - s2;
+    const afterOptional = afterBusiness - s3;
+
+    document.getElementById('flow-no-income').style.display = hasIncome ? 'none' : 'block';
+    document.getElementById('flow-net').textContent           = fmt(net);
+    document.getElementById('flow-minus-state').textContent   = '- ' + fmt(s1);
+    document.getElementById('flow-after-state').textContent   = fmt(afterState);
+    document.getElementById('flow-minus-business').textContent = '- ' + fmt(s2);
+    document.getElementById('flow-after-business').textContent = fmt(afterBusiness);
+    document.getElementById('flow-minus-optional').textContent = '- ' + fmt(s3);
+
+    const finalEl = document.getElementById('flow-final');
+    finalEl.textContent = fmt(afterOptional);
+    finalEl.style.color = afterOptional >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  ['state','business','optional'].forEach(s => {
+    const el = document.getElementById(s+'-date');
+    if (el) el.value = todayStr();
+  });
+
+  function showHardToLookFocusing() {
+    document.getElementById('fo-icon').textContent = '🌿';
+    document.getElementById('fo-amount').textContent = '';
+    document.getElementById('fo-title').textContent = 'זה בסדר שקשה';
+    document.getElementById('fo-text').innerHTML = 'מה מרגיש הגוף עכשיו, כשאת מסתכלת על המספרים?<br/><small style="color:var(--text-faint); font-size:0.8rem;">אין תשובה נכונה — רק מה שמגיע.</small>';
+    document.getElementById('fo-actions').innerHTML = `
+      <div style="width:100%; margin-bottom:14px;">
+        <textarea id="fo-hard-response" class="form-input"
+          style="width:100%; min-height:80px; resize:vertical; text-align:right;"
+          placeholder="כתבי מה עולה..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="showHardToLookStep2()">אני כאן — המשיכי ←</button>
+      <button class="btn btn-ghost" onclick="closeFocusing()">דלגי</button>`;
+    document.getElementById('fo-overlay').classList.add('visible');
+    document.getElementById('fo-panel').classList.add('visible');
+  }
+
+  function showHardToLookStep2() {
+    const text = (document.getElementById('fo-hard-response')?.value || '').trim();
+    if (text) {
+      const reflections = JSON.parse(localStorage.getItem('ff_expense_reflections') || '[]');
+      reflections.unshift({ date: new Date().toISOString(), text, page: 'expenses' });
+      localStorage.setItem('ff_expense_reflections', JSON.stringify(reflections));
+    }
+    document.getElementById('fo-icon').textContent = '🌿';
+    document.getElementById('fo-amount').textContent = '';
+    document.getElementById('fo-title').textContent = 'תודה שעצרת';
+    document.getElementById('fo-text').innerHTML = 'הקושי להסתכל הוא לא כישלון — לפעמים הוא מסר.<br/>הגוף יודע. תמשיכי בקצב שלך.';
+    document.getElementById('fo-actions').innerHTML = `<button class="btn btn-primary" onclick="closeFocusing()">סגרי ✓</button>`;
+  }
+
+  function closeFocusing() {
+    document.getElementById('fo-overlay').classList.remove('visible');
+    document.getElementById('fo-panel').classList.remove('visible');
+  }
+
+  initNav('expenses');
+  renderAll();
+</script>
+
+<div class="focusing-overlay" id="fo-overlay" onclick="closeFocusing()"></div>
+<div class="focusing-panel" id="fo-panel">
+  <div class="focusing-panel-inner">
+    <div class="fm-icon" id="fo-icon">🌿</div>
+    <div class="fm-amount" id="fo-amount"></div>
+    <div class="fm-title" id="fo-title"></div>
+    <div class="fm-text" id="fo-text"></div>
+    <div class="fm-actions" id="fo-actions"></div>
+  </div>
+</div>
+
+</body>
+</html>

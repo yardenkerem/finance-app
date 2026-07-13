@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>שיח התמקדות — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .stage-indicator {
+      display: flex; gap: 6px; justify-content: center;
+      margin-bottom: 24px;
+    }
+    .stage-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+    .stage-dot.done { background: var(--green); }
+    .stage-dot.current { background: var(--accent); width: 18px; border-radius: 3px; }
+
+    .session-save {
+      background: var(--bg-card-2);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 20px;
+      animation: fadeUp 0.4s ease;
+    }
+
+    .past-sessions { margin-top: 40px; }
+    .session-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .session-item:hover { border-color: var(--border-accent); }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container-sm">
+
+    <div class="page-header" style="text-align:center;">
+      <div class="page-label">Inner Relationship Focusing</div>
+      <h1 class="page-title">שיח התמקדות</h1>
+      <p class="page-subtitle">המקום הבטוח שלך — להיות עם מה שעובר עלייך</p>
+    </div>
+
+    <!-- Intro explanation -->
+    <div style="max-width:540px; margin:0 auto 32px; text-align:right;">
+      <div style="background:rgba(232,201,126,0.05); border:1px solid rgba(232,201,126,0.18); border-radius:var(--radius); padding:24px 28px; line-height:2;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--accent); margin-bottom:12px;">השיח הזה הוא לא רק על כסף</div>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin:0;">
+          כאן יש מקום לכל מה שעובר עלייך — בחיים, בעבודה, ביחסים, בגוף, בנפש.<br/>
+          <br/>
+          הרעיון הוא פשוט: לשבת רגע עם מה שיש,<br/>
+          לשים לב איך זה מורגש בגוף עכשיו —<br/>
+          ולהסכים להיות עם זה עוד רגע אחד.<br/>
+          <br/>
+          <strong style="color:var(--text);">כי רק משם מגיע שינוי.</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Start screen -->
+    <div id="start-screen" class="card" style="text-align:center; padding:48px 32px;">
+      <div style="font-size:2.5rem; margin-bottom:16px;">🌿</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; margin-bottom:12px;">
+        ברוכה הבאה לשיחה
+      </div>
+      <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.9; margin-bottom:32px; max-width:440px; margin-right:auto; margin-left:auto;">
+        אין כאן נכון או לא נכון.<br/>
+        אין כאן שיפוט — לא על הכסף, לא על הבחירות, לא על הרגשות.<br/>
+        <br/>
+        כל מה שעולה בך הוא מידע — והמידע הזה לא מגיע מהראש, אלא מהגוף.
+      </p>
+      <button class="btn btn-primary" onclick="startSession()" style="padding:14px 40px; font-size:1rem;">
+        🌱 התחילי שיחה
+      </button>
+    </div>
+
+    <!-- Chat screen -->
+    <div id="chat-screen" style="display:none;">
+
+      <div class="stage-indicator" id="stage-dots"></div>
+
+      <div class="chat-window" id="chat-window">
+        <div class="chat-messages" id="chat-messages"></div>
+
+        <div class="chat-input-area" id="input-area">
+          <textarea
+            class="chat-textarea"
+            id="chat-input"
+            placeholder="כתבי כאן — בחופשיות, בלי לסנן..."
+            rows="2"
+            onkeydown="handleKey(event)"
+          ></textarea>
+          <button class="btn btn-primary btn-sm" onclick="sendMessage()" id="send-btn" style="padding:14px 20px; height:52px;">
+            שלחי
+          </button>
+        </div>
+      </div>
+
+      <!-- Save note at end -->
+      <div id="session-save" class="session-save" style="display:none;">
+        <div style="font-size:0.85rem; font-weight:600; margin-bottom:12px;">💛 רצית לרשום משהו מהשיחה?</div>
+        <textarea class="form-textarea" id="session-note" placeholder="מה היה חשוב לך בשיחה הזו? (אופציונלי)"></textarea>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button class="btn btn-primary btn-sm" onclick="saveSession()">שמרי</button>
+          <button class="btn btn-ghost btn-sm" onclick="newSession()">שיחה חדשה</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Past sessions -->
+    <div class="past-sessions" id="past-sessions" style="display:none;">
+      <div class="page-label" style="margin-bottom:16px;">שיחות קודמות</div>
+      <div id="sessions-list"></div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const STAGES = [
+    {
+      id: 'opening',
+      message: `שלום 💛
+
+אני כאן בשבילך, ורק בשבילך.
+
+מה עובר עליך עכשיו — בהקשר של כסף, עסק, פרנסה?
+אפשר לכתוב בחופשיות — אין כאן נכון או לא נכון.`,
+      waitForUser: true
+    },
+    {
+      id: 'presence',
+      message: (prev) => `תודה שחלקת איתי את זה. 🌿
+
+בואי ניקח רגע ביחד...
+
+סרקי פנימה לגוף — איפה את מרגישה את מה שתיארת?
+אולי בחזה? בבטן? בגרון? בכתפיים?
+
+(אין תשובה נכונה — רק מה שמרגישה בפועל)`,
+      waitForUser: true
+    },
+    {
+      id: 'welcome',
+      message: `כשמצאת את התחושה — תגידי לה שלום. 🌱
+
+רק תני לה לדעת שאת יודעת שהיא שם.
+לא צריך לעשות איתה שום דבר עכשיו.
+
+האם התחושה בסדר שנשאר איתה עוד קצת?
+ומה היא צריכה ממך כרגע — איזה מגע, איזו התייחסות?`,
+      waitForUser: true
+    },
+    {
+      id: 'felt_sense',
+      message: `יפה.
+
+עכשיו — בלי לנסות להבין אותה בראש.
+פשוט תסתכלי עליה מבחוץ, מתוך סקרנות:
+
+✦ איזו צורה יש לה?
+✦ איזה צבע?
+✦ כבדה או קלה?
+✦ רחבה או קטנה?
+✦ מגיע איזשהו דימוי?
+
+מה עולה כשאת שואלת אותה?`,
+      waitForUser: true
+    },
+    {
+      id: 'emotion',
+      message: `מעניין מאוד.
+
+ומה הרגש שמגיע עם התחושה הזו?
+(פחד, בושה, עצב, כעס, אשמה, אי-שקט — כל דבר בסדר)
+
+ולמה בחיים שלך זה קשור?
+תני לתשובה לעלות מהגוף — לא מהראש.`,
+      waitForUser: true
+    },
+    {
+      id: 'deepen',
+      message: `אני רוצה לשאול את התחושה שתי שאלות, ואת תעבירי לה:
+
+💔 מה היא הכי לא רוצה שיקרה?
+   — בגוף, ברגש, במציאות?
+
+💛 ומה היא כן רוצה?
+   — בגוף, ברגש, במציאות?
+
+תני לתשובה לבוא ממנה — לא ממך.`,
+      waitForUser: true
+    },
+    {
+      id: 'perspective',
+      message: `יפה מאוד.
+
+בואי ננסה עוד משהו אחד —
+תיכנסי לנקודת המבט של התחושה עצמה.
+
+אם היא יכלה לדבר ישירות אליך:
+מה היא הייתה אומרת?
+מה היא רוצה שתדעי?`,
+      waitForUser: true
+    },
+    {
+      id: 'closing_check',
+      message: `תודה שהיית כאן עם עצמך כל הזמן הזה. 🌿
+
+לפני שסוגרות — האם יש עוד משהו שעלה שחשוב לך?
+משהו שאת לא רוצה לשכוח מהשיחה הזו?`,
+      waitForUser: true
+    },
+    {
+      id: 'body_check',
+      message: `ועוד שאלה אחת:
+
+האם משהו השתנה בגוף מאז שהתחלנו?
+אפילו קצת — קלילות, נשימה שונה, שחרור קטן, פתיחות?`,
+      waitForUser: true
+    },
+    {
+      id: 'goodbye',
+      message: `💛
+
+תגידי שלום לתחושה.
+היא עשתה עבודה חשובה היום.
+
+וגם את.
+
+כל תחושה שעולה — גם הכי קשה — היא לא אויב.
+היא חלק שמנסה להגן עליך.
+היא ראויה לשלום, לסקרנות, ולמגע.
+
+אני כאן בכל פעם שתצטרכי. 🌱`,
+      waitForUser: false
+    }
+  ];
+
+  let currentStage = 0;
+  let sessionMessages = [];
+  let isTyping = false;
+
+  function fmt(d) {
+    return new Date(d).toLocaleDateString('he-IL', { day:'numeric', month:'long', year:'numeric' });
+  }
+
+  function getSessions() { return JSON.parse(localStorage.getItem('ff_sessions') || '[]'); }
+  function saveSessions(arr) { localStorage.setItem('ff_sessions', JSON.stringify(arr)); }
+
+  function startSession() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('chat-screen').style.display = 'block';
+    currentStage = 0;
+    sessionMessages = [];
+    renderStageDots();
+    showAppMessage(STAGES[0].message);
+  }
+
+  function renderStageDots() {
+    const total = STAGES.length;
+    document.getElementById('stage-dots').innerHTML = STAGES.map((s, i) => {
+      let cls = 'stage-dot';
+      if (i < currentStage) cls += ' done';
+      else if (i === currentStage) cls += ' current';
+      return `<div class="${cls}"></div>`;
+    }).join('');
+  }
+
+  function showAppMessage(text) {
+    isTyping = true;
+    toggleInput(false);
+
+    // Show typing indicator
+    const msgs = document.getElementById('chat-messages');
+    const typingEl = document.createElement('div');
+    typingEl.className = 'chat-typing';
+    typingEl.id = 'typing-indicator';
+    typingEl.innerHTML = `<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
+    msgs.appendChild(typingEl);
+    scrollToBottom();
+
+    const delay = Math.min(800 + text.length * 8, 2200);
+
+    setTimeout(() => {
+      typingEl.remove();
+      addBubble('app', text);
+      isTyping = false;
+
+      const stage = STAGES[currentStage];
+      if (stage.waitForUser) {
+        toggleInput(true);
+        document.getElementById('chat-input').focus();
+      } else {
+        // Final stage
+        document.getElementById('input-area').style.display = 'none';
+        document.getElementById('session-save').style.display = 'block';
+      }
+    }, delay);
+  }
+
+  function addBubble(who, text) {
+    const msgs = document.getElementById('chat-messages');
+    const el = document.createElement('div');
+    el.className = `chat-bubble ${who}`;
+    el.textContent = text;
+    msgs.appendChild(el);
+    sessionMessages.push({ who, text, time: new Date().toISOString() });
+    scrollToBottom();
+  }
+
+  function toggleInput(enabled) {
+    const inp = document.getElementById('chat-input');
+    const btn = document.getElementById('send-btn');
+    inp.disabled = !enabled;
+    btn.disabled = !enabled;
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function sendMessage() {
+    if (isTyping) return;
+    const inp = document.getElementById('chat-input');
+    const text = inp.value.trim();
+    if (!text) return;
+
+    addBubble('user', text);
+    inp.value = '';
+    toggleInput(false);
+
+    currentStage++;
+    renderStageDots();
+
+    if (currentStage < STAGES.length) {
+      const stage = STAGES[currentStage];
+      const msg = typeof stage.message === 'function' ? stage.message(text) : stage.message;
+      showAppMessage(msg);
+    }
+  }
+
+  function scrollToBottom() {
+    const w = document.getElementById('chat-window');
+    w.scrollTop = w.scrollHeight;
+  }
+
+  function saveSession() {
+    const note = document.getElementById('session-note').value.trim();
+    const sessions = getSessions();
+    sessions.unshift({
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      messages: sessionMessages,
+      note: note || null
+    });
+    saveSessions(sessions);
+    renderPastSessions();
+    document.getElementById('session-save').style.display = 'none';
+    document.getElementById('past-sessions').style.display = 'block';
+    alert('השיחה נשמרה 💛');
+  }
+
+  function newSession() {
+    document.getElementById('chat-messages').innerHTML = '';
+    document.getElementById('input-area').style.display = 'flex';
+    document.getElementById('session-save').style.display = 'none';
+    startSession();
+  }
+
+  function renderPastSessions() {
+    const sessions = getSessions();
+    if (sessions.length === 0) return;
+
+    document.getElementById('past-sessions').style.display = 'block';
+    document.getElementById('sessions-list').innerHTML = sessions.map(s => `
+      <div class="session-item" onclick="toggleSession('${s.id}')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:0.88rem; font-weight:600;">${fmt(s.date)}</div>
+          <div style="font-size:0.78rem; color:var(--text-faint);">${s.messages.length} הודעות</div>
+        </div>
+        ${s.note ? `<div style="font-size:0.82rem; color:var(--text-muted); margin-top:6px;">"${s.note}"</div>` : ''}
+        <div id="session-detail-${s.id}" style="display:none; margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+          ${s.messages.map(m => `
+            <div style="margin-bottom:8px; ${m.who==='user' ? 'text-align:left;' : ''}">
+              <span style="font-size:0.78rem; color:${m.who==='app' ? 'var(--accent)' : 'var(--text-muted)'};">${m.who==='app' ? '🌿 Focusing Finance' : '👤 את'}</span>
+              <div style="font-size:0.85rem; color:var(--text-muted); margin-top:3px; white-space:pre-line;">${m.text}</div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  function toggleSession(id) {
+    const el = document.getElementById('session-detail-' + id);
+    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+
+  // Init
+  initNav('chat');
+  const sessions = getSessions();
+  if (sessions.length > 0) renderPastSessions();
+</script>
+</body>
+</html>

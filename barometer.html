@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ברומטר הכסף — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .baro-today-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      margin-bottom: 32px;
+    }
+    .baro-today-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      margin-bottom: 10px;
+    }
+    .baro-today-q {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+    .mood-grid-inline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .mood-btn-inline {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px;
+      padding: 14px 8px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--transition);
+      color: var(--text);
+    }
+    .mood-btn-inline:hover { border-color: var(--accent); background: var(--accent-light); }
+    .mood-btn-inline.blocking-btn:hover { border-color: rgba(201,123,123,0.6); background: rgba(201,123,123,0.1); }
+    .mood-emoji-inline { font-size: 1.8rem; line-height: 1; }
+    .mood-label-inline { font-size: 0.75rem; color: var(--text-muted); }
+
+    .today-logged {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .today-logged-emoji { font-size: 2.5rem; line-height: 1; }
+    .today-logged-mood { font-size: 1.1rem; font-weight: 600; }
+    .today-logged-sub { font-size: 0.8rem; color: var(--text-faint); margin-top: 2px; }
+    .today-change-btn {
+      margin-right: auto;
+      font-size: 0.78rem; color: var(--text-faint);
+      background: none; border: 1px solid var(--border);
+      border-radius: 20px; padding: 5px 14px; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .today-change-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .baro-month-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .baro-stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 14px;
+      text-align: center;
+    }
+    .baro-stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .baro-stat-label { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+    .baro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .baro-entry {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 5px; padding: 10px 4px;
+      border-radius: 10px; border: 1px solid var(--border);
+      text-align: center;
+    }
+    .baro-entry.blocking { background: rgba(201,123,123,0.08); border-color: rgba(201,123,123,0.25); }
+    .baro-entry.flowing  { background: rgba(124,185,160,0.08); border-color: rgba(124,185,160,0.25); }
+    .baro-entry.baro-empty {
+      border-color: rgba(255,255,255,0.18);
+      background: transparent;
+    }
+    .baro-emoji { font-size: 1.5rem; line-height: 1; }
+    .baro-mood  { font-size: 0.68rem; color: var(--text-muted); }
+    .baro-date  { font-size: 0.62rem; color: var(--text-faint); }
+    .baro-day-num { font-size: 0.78rem; color: rgba(255,255,255,0.45); }
+
+    .month-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--text-muted);
+      margin: 28px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: var(--text-faint); font-size: 0.9rem; line-height: 1.8;
+    }
+
+    .baro-next-section {
+      margin-top: 52px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      margin-bottom: 56px;
+    }
+    .baro-next-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .baro-next-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .baro-next-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+    }
+    .baro-next-card-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.07em;
+      color: var(--accent);
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+    .baro-next-links { display: flex; flex-direction: column; gap: 8px; }
+    .baro-next-link {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--text);
+      text-decoration: none;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all var(--transition);
+    }
+    .baro-next-link:hover {
+      border-color: var(--border-accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    @media (max-width: 500px) {
+      .mood-grid-inline { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+      .mood-btn-inline { padding: 10px 4px; }
+      .mood-emoji-inline { font-size: 1.5rem; }
+      .baro-month-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .baro-next-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container-sm">
+
+    <div class="page-header">
+      <div class="page-label">ברומטר הכסף</div>
+      <h1 class="page-title">איך את מרגישה עם הכסף?</h1>
+      <p class="page-subtitle">בחרי היום, עקבי לאורך זמן — לפעמים התחושה משתנה הרבה לפני שהמספרים משתנים</p>
+    </div>
+
+    <div id="today-section"></div>
+    <div id="month-stats-section"></div>
+    <div id="history-section"></div>
+
+    <div class="baro-next-section">
+      <div class="baro-next-title">לאן את רוצה להמשיך מכאן?</div>
+      <div class="baro-next-grid">
+
+        <div class="baro-next-card">
+          <div class="baro-next-card-title">עבודה פנימית — התמקדות</div>
+          <div class="baro-next-links">
+            <a href="focusing-chat.html" class="baro-next-link">שיח התמקדות 🌿</a>
+            <a href="vision.html"        class="baro-next-link">לאן אני הולכת 🌟</a>
+            <a href="daily-practice.html" class="baro-next-link">תרגיל יומי ☀️</a>
+            <a href="daily-practice.html?tab=weekly" class="baro-next-link">תרגיל שבועי — שפע 🌀</a>
+          </div>
+        </div>
+
+        <div class="baro-next-card">
+          <div class="baro-next-card-title">עבודה על המספרים</div>
+          <div class="baro-next-links">
+            <a href="income.html"        class="baro-next-link">הכנסות</a>
+            <a href="expenses.html"      class="baro-next-link">הוצאות עסק</a>
+            <a href="home-expenses.html" class="baro-next-link">הוצאות בית</a>
+            <a href="summary.html"       class="baro-next-link">כמה נשאר?</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Nervous system regulation moment -->
+<div class="focusing-overlay" id="ns-overlay" onclick="closeNsRegulation()"></div>
+<div class="focusing-panel" id="ns-panel">
+  <div class="focusing-panel-inner">
+    <div class="fm-icon" id="ns-icon">🌬️</div>
+    <div class="fm-title" id="ns-title">רגע לגוף, לפני שממשיכות</div>
+    <div class="fm-text" id="ns-text"></div>
+    <div class="fm-actions" id="ns-actions"></div>
+  </div>
+</div>
+
+<script>
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    return d.getDate() + ' ' + MONTHS_HE[d.getMonth()];
+  }
+
+  function getTodayKey() {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  function getTodayMood() {
+    const history = JSON.parse(localStorage.getItem('ff_mood_history') || '[]');
+    return history.find(e => e.date === getTodayKey()) || null;
+  }
+
+  function logMood(label, emoji, blocking) {
+    const todayKey = getTodayKey();
+    localStorage.setItem('ff_last_mood_date', todayKey);
+    const history = JSON.parse(localStorage.getItem('ff_mood_history') || '[]');
+    const i = history.findIndex(e => e.date === todayKey);
+    const entry = { date: todayKey, mood: label, emoji, blocking };
+    if (i !== -1) history[i] = entry; else history.unshift(entry);
+    localStorage.setItem('ff_mood_history', JSON.stringify(history));
+    render();
+    if (blocking) showNsRegulation();
+  }
+
+  const NS_REGULATION_TEXT = 'כשהגוף במצב כזה — קיפאון, כובד, חרדה, ריקנות — קשה לחשוב בבהירות או להרגיש לעומק. זו לא בעיה שלך, זו מערכת העצבים שעושה את התפקיד שלה.\n\nבואי נרגיע אותה רגע, לפני שממשיכות הלאה:\n\n🫁 שאפי לאט לספירת 4\n⏸️ עצרי לספירת 4\n💨 נשפי לאט וארוך לספירת 6\n\nחזרי על זה 3 פעמים, בקצב שלך.';
+
+  function showNsRegulation() {
+    document.getElementById('ns-text').textContent = NS_REGULATION_TEXT;
+    document.getElementById('ns-actions').innerHTML = `
+      <button class="btn btn-primary" onclick="closeNsRegulation()">עשיתי את זה — אני כאן</button>
+      <button class="btn btn-ghost" onclick="closeNsRegulation()">דלגי</button>
+    `;
+    document.getElementById('ns-overlay').classList.add('visible');
+    document.getElementById('ns-panel').classList.add('visible');
+  }
+
+  function closeNsRegulation() {
+    document.getElementById('ns-overlay').classList.remove('visible');
+    document.getElementById('ns-panel').classList.remove('visible');
+  }
+
+  function showMoodButtons() {
+    document.getElementById('today-section').innerHTML = `
+      <div class="baro-today-card">
+        <div class="baro-today-label">היום</div>
+        <div class="baro-today-q">איך את מרגישה מול הכסף היום?</div>
+        <div class="mood-grid-inline">
+          ${MOODS.map(m => `
+            <button class="mood-btn-inline ${m.blocking ? 'blocking-btn' : ''}"
+              onclick="logMood('${m.label}','${m.emoji}',${m.blocking})">
+              <span class="mood-emoji-inline">${m.emoji}</span>
+              <span class="mood-label-inline">${m.label}</span>
+            </button>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  function renderToday() {
+    const today = getTodayMood();
+    if (!today) { showMoodButtons(); return; }
+
+    document.getElementById('today-section').innerHTML = `
+      <div class="baro-today-card">
+        <div class="baro-today-label">היום</div>
+        <div class="today-logged">
+          <div class="today-logged-emoji">${today.emoji}</div>
+          <div class="today-logged-info">
+            <div class="today-logged-mood">${today.mood}</div>
+            <div class="today-logged-sub">נרשם היום ✓</div>
+          </div>
+          <button class="today-change-btn" onclick="showMoodButtons()">שינוי</button>
+        </div>
+      </div>`;
+  }
+
+  function renderMonthStats() {
+    const history = JSON.parse(localStorage.getItem('ff_mood_history') || '[]');
+    const el = document.getElementById('month-stats-section');
+    const now = new Date();
+    const thisMonth = history.filter(e => {
+      const d = new Date(e.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    if (thisMonth.length === 0) { el.innerHTML = ''; return; }
+
+    const flowing  = thisMonth.filter(e => !e.blocking).length;
+    const blocking = thisMonth.filter(e =>  e.blocking).length;
+    const flowPct  = Math.round((flowing / thisMonth.length) * 100);
+
+    el.innerHTML = `
+      <div class="baro-month-stats">
+        <div class="baro-stat-card">
+          <div class="baro-stat-num">${thisMonth.length}</div>
+          <div class="baro-stat-label">ימים נרשמו החודש</div>
+        </div>
+        <div class="baro-stat-card">
+          <div class="baro-stat-num" style="color:var(--green);">${flowPct}%</div>
+          <div class="baro-stat-label">מצבים זורמים</div>
+        </div>
+        <div class="baro-stat-card">
+          <div class="baro-stat-num" style="color:${blocking > flowing ? 'var(--red)' : 'var(--text-muted)'};">${blocking}</div>
+          <div class="baro-stat-label">מצבים חוסמים</div>
+        </div>
+      </div>`;
+  }
+
+  function renderHistory() {
+    const history = JSON.parse(localStorage.getItem('ff_mood_history') || '[]');
+    const el = document.getElementById('history-section');
+
+    if (history.length === 0) {
+      el.innerHTML = `<div class="empty-state">
+        עדיין אין רשומות.<br/>
+        בחרי מצב רוח למעלה — לאורך זמן תוכלי לראות כאן את המסע שלך.
+      </div>`;
+      return;
+    }
+
+    // Group entries by month, keyed by day number
+    const byMonth = {};
+    history.forEach(e => {
+      const d = new Date(e.date);
+      const key = d.getFullYear() + '-' + d.getMonth();
+      if (!byMonth[key]) byMonth[key] = {
+        year: d.getFullYear(), month: d.getMonth(), entries: {}
+      };
+      byMonth[key].entries[d.getDate()] = e;
+    });
+
+    const now = new Date();
+
+    el.innerHTML = Object.values(byMonth)
+      .sort((a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month)
+      .map(({ year, month, entries }) => {
+        const label = MONTHS_HE[month] + ' ' + year;
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+        const lastDay = isCurrentMonth ? now.getDate() : daysInMonth;
+
+        let cells = '';
+        for (let day = 1; day <= lastDay; day++) {
+          const e = entries[day];
+          if (e) {
+            cells += `
+              <div class="baro-entry ${e.blocking ? 'blocking' : 'flowing'}">
+                <div class="baro-emoji">${e.emoji}</div>
+                <div class="baro-mood">${e.mood}</div>
+                <div class="baro-date">${day}</div>
+              </div>`;
+          } else {
+            cells += `<div class="baro-entry baro-empty"><div class="baro-day-num">${day}</div></div>`;
+          }
+        }
+
+        return `
+          <div class="month-label">${label}</div>
+          <div class="baro-grid">${cells}</div>`;
+      }).join('');
+  }
+
+  function render() {
+    renderToday();
+    renderMonthStats();
+    renderHistory();
+  }
+
+  initNav('barometer');
+  render();
+</script>
+</body>
+</html>

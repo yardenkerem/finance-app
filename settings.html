@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>הגדרות — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container-sm">
+
+    <div class="page-header">
+      <div class="page-label">הגדרות</div>
+      <h1 class="page-title">הגדרות</h1>
+      <p class="page-subtitle">הגדרות אחת פעם — ואז האפליקציה עובדת בשבילך</p>
+    </div>
+
+    <!-- Tax settings -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="settings-label">מיסים</div>
+
+      <div class="form-group">
+        <label class="form-label">מע"מ</label>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <input type="text" class="form-input" value="18%" disabled style="width:100px; opacity:0.6;"/>
+          <span class="text-muted" style="font-size:0.82rem;">קבוע על פי חוק</span>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">מס הכנסה שאת משלמת (%)</label>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <input type="number" class="form-input" id="tax-rate" placeholder="לדוגמה: 20" min="0" max="50" style="width:160px;"/>
+          <span class="text-muted" style="font-size:0.82rem;">לפי מה שקבעת עם רואה החשבון שלך</span>
+        </div>
+        <div class="form-hint">אחוז זה יוחסר מכל הכנסה לאחר הפחתת המע"מ</div>
+      </div>
+    </div>
+
+    <!-- Export / Import -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="settings-label">גיבוי ושחזור נתונים</div>
+      <p class="text-muted" style="font-size:0.85rem; margin-bottom:20px; line-height:1.7;">
+        כל הנתונים שלך (הכנסות, הוצאות, תרגולים, חזון) נשמרים רק על המכשיר שלך.<br/>
+        כדאי לגבות מדי פעם — ובמיוחד לפני מעבר למכשיר חדש.
+      </p>
+
+      <div style="margin-bottom:24px;">
+        <div style="font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:8px;">ייצוא — הורדת קובץ גיבוי</div>
+        <button class="btn btn-primary" onclick="exportData()">⬇ הורידי קובץ גיבוי</button>
+        <div style="font-size:0.78rem; color:var(--text-faint); margin-top:6px;">מוריד קובץ JSON שאפשר לשמור ולהעביר</div>
+      </div>
+
+      <div style="border-top:1px solid var(--border); padding-top:20px;">
+        <div style="font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:8px;">ייבוא — שחזור מקובץ גיבוי</div>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <input type="file" id="import-file" accept=".json"
+            style="font-size:0.85rem; color:var(--text-muted); background:rgba(245,240,235,0.05); border:1px solid var(--border); border-radius:8px; padding:8px 12px; cursor:pointer;"/>
+          <button class="btn btn-ghost" onclick="importData()">⬆ ייבאי נתונים</button>
+        </div>
+        <div style="font-size:0.78rem; color:var(--text-faint); margin-top:6px;">ידרוס את הנתונים הקיימים — כדאי לגבות קודם</div>
+      </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div class="card" style="border-color:var(--red-light); margin-bottom:28px;">
+      <div class="settings-label" style="color:var(--red);">אזור מחיקה</div>
+      <p class="text-muted" style="font-size:0.85rem; margin-bottom:16px;">
+        מחיקת כל הנתונים — הכנסות, הוצאות, שיחות, הגדרות. פעולה זו בלתי הפיכה.
+      </p>
+      <button class="btn btn-danger" onclick="clearAllData()">מחקי את כל הנתונים</button>
+    </div>
+
+    <div style="display:flex; gap:12px; justify-content:flex-end;">
+      <a href="index.html" class="btn btn-ghost">ביטול</a>
+      <button class="btn btn-primary" onclick="saveSettings()">שמרי הגדרות</button>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function getSettings() { return JSON.parse(localStorage.getItem('ff_settings') || '{"incomeTaxRate":0}'); }
+
+  function init() {
+    const settings = getSettings();
+    document.getElementById('tax-rate').value = settings.incomeTaxRate || '';
+  }
+
+  function saveSettings() {
+    const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+    const settings = getSettings();
+    settings.incomeTaxRate = taxRate;
+    localStorage.setItem('ff_settings', JSON.stringify(settings));
+    localStorage.setItem('ff_tax_configured', '1');
+    alert('ההגדרות נשמרו ✓');
+    window.location.href = 'index.html';
+  }
+
+  const ALL_KEYS = [
+    'ff_incomes','ff_expenses','ff_home_expenses','ff_settings',
+    'ff_jar_targets','ff_hidden_jars','ff_vision','ff_extra_incomes',
+    'ff_daily_practice','ff_daily_answers','ff_practice_start',
+    'ff_month_reflections','ff_last_seen_month','ff_tax_configured'
+  ];
+
+  function exportData() {
+    const data = { _exported: new Date().toISOString() };
+    ALL_KEYS.forEach(k => {
+      const v = localStorage.getItem(k);
+      if (v) try { data[k] = JSON.parse(v); } catch { data[k] = v; }
+    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'focusing-finance-' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importData() {
+    const file = document.getElementById('import-file').files[0];
+    if (!file) { alert('בחרי קובץ JSON לפני הייבוא'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!confirm('ייבוא הנתונים ידרוס את כל הנתונים הקיימים. להמשיך?')) return;
+        ALL_KEYS.forEach(k => {
+          if (data[k] !== undefined) localStorage.setItem(k, JSON.stringify(data[k]));
+        });
+        alert('הנתונים יובאו בהצלחה ✓');
+        window.location.reload();
+      } catch { alert('קובץ לא תקין — בדקי שזה קובץ גיבוי של Focusing Finance'); }
+    };
+    reader.readAsText(file);
+  }
+
+  function clearAllData() {
+    if (!confirm('למחוק את כל הנתונים? פעולה זו בלתי הפיכה.')) return;
+    if (!confirm('האם את בטוחה לגמרי? כל ההכנסות, ההוצאות והשיחות יימחקו.')) return;
+    ['ff_settings','ff_incomes','ff_expenses','ff_home_expenses','ff_jar_examples',
+     'ff_vision','ff_daily_practice','ff_sessions','ff_tax_configured'
+    ].forEach(k => localStorage.removeItem(k));
+    alert('כל הנתונים נמחקו.');
+    window.location.href = 'index.html';
+  }
+
+  initNav('settings');
+  init();
+</script>
+</body>
+</html>

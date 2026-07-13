@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>הוצאות בית — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .expense-row {
+      display: grid;
+      grid-template-columns: 100px 1fr 110px 110px 120px 140px 90px;
+      align-items: center;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+      transition: background var(--transition);
+    }
+    .expense-row:hover { background: rgba(245,240,235,0.02); }
+    .expense-row:last-child { border-bottom: none; }
+
+    .expense-header {
+      display: grid;
+      grid-template-columns: 100px 1fr 110px 110px 120px 140px 90px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .jar-suggestion {
+      background: var(--bg-card-2);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-top: 16px;
+      animation: fadeUp 0.3s ease;
+      display: none;
+    }
+
+    .jar-suggestion.visible { display: block; }
+
+    .jar-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-light);
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.9rem; font-weight: 600;
+      color: var(--accent);
+      cursor: default;
+    }
+
+    .jar-picker {
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .jar-picker.visible { display: flex; }
+
+    .jar-option {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      color: var(--text-muted);
+    }
+
+    .jar-option:hover, .jar-option.selected {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .jars-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .jar-summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top-width: 3px;
+      border-radius: var(--radius);
+      padding: 20px 10px;
+      text-align: center;
+      transition: all var(--transition);
+    }
+
+    .jar-summary-card:hover {
+      background: var(--bg-card-2);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    .edit-input {
+      width: 100%; background: rgba(245,240,235,0.08);
+      border: 1px solid var(--border-accent); border-radius: 6px;
+      padding: 6px 10px; color: var(--text);
+      font-family: 'Assistant', sans-serif; font-size: 0.85rem;
+      direction: rtl;
+    }
+    .edit-input:focus { outline: none; border-color: var(--accent); }
+
+    @media (max-width: 900px) {
+      .expense-header { display: none; }
+      .expense-row { grid-template-columns: 1fr 1fr; }
+      .jars-summary-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="page-label">הוצאות בית</div>
+      <h1 class="page-title">הוצאות הבית שלי</h1>
+      <p class="page-subtitle">כל הוצאה — יודעת לאן היא שייכת</p>
+    </div>
+
+    <!-- Jars summary -->
+    <div class="jars-summary-grid" id="jars-summary"></div>
+
+    <!-- Jar detail panel (expands on click) -->
+    <div id="jar-detail-panel" style="display:none; margin-bottom:24px;">
+      <div class="card" style="border-color:var(--border-accent);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div class="card-title" style="margin:0;" id="jar-detail-title"></div>
+          <button onclick="closeJarDetail()" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:1.2rem;padding:4px 8px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-faint)'">✕</button>
+        </div>
+        <div id="jar-detail-rows"></div>
+      </div>
+    </div>
+
+    <!-- Recurring banner -->
+    <div id="recurring-banner" style="display:none; margin-bottom:20px; background:rgba(201,169,110,0.08); border:1.5px solid rgba(201,169,110,0.35); border-radius:var(--radius); padding:20px 26px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+        <div>
+          <div style="font-size:0.95rem; font-weight:600; color:var(--accent); margin-bottom:5px;">
+            יש <span id="recurring-count">0</span> הוצאות קבועות מהחודש הקודם
+          </div>
+          <div style="font-size:0.82rem; color:var(--text-faint);" id="recurring-preview"></div>
+        </div>
+        <button onclick="copyRecurringExpenses()" class="btn btn-primary btn-sm">העתיקי לחודש הנוכחי ←</button>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-bottom:24px;">
+      <div style="font-size:0.75rem; color:var(--text-faint); margin-bottom:8px; letter-spacing:0.05em;">רק אם את רוצה — שיח התמקדות קצר</div>
+      <button class="btn btn-ghost btn-sm" style="font-size:0.85rem; color:var(--text-muted); border-color:var(--border);" onclick="showHardToLookFocusing()">🌿 קשה לי להסתכל על המספרים</button>
+    </div>
+
+    <!-- Entry form -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">רישום הוצאה חדשה</div>
+
+      <div class="form-grid-3">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">תאריך</label>
+          <input type="date" class="form-input" id="he-date"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">שם ההוצאה</label>
+          <input type="text" class="form-input" id="he-name" placeholder="למשל: שכירות, דלק, נטפליקס..." oninput="suggestJar()"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">תדירות תשלום</label>
+          <select class="form-select" id="he-period">
+            <option value="monthly">חודשי</option>
+            <option value="onetime">חד פעמי</option>
+            <option value="annual">שנתי</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">סכום (₪)</label>
+          <input type="number" class="form-input" id="he-amount" placeholder="0" min="0"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">אמצעי תשלום</label>
+          <select class="form-select" id="he-method">
+            <option value="">בחרי...</option>
+            <option value="bit">ביט</option>
+            <option value="paybox">פייבוקס</option>
+            <option value="credit">כרטיס אשראי</option>
+            <option value="cash">מזומן</option>
+            <option value="check">שיק</option>
+            <option value="transfer">העברה בנקאית</option>
+            <option value="direct">הוראת קבע</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">כד משויך</label>
+          <div id="he-jar-display" style="padding:12px 0; font-size:0.9rem; color:var(--text-faint);">יוצע אוטומטית</div>
+        </div>
+      </div>
+
+      <!-- Jar suggestion -->
+      <div class="jar-suggestion" id="jar-suggestion">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <span style="font-size:0.85rem; color:var(--text-muted);">המערכת מציעה:</span>
+          <div class="jar-pill" id="suggested-jar-pill">🌱 הקרקע</div>
+          <button class="btn btn-primary btn-sm" onclick="confirmJar()">✓ אשרי</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleJarPicker()">שנה כד</button>
+        </div>
+        <div class="jar-picker" id="jar-picker"></div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:12px;">
+        <button class="btn btn-primary" onclick="addHomeExpense()">+ רשמי הוצאה</button>
+        <div id="jar-required-msg" style="display:none; align-items:center; font-size:0.82rem; color:var(--red);">אנא בחרי כד</div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:0.79rem; color:var(--text-faint);">
+        <span>הזמנה לשיח לאחר הוצאה מעל</span>
+        <input type="number" id="he-threshold" min="0" max="100000"
+          style="width:76px; background:transparent; border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-size:0.79rem; color:var(--text-muted); text-align:left; direction:ltr;"
+          onchange="saveThreshold()" onblur="saveThreshold()"/>
+        <span>₪</span>
+        <span style="font-size:0.72rem; opacity:0.6;">(0 = ללא)</span>
+      </div>
+    </div>
+
+    <!-- Expenses list -->
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--border);">
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost btn-sm" id="flt-month" onclick="setFilter('month')">החודש</button>
+          <button class="btn btn-ghost btn-sm" id="flt-all" onclick="setFilter('all')">כל הזמן</button>
+        </div>
+        <div style="font-size:0.85rem; color:var(--text-muted);">
+          סה"כ: <strong id="total-display" style="color:var(--text);">₪0</strong>
+        </div>
+      </div>
+
+      <div class="expense-header">
+        <div style="font-size:0.72rem;letter-spacing:0.07em;color:var(--text-faint);">תאריך</div>
+        <div style="font-size:0.72rem;letter-spacing:0.07em;color:var(--text-faint);">שם ההוצאה</div>
+        <div style="font-size:0.72rem;letter-spacing:0.07em;color:var(--text-faint);">תדירות</div>
+        <div style="font-size:0.72rem;letter-spacing:0.07em;color:var(--text-faint);">סכום</div>
+        <div style="font-size:0.72rem;letter-spacing:0.07em;color:var(--text-faint);">אמצעי תשלום</div>
+        <div style="font-size:0.72rem;letter-spacing:0.07em;color:var(--text-faint);">כד</div>
+        <div></div>
+      </div>
+
+      <div id="expense-rows"></div>
+
+      <div id="expense-empty" class="empty-state" style="display:none;">
+        <div class="empty-icon">🏠</div>
+        <p>עדיין אין הוצאות בית רשומות.<br/>רשמי את הראשונה למעלה.</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+
+  const JARS = [
+    { key:'ground',  icon:'🌱', name:'הקרקע',  color:'#6DBF8A',
+      keywords:['שכירות','משכנתא','ארנונה','חשמל','מים','גז','ועד','אינטרנט','סופר','מזון','קניות','מכולת','אוכל','ניקוי','היגיינה'],
+      examples:['שכירות / משכנתא','ארנונה','חשמל','מים','גז','ועד בית','אינטרנט וטלפון','קניות סופר','מוצרי ניקיון והיגיינה'] },
+    { key:'way',     icon:'🛤️', name:'הדרך',    color:'#E8954A',
+      keywords:['דלק','פנגו','ביטוח רכב','טסט','מוסך','חניה','כביש','רכבת','אוטובוס','מונית','גט','אובר','טיפול רכב','צמיג'],
+      examples:['דלק','ביטוח רכב','טסט שנתי','מוסך ותיקונים','כביש 6 / חניה','רכבת ואוטובוס','מונית / גט / אובר','פנגו'] },
+    { key:'future',  icon:'🌟', name:'העתיד',   color:'#B07FE0',
+      keywords:['גן','צהרון','בית ספר','שיעורים פרטיים','חוגים','קייטנה','ילדים','תנועת נוער','ילקוט','ספרים לבית ספר','כסף כיס'],
+      examples:['גן / צהרון','בית ספר','חוגים ופעילויות','שיעורים פרטיים','קייטנות','תנועת נוער','ציוד לימודי','כסף כיס'] },
+    { key:'anchor',  icon:'⚓', name:'העוגן',   color:'#5BA8D4',
+      keywords:['רופא','שיניים','פיזיותרפיה','תרופות','ביטוח בריאות','קופת חולים','אופטיקה','בדיקות','עורך דין','עמלת בנק','ביטוח חיים','סיעודי'],
+      examples:['קופת חולים','ביטוח בריאות פרטי','רופא שיניים','תרופות','פיזיותרפיה / אוסטאופתיה','בדיקות רפואיות','אופטיקה','ביטוח חיים / סיעודי','עמלות בנק'] },
+    { key:'head',    icon:'🧠', name:'הראש',    color:'#4DBFBF',
+      keywords:['קורס','סדנה','ספר','לימודים','אוניברסיטה','מאמן','ייעוץ','כנס','מנוי','אפליקציית למידה','השתלמות'],
+      examples:['קורסים וסדנאות','ספרים מקצועיים','אוניברסיטה / לימודים','מאמן אישי / ייעוץ','כנסים ואירועי מקצוע','מנויים ואפליקציות למידה','פודקאסטים / תכנים דיגיטליים'] },
+    { key:'dream',   icon:'✨', name:'החלום',   color:'#D4AF37',
+      keywords:['חיסכון','שיפוץ','רכב חדש','חופשה גדולה','ריהוט','מכשיר חשמלי','בר מצווה','חתונה'],
+      examples:['שיפוץ הבית','רכב חדש','חופשה גדולה בחו"ל','ריהוט חדש','מכשיר חשמלי גדול','אירוע משפחתי (בר מצווה, חתונה)','חיסכון לכל מטרה גדולה'] },
+    { key:'freedom', icon:'🦋', name:'החופש',   color:'#A78BCA',
+      keywords:['השקעה','מניות','קרן','פנסיה','גמל','השתלמות','נדלן','נדל"ן'],
+      examples:['קרן פנסיה (מעבר לחובה)','קרן השתלמות','השקעה במניות / קרנות','נדל"ן להשקעה','חיסכון ארוך טווח','כל כסף שעובד בשבילך'] },
+    { key:'battery', icon:'🔋', name:'המצבר',   color:'#E07090',
+      keywords:['מסעדה','בית קפה','קפה','קולנוע','הופעה','בגדים','אופנה','ספא','מסאז','טיפול','נופש','צימר','בילוי','נטפליקס','ספוטיפיי','מנוי בידור'],
+      examples:['מסעדות ובתי קפה','קולנוע והופעות','בגדים ואופנה','ספא ומסאז','נופש וצימרים','נטפליקס / ספוטיפיי ומנויי בידור','קוסמטיקה ופינוקים','כל מה שמטעין אנרגיה'] },
+    { key:'heart',   icon:'💛', name:'הלב',     color:'#E8C84A',
+      keywords:['תרומה','מתנה','אירוח','עזרה','כרטיס ברכה','פרחים','יום הולדת','חתונה מתנה'],
+      examples:['מתנות ליום הולדת','מתנות חתונה / בר מצווה','פרחים','אירוח אורחים','תרומות','עזרה כלכלית למשפחה','כרטיסי ברכה'] },
+    { key:'air',     icon:'🌬️', name:'האוויר',  color:'#7EC8D8',
+      keywords:['חירום','בצמ','בצ"מ','חירום רפואי','תיקון דחוף','אינסטלטור','חשמלאי דחוף'],
+      examples:['קרן חירום לבלתי צפוי','תיקון דחוף בבית','חירום רפואי','החלפת מוצר שהתקלקל','כל הוצאה שלא תיכננת'] },
+  ];
+
+  const PERIOD_LABELS = { monthly:'חודשי', onetime:'חד פעמי', annual:'שנתי' };
+  const METHOD_LABELS = { bit:'ביט', paybox:'פייבוקס', credit:'כרטיס אשראי', cash:'מזומן', check:'שיק', transfer:'העברה בנקאית', direct:'הוראת קבע' };
+
+  let selectedJarKey = null;
+  let currentFilter = 'month';
+
+  function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
+  function fmtDate(d) { const dt = new Date(d); return dt.getDate() + ' ' + MONTHS[dt.getMonth()]; }
+
+  function getHomeExpenses() { return JSON.parse(localStorage.getItem('ff_home_expenses') || '[]'); }
+  function saveHomeExpenses(arr) { localStorage.setItem('ff_home_expenses', JSON.stringify(arr)); }
+
+  function getLastMonthRecurring() {
+    const now = new Date();
+    const lm = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+    const ly = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    return getHomeExpenses().filter(e => {
+      const d = new Date(e.date);
+      return d.getMonth() === lm && d.getFullYear() === ly && e.period === 'monthly';
+    });
+  }
+
+  function copyRecurringExpenses() {
+    const recurring = getLastMonthRecurring();
+    const todayStr = new Date().toISOString().split('T')[0];
+    const all = getHomeExpenses();
+    recurring.forEach(e => {
+      all.push({ ...e, id: Date.now().toString() + Math.random().toString(36).slice(2,8), date: todayStr, createdAt: new Date().toISOString() });
+    });
+    saveHomeExpenses(all);
+    document.getElementById('recurring-banner').style.display = 'none';
+    render();
+  }
+
+  function monthlyAmount(e) {
+    if (e.period === 'annual') return e.amount / 12;
+    if (e.period === 'onetime') return e.amount;
+    return e.amount;
+  }
+
+  // Keyword-based jar suggestion
+  function guessJar(name) {
+    const lower = name.toLowerCase();
+    for (const jar of JARS) {
+      if (jar.keywords.some(kw => lower.includes(kw.toLowerCase()))) {
+        return jar.key;
+      }
+    }
+    return null;
+  }
+
+  function suggestJar() {
+    const name = document.getElementById('he-name').value.trim();
+    const suggestion = document.getElementById('jar-suggestion');
+    const pill = document.getElementById('suggested-jar-pill');
+
+    if (name.length < 2) {
+      suggestion.classList.remove('visible');
+      selectedJarKey = null;
+      document.getElementById('he-jar-display').textContent = 'יוצע אוטומטית';
+      return;
+    }
+
+    const guessed = guessJar(name);
+    if (guessed) {
+      const jar = JARS.find(j => j.key === guessed);
+      pill.textContent = jar.icon + ' ' + jar.name;
+      selectedJarKey = guessed;
+      suggestion.classList.add('visible');
+      document.getElementById('jar-picker').classList.remove('visible');
+      updateJarDisplay();
+    } else {
+      // No guess — show picker directly
+      pill.textContent = '? לא זוהה';
+      selectedJarKey = null;
+      suggestion.classList.add('visible');
+      document.getElementById('jar-picker').classList.add('visible');
+      renderJarPicker();
+    }
+  }
+
+  function confirmJar() {
+    if (!selectedJarKey) {
+      document.getElementById('jar-picker').classList.add('visible');
+      renderJarPicker();
+      return;
+    }
+    updateJarDisplay();
+  }
+
+  function toggleJarPicker() {
+    const picker = document.getElementById('jar-picker');
+    const isVisible = picker.classList.contains('visible');
+    if (!isVisible) {
+      renderJarPicker();
+      picker.classList.add('visible');
+    } else {
+      picker.classList.remove('visible');
+    }
+  }
+
+  function renderJarPicker() {
+    document.getElementById('jar-picker').innerHTML = JARS.map(j =>
+      `<div class="jar-option ${selectedJarKey === j.key ? 'selected' : ''}" onclick="selectJar('${j.key}')">
+        ${j.icon} ${j.name}
+      </div>`
+    ).join('');
+  }
+
+  function selectJar(key) {
+    selectedJarKey = key;
+    const jar = JARS.find(j => j.key === key);
+    document.getElementById('suggested-jar-pill').textContent = jar.icon + ' ' + jar.name;
+    document.getElementById('jar-picker').classList.remove('visible');
+    updateJarDisplay();
+  }
+
+  function updateJarDisplay() {
+    if (!selectedJarKey) return;
+    const jar = JARS.find(j => j.key === selectedJarKey);
+    document.getElementById('he-jar-display').innerHTML =
+      `<span style="color:var(--accent); font-weight:600;">${jar.icon} ${jar.name}</span>`;
+  }
+
+  // Set today
+  document.getElementById('he-date').valueAsDate = new Date();
+
+  function addHomeExpense() {
+    const date = document.getElementById('he-date').value;
+    const name = document.getElementById('he-name').value.trim();
+    const period = document.getElementById('he-period').value;
+    const amount = parseFloat(document.getElementById('he-amount').value);
+
+    if (!date) { alert('אנא בחרי תאריך'); return; }
+    if (!name) { alert('אנא כתבי שם להוצאה'); return; }
+    if (!amount || amount <= 0) { alert('אנא הכניסי סכום'); return; }
+    if (!selectedJarKey) {
+      document.getElementById('jar-required-msg').style.display = 'flex';
+      document.getElementById('jar-picker').classList.add('visible');
+      renderJarPicker();
+      return;
+    }
+
+    document.getElementById('jar-required-msg').style.display = 'none';
+
+    const method = document.getElementById('he-method').value;
+
+    const expense = {
+      id: Date.now().toString(),
+      date, name, period, amount, method,
+      jarKey: selectedJarKey,
+      createdAt: new Date().toISOString()
+    };
+
+    const expenses = getHomeExpenses();
+    expenses.push(expense);
+    saveHomeExpenses(expenses);
+
+    // Reset
+    document.getElementById('he-name').value = '';
+    document.getElementById('he-amount').value = '';
+    document.getElementById('he-period').value = 'monthly';
+    document.getElementById('he-method').value = '';
+    document.getElementById('he-date').valueAsDate = new Date();
+    document.getElementById('jar-suggestion').classList.remove('visible');
+    document.getElementById('he-jar-display').textContent = 'יוצע אוטומטית';
+    selectedJarKey = null;
+
+    render();
+
+    const settings = JSON.parse(localStorage.getItem('ff_settings') || '{}');
+    const threshold = settings.largeExpenseThreshold !== undefined ? settings.largeExpenseThreshold : 500;
+    if (threshold > 0 && amount >= threshold) {
+      showExpenseFocusing(amount, name);
+    }
+  }
+
+  function deleteExpense(id) {
+    if (!confirm('למחוק הוצאה זו?')) return;
+    saveHomeExpenses(getHomeExpenses().filter(e => e.id !== id));
+    render();
+  }
+
+  function editExpense(id) {
+    const exp = getHomeExpenses().find(e => e.id === id);
+    if (!exp) return;
+    const row = document.getElementById('erow-' + id);
+    if (!row) return;
+
+    const jar = JARS.find(j => j.key === exp.jarKey);
+    row.classList.add('editing');
+    row.innerHTML = `
+      <input class="edit-input" type="date" id="ee-date-${id}" value="${exp.date}"/>
+      <input class="edit-input" type="text" id="ee-name-${id}" value="${exp.name}"/>
+      <select class="edit-input" id="ee-period-${id}">
+        <option value="monthly" ${exp.period==='monthly'?'selected':''}>חודשי</option>
+        <option value="onetime" ${exp.period==='onetime'?'selected':''}>חד פעמי</option>
+        <option value="annual" ${exp.period==='annual'?'selected':''}>שנתי</option>
+      </select>
+      <input class="edit-input" type="number" id="ee-amount-${id}" value="${exp.amount}" style="direction:ltr;"/>
+      <select class="edit-input" id="ee-method-${id}">
+        <option value="">ללא</option>
+        <option value="bit" ${exp.method==='bit'?'selected':''}>ביט</option>
+        <option value="paybox" ${exp.method==='paybox'?'selected':''}>פייבוקס</option>
+        <option value="credit" ${exp.method==='credit'?'selected':''}>כרטיס אשראי</option>
+        <option value="cash" ${exp.method==='cash'?'selected':''}>מזומן</option>
+        <option value="check" ${exp.method==='check'?'selected':''}>שיק</option>
+        <option value="transfer" ${exp.method==='transfer'?'selected':''}>העברה בנקאית</option>
+        <option value="direct" ${exp.method==='direct'?'selected':''}>הוראת קבע</option>
+      </select>
+      <select class="edit-input" id="ee-jar-${id}">
+        ${JARS.map(j => `<option value="${j.key}" ${j.key===exp.jarKey?'selected':''}>${j.icon} ${j.name}</option>`).join('')}
+      </select>
+      <div style="display:flex;gap:4px;">
+        <button class="btn btn-primary btn-sm" onclick="saveExpenseEdit('${id}')">שמרי</button>
+        <button class="btn btn-ghost btn-sm" onclick="render()">ביטול</button>
+      </div>
+    `;
+  }
+
+  function saveExpenseEdit(id) {
+    const date = document.getElementById('ee-date-' + id).value;
+    const name = document.getElementById('ee-name-' + id).value.trim();
+    const period = document.getElementById('ee-period-' + id).value;
+    const amount = parseFloat(document.getElementById('ee-amount-' + id).value);
+    const method = document.getElementById('ee-method-' + id).value;
+    const jarKey = document.getElementById('ee-jar-' + id).value;
+
+    if (!date || !name || !amount || amount <= 0) { alert('אנא מלאי את כל השדות'); return; }
+
+    const expenses = getHomeExpenses().map(e => {
+      if (e.id !== id) return e;
+      return { ...e, date, name, period, amount, method, jarKey };
+    });
+    saveHomeExpenses(expenses);
+    render();
+  }
+
+  function setFilter(f) {
+    currentFilter = f;
+    document.getElementById('flt-month').style.background = f==='month' ? 'var(--accent-light)' : '';
+    document.getElementById('flt-month').style.color = f==='month' ? 'var(--accent)' : '';
+    document.getElementById('flt-all').style.background = f==='all' ? 'var(--accent-light)' : '';
+    document.getElementById('flt-all').style.color = f==='all' ? 'var(--accent)' : '';
+    render();
+  }
+
+  function getFiltered() {
+    const all = getHomeExpenses().sort((a,b) => new Date(b.date) - new Date(a.date));
+    if (currentFilter === 'all') return all;
+    const now = new Date();
+    return all.filter(i => {
+      const d = new Date(i.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+  }
+
+  function render() {
+    const expenses = getFiltered();
+    const allExpenses = getHomeExpenses();
+    const rows = document.getElementById('expense-rows');
+    const empty = document.getElementById('expense-empty');
+
+    // Recurring banner — show only in month view when month is empty but last month had recurring
+    const banner = document.getElementById('recurring-banner');
+    if (currentFilter === 'month') {
+      const recurring = getLastMonthRecurring();
+      if (expenses.length === 0 && recurring.length > 0) {
+        document.getElementById('recurring-count').textContent = recurring.length;
+        document.getElementById('recurring-preview').textContent =
+          recurring.slice(0,3).map(e => e.name).join(', ') + (recurring.length > 3 ? ' ועוד...' : '');
+        banner.style.display = 'block';
+      } else {
+        banner.style.display = 'none';
+      }
+    } else {
+      banner.style.display = 'none';
+    }
+
+    // Jars summary (always all-time monthly average)
+    const jarTotals = {};
+    JARS.forEach(j => jarTotals[j.key] = 0);
+    allExpenses.forEach(e => {
+      if (jarTotals[e.jarKey] !== undefined) {
+        jarTotals[e.jarKey] += monthlyAmount(e);
+      }
+    });
+
+    document.getElementById('jars-summary').innerHTML = JARS.map(j => {
+      const total = jarTotals[j.key];
+      return `<div class="jar-summary-card" onclick="toggleJarDetail('${j.key}')" id="jscard-${j.key}" style="cursor:pointer; border-top-color:${j.color};">
+        <div style="font-size:2.2rem; margin-bottom:10px;">${j.icon}</div>
+        <div style="font-size:0.85rem; font-weight:700; color:var(--text); margin-bottom:8px;">${j.name}</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:600; color:${total>0 ? j.color : 'var(--text-muted)'};">${total>0 ? fmt(total) : '₪0'}</div>
+      </div>`;
+    }).join('');
+
+    // List
+    if (expenses.length === 0) {
+      rows.innerHTML = '';
+      empty.style.display = 'block';
+      document.getElementById('total-display').textContent = '₪0';
+      return;
+    }
+
+    empty.style.display = 'none';
+    const total = expenses.reduce((s,e) => s + e.amount, 0);
+    document.getElementById('total-display').textContent = fmt(total);
+
+    rows.innerHTML = expenses.map(e => {
+      const jar = JARS.find(j => j.key === e.jarKey) || JARS[0];
+      return `<div class="expense-row" id="erow-${e.id}">
+        <div style="font-size:0.83rem; color:var(--text-muted);">${fmtDate(e.date)}</div>
+        <div style="font-size:0.92rem; font-weight:500;">${e.name}</div>
+        <div><span class="badge badge-gold">${PERIOD_LABELS[e.period]}</span></div>
+        <div style="font-weight:600;">${fmt(e.amount)}</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">${e.method ? METHOD_LABELS[e.method] || e.method : '—'}</div>
+        <div><span style="font-size:0.88rem;">${jar.icon} ${jar.name}</span></div>
+        <div style="display:flex; gap:4px;">
+          <button onclick="editExpense('${e.id}')" title="ערכי" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:0.9rem;padding:4px 6px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-faint)'">✎</button>
+          <button onclick="deleteExpense('${e.id}')" title="מחקי" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:1rem;padding:4px 6px;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-faint)'">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function getCustomExamples(key) {
+    const all = JSON.parse(localStorage.getItem('ff_jar_examples') || '{}');
+    return all[key] || [];
+  }
+  function saveCustomExamples(key, arr) {
+    const all = JSON.parse(localStorage.getItem('ff_jar_examples') || '{}');
+    all[key] = arr;
+    localStorage.setItem('ff_jar_examples', JSON.stringify(all));
+  }
+  function showAddExample(key) {
+    document.getElementById('add-ex-btn-' + key).style.display = 'none';
+    const form = document.getElementById('add-example-form-' + key);
+    form.style.display = 'block';
+    document.getElementById('new-example-input-' + key).focus();
+  }
+  function hideAddExample(key) {
+    document.getElementById('add-example-form-' + key).style.display = 'none';
+    document.getElementById('add-ex-btn-' + key).style.display = 'inline-flex';
+  }
+  function saveCustomExample(key) {
+    const input = document.getElementById('new-example-input-' + key);
+    const val = input.value.trim();
+    if (!val) return;
+    const arr = getCustomExamples(key);
+    arr.push(val);
+    saveCustomExamples(key, arr);
+    toggleJarDetail(key);
+  }
+  function removeCustomExample(key, idx) {
+    const arr = getCustomExamples(key);
+    arr.splice(idx, 1);
+    saveCustomExamples(key, arr);
+    toggleJarDetail(key);
+  }
+
+  let activeJarKey = null;
+
+  function toggleJarDetail(key) {
+    if (activeJarKey === key) {
+      closeJarDetail();
+      return;
+    }
+    activeJarKey = key;
+
+    // Highlight selected card
+    JARS.forEach(j => {
+      const card = document.getElementById('jscard-' + j.key);
+      if (card) {
+        card.style.borderColor = j.key === key ? 'var(--accent)' : '';
+        card.style.background  = j.key === key ? 'var(--accent-light)' : '';
+      }
+    });
+
+    const jar = JARS.find(j => j.key === key);
+    const allExpenses = getHomeExpenses().filter(e => e.jarKey === key)
+      .sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    const panel = document.querySelector('#jar-detail-panel .card');
+    if (panel) panel.style.borderTopColor = jar.color;
+
+    document.getElementById('jar-detail-title').innerHTML =
+      `<span style="color:${jar.color};">${jar.icon}</span> ${jar.name}`;
+
+    const customExamples = getCustomExamples(key);
+    const allExamples = [...jar.examples, ...customExamples];
+
+    const examplesList = allExamples.map((ex, idx) => {
+      const isCustom = idx >= jar.examples.length;
+      return `<span style="display:inline-flex; align-items:center; gap:6px; background:${jar.color}22; border:1.5px solid ${jar.color}88; border-radius:20px; padding:7px 16px; font-size:0.88rem; font-weight:600; color:${jar.color};">
+        ${ex}
+        ${isCustom ? `<button onclick="removeCustomExample('${key}', ${idx - jar.examples.length})" style="background:none;border:none;cursor:pointer;color:${jar.color};opacity:0.6;font-size:0.85rem;padding:0;line-height:1;" title="הסירי">×</button>` : ''}
+      </span>`;
+    }).join('');
+
+    const recordedHtml = allExpenses.length === 0
+      ? `<p style="color:var(--text-faint); font-size:0.85rem; margin:0;">עדיין לא רשמת הוצאות לכד הזה</p>`
+      : allExpenses.map(e => `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border);">
+            <div style="display:flex; gap:14px; align-items:center;">
+              <span style="font-size:0.78rem; color:var(--text-faint); min-width:58px;">${fmtDate(e.date)}</span>
+              <span style="font-size:0.88rem;">${e.name}</span>
+              <span style="font-size:0.72rem; color:var(--text-faint);">${PERIOD_LABELS[e.period]}</span>
+            </div>
+            <span style="font-weight:600; color:var(--accent);">${fmt(e.amount)}</span>
+          </div>`).join('');
+
+    document.getElementById('jar-detail-rows').innerHTML = `
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint); margin-bottom:10px;">מה שייך לכד הזה</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+          ${examplesList}
+          <button onclick="showAddExample('${key}')" id="add-ex-btn-${key}"
+            style="display:inline-flex; align-items:center; gap:6px; background:transparent; border:1.5px dashed ${jar.color}66; border-radius:20px; padding:7px 16px; font-size:0.88rem; font-weight:600; color:${jar.color}88; cursor:pointer; transition:all 0.2s;"
+            onmouseover="this.style.borderColor='${jar.color}'; this.style.color='${jar.color}'"
+            onmouseout="this.style.borderColor='${jar.color}66'; this.style.color='${jar.color}88'">
+            + הוסיפי דוגמה
+          </button>
+        </div>
+        <div id="add-example-form-${key}" style="display:none; margin-top:12px; display:none;">
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="text" id="new-example-input-${key}" placeholder="למשל: ביגוד לילדים..." maxlength="40"
+              style="flex:1; background:rgba(245,240,235,0.08); border:1px solid ${jar.color}88; border-radius:20px; padding:8px 16px; color:var(--text); font-family:'Assistant',sans-serif; font-size:0.88rem; direction:rtl; outline:none;"
+              onkeydown="if(event.key==='Enter') saveCustomExample('${key}')"
+            />
+            <button onclick="saveCustomExample('${key}')"
+              style="background:${jar.color}33; border:1.5px solid ${jar.color}; border-radius:20px; padding:8px 16px; color:${jar.color}; font-weight:600; font-size:0.85rem; cursor:pointer;">
+              הוסיפי
+            </button>
+            <button onclick="hideAddExample('${key}')"
+              style="background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:1.1rem;">✕</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint); margin-bottom:10px;">מה רשמת</div>
+        ${recordedHtml}
+      </div>`;
+
+    document.getElementById('jar-detail-panel').style.display = 'block';
+    document.getElementById('jar-detail-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function closeJarDetail() {
+    activeJarKey = null;
+    document.getElementById('jar-detail-panel').style.display = 'none';
+    JARS.forEach(j => {
+      const card = document.getElementById('jscard-' + j.key);
+      if (card) { card.style.borderColor = ''; card.style.background = ''; }
+    });
+  }
+
+  // ── LARGE EXPENSE FOCUSING ──
+  const EXPENSE_PROMPTS_S1 = [
+    'הוצאה גדולה — עצרי רגע.\n\nאיפה בגוף את מרגישה אותה עכשיו?\nמה עולה בך?',
+    'כסף יצא. תני לגוף לספר לך מה הוא מרגיש.\n\nיש שם מתח? הקלה? חרדה?\nכל תחושה שמגיעה — בסדר.',
+    'לפני שממשיכים —\n\nיש תחושה שצצה בגוף עם ההוצאה הזו?\nתני לה מקום, בלי לשפוט.',
+  ];
+
+  const EXPENSE_PROMPTS_S2 = [
+    'יש משהו שרוצה להיאמר על ההוצאה הזו?\n\nאולי יש שם פחד, ציפייה, צורך שנענה — כל מה שמגיע.',
+    'אם התחושה הזו יכלה לדבר —\n\nמה היא רצתה שתדעי?',
+    'לפעמים הוצאה גדולה מעלה שאלות יותר גדולות ממנה.\n\nמה מבין אותן נוגע בך עכשיו?',
+  ];
+
+  function showExpenseFocusing(amount, name) {
+    const prompt = EXPENSE_PROMPTS_S1[Math.floor(Math.random() * EXPENSE_PROMPTS_S1.length)];
+    document.getElementById('fo-amount').textContent = fmt(amount) + (name ? ' — ' + name : '');
+    document.getElementById('fo-icon').textContent = '🌿';
+    document.getElementById('fo-title').textContent = 'הוצאה גדולה נרשמה';
+    document.getElementById('fo-text').textContent = prompt;
+    document.getElementById('fo-actions').innerHTML = `
+      <button class="btn btn-primary" onclick="showExpenseFocusingStep2()">אני כאן — המשיכי ←</button>
+      <button class="btn btn-ghost" onclick="closeFocusing()">דלגי</button>
+    `;
+    document.getElementById('fo-overlay').classList.add('visible');
+    document.getElementById('fo-panel').classList.add('visible');
+  }
+
+  function showExpenseFocusingStep2() {
+    const prompt = EXPENSE_PROMPTS_S2[Math.floor(Math.random() * EXPENSE_PROMPTS_S2.length)];
+    document.getElementById('fo-icon').textContent = '🤲';
+    document.getElementById('fo-title').textContent = 'רגע נוסף';
+    document.getElementById('fo-text').textContent = prompt;
+    document.getElementById('fo-actions').innerHTML = `
+      <button class="btn btn-primary" onclick="closeFocusing()" style="font-size:1.1rem;">תודה על הרגע הזה 🙏</button>
+      <button class="btn btn-ghost" onclick="closeFocusing()">סגרי</button>
+    `;
+  }
+
+  function closeFocusing() {
+    document.getElementById('fo-overlay').classList.remove('visible');
+    document.getElementById('fo-panel').classList.remove('visible');
+  }
+
+  function showHardToLookFocusing() {
+    document.getElementById('fo-icon').textContent = '🌿';
+    document.getElementById('fo-amount').textContent = '';
+    document.getElementById('fo-title').textContent = 'זה בסדר שקשה';
+    document.getElementById('fo-text').innerHTML = 'מה מרגיש הגוף עכשיו, כשאת מסתכלת על המספרים?<br/><small style="color:var(--text-faint); font-size:0.8rem;">אין תשובה נכונה — רק מה שמגיע.</small>';
+    document.getElementById('fo-actions').innerHTML = `
+      <div style="width:100%; margin-bottom:14px;">
+        <textarea id="fo-hard-response" class="form-input"
+          style="width:100%; min-height:80px; resize:vertical; text-align:right;"
+          placeholder="כתבי מה עולה..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="showHardToLookStep2()">אני כאן — המשיכי ←</button>
+      <button class="btn btn-ghost" onclick="closeFocusing()">דלגי</button>`;
+    document.getElementById('fo-overlay').classList.add('visible');
+    document.getElementById('fo-panel').classList.add('visible');
+  }
+
+  function showHardToLookStep2() {
+    const text = (document.getElementById('fo-hard-response')?.value || '').trim();
+    if (text) {
+      const reflections = JSON.parse(localStorage.getItem('ff_expense_reflections') || '[]');
+      reflections.unshift({ date: new Date().toISOString(), text, page: 'home-expenses' });
+      localStorage.setItem('ff_expense_reflections', JSON.stringify(reflections));
+    }
+    document.getElementById('fo-icon').textContent = '🌿';
+    document.getElementById('fo-amount').textContent = '';
+    document.getElementById('fo-title').textContent = 'תודה שעצרת';
+    document.getElementById('fo-text').innerHTML = 'הקושי להסתכל הוא לא כישלון — לפעמים הוא מסר.<br/>הגוף יודע. תמשיכי בקצב שלך.';
+    document.getElementById('fo-actions').innerHTML = `<button class="btn btn-primary" onclick="closeFocusing()">סגרי ✓</button>`;
+  }
+
+  function saveThreshold() {
+    const val = parseFloat(document.getElementById('he-threshold').value) || 0;
+    const settings = JSON.parse(localStorage.getItem('ff_settings') || '{}');
+    settings.largeExpenseThreshold = val;
+    localStorage.setItem('ff_settings', JSON.stringify(settings));
+  }
+
+  function initThreshold() {
+    const settings = JSON.parse(localStorage.getItem('ff_settings') || '{}');
+    const threshold = settings.largeExpenseThreshold;
+    document.getElementById('he-threshold').value = threshold !== undefined ? threshold : 500;
+  }
+
+  initNav('home-expenses');
+  initThreshold();
+  setFilter('month');
+</script>
+
+<!-- Large Expense Focusing Moment -->
+<div class="focusing-overlay" id="fo-overlay" onclick="closeFocusing()"></div>
+<div class="focusing-panel" id="fo-panel">
+  <div class="focusing-panel-inner">
+    <div class="fm-icon" id="fo-icon">🌿</div>
+    <div class="fm-amount" id="fo-amount"></div>
+    <div class="fm-title" id="fo-title">הוצאה גדולה נרשמה</div>
+    <div class="fm-text" id="fo-text"></div>
+    <div class="fm-actions" id="fo-actions"></div>
+  </div>
+</div>
+
+</body>
+</html>

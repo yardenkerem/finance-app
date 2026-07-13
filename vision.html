@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>לאן אני הולכת — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .vision-section {
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 20px;
+      border-right: 5px solid;
+    }
+    .vision-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .vision-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .vision-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: rgba(245,240,235,0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      resize: vertical;
+      direction: rtl;
+      box-sizing: border-box;
+    }
+    .vision-textarea:focus {
+      outline: none;
+      border-color: var(--border-accent);
+    }
+    .vision-textarea::placeholder { color: var(--text-faint); }
+
+    .body-scale {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .body-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Assistant', sans-serif;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .body-btn:hover, .body-btn.selected {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .bridge-step {
+      position: relative;
+      padding: 24px 24px 24px 64px;
+      margin-bottom: 16px;
+      background: rgba(245,240,235,0.03);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .bridge-number {
+      position: absolute;
+      right: 24px;
+      top: 24px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .save-btn {
+      background: var(--accent-light);
+      border: 1px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 10px 24px;
+      color: var(--accent);
+      font-family: 'Assistant', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all var(--transition);
+    }
+    .save-btn:hover { background: rgba(201,169,110,0.2); }
+    .saved-note {
+      font-size: 0.78rem;
+      color: var(--text-faint);
+      margin-top: 6px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container-sm">
+
+    <div class="page-header">
+      <h1 class="page-title">לאן אני הולכת</h1>
+      <p class="page-subtitle">מפה לשם — בגוף, בנפש ובכסף</p>
+    </div>
+
+    <!-- Intro -->
+    <div class="card" style="border-color:var(--border-accent); margin-bottom:28px; padding:28px;">
+      <p style="color:var(--text-muted); font-size:0.95rem; line-height:2; margin:0;">
+        לפני שמתחילות — קחי נשימה אחת ארוכה. הניחי את ידיך על הברכיים. תשאלי את עצמך: <em>מה קורה כאן, כרגע?</em><br/>
+        אין תשובות נכונות. יש רק את מה שנכון לך.
+      </p>
+    </div>
+
+    <!-- Repetition note -->
+    <div style="display:flex; align-items:flex-start; gap:14px; padding:20px 24px; background:rgba(201,169,110,0.06); border:1px solid rgba(201,169,110,0.2); border-radius:var(--radius); margin-bottom:28px;">
+      <div style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">🔄</div>
+      <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.95;">
+        <strong style="color:var(--text);">אפשר — ומומלץ — לחזור לכאן שוב ושוב.</strong><br/>
+        המערכת שומרת את מה שכתבת. בכל פעם שתחזרי, תוכלי לקרוא מה היה ולראות מה השתנה —
+        בתחושה, בחזון, בדרך שבה את מתייחסת לכסף.<br/>
+        השינוי לא קורה בבת אחת. הוא קורה בכל פעם שחוזרים.
+      </div>
+    </div>
+
+    <!-- Section 1: Now -->
+    <div class="vision-section" style="background:rgba(91,168,212,0.07); border-color:#5BA8D4;">
+      <div class="vision-title" style="color:#5BA8D4;">🌊 איפה אני היום?</div>
+      <div class="vision-subtitle">לפני שמציירים את העתיד, חשוב לראות את ההווה בבהירות — בלי שיפוט, רק עם עיניים פקוחות.</div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.82rem; letter-spacing:0.06em; color:var(--text-faint); margin-bottom:10px;">המצב הכלכלי שלי עכשיו</div>
+        <textarea class="vision-textarea" id="now-financial" placeholder="כמה אני מרוויחה? כמה יוצא? יש חסכון? חובות? מה עובד, מה לא עובד?"></textarea>
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <div style="font-size:0.82rem; letter-spacing:0.06em; color:var(--text-faint); margin-bottom:10px;">איך המצב הכלכלי שלי מרגיש בגוף? 👇</div>
+        <div class="body-scale" id="body-now">
+          <button class="body-btn" onclick="selectBody('now','כבדות')">כבדות</button>
+          <button class="body-btn" onclick="selectBody('now','לחץ')">לחץ</button>
+          <button class="body-btn" onclick="selectBody('now','חרדה')">חרדה</button>
+          <button class="body-btn" onclick="selectBody('now','קיפאון')">קיפאון</button>
+          <button class="body-btn" onclick="selectBody('now','בושה')">בושה</button>
+          <button class="body-btn" onclick="selectBody('now','תקווה')">תקווה</button>
+          <button class="body-btn" onclick="selectBody('now','עייפות')">עייפות</button>
+          <button class="body-btn" onclick="selectBody('now','ביקורת עצמית')">ביקורת עצמית</button>
+        </div>
+        <textarea class="vision-textarea" id="now-body" placeholder="המילים שסימנת יופיעו כאן — ומה עוד מגיע לך?" style="min-height:80px; margin-top:12px;"></textarea>
+        <div style="font-size:0.8rem; color:#5BA8D4; margin-top:10px; line-height:1.7;">ומה עוד מגיע — מעבר למה שסימנת?</div>
+      </div>
+
+      <div style="padding:20px; background:rgba(91,168,212,0.04); border-radius:10px; border:1px solid rgba(91,168,212,0.12); margin-bottom:20px;">
+        <div style="font-size:0.78rem; color:#5BA8D4; letter-spacing:0.06em; margin-bottom:16px;">תישארי עם זה עוד רגע —</div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:0.82rem; color:var(--text-faint); margin-bottom:8px;">רגשות — מה עולה בך?</div>
+          <textarea class="vision-textarea" id="now-emotions" placeholder="בושה? עצב? כעס? תסכול? ייאוש? תקווה? יותר מרגש אחד בו-זמנית — הכל בסדר." style="min-height:70px;"></textarea>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:0.82rem; color:var(--text-faint); margin-bottom:8px;">דימויים, מטאפורות, מחשבות שמגיעות</div>
+          <textarea class="vision-textarea" id="now-images" placeholder="יש צבע, תמונה, מחשבה שמגיחה כשאת נשארת עם זה? לא חייבת להסביר — רק לכתוב." style="min-height:70px;"></textarea>
+        </div>
+
+        <div>
+          <div style="font-size:0.82rem; color:var(--text-faint); margin-bottom:8px;">דימוי עצמי, תובנות, זיכרונות</div>
+          <textarea class="vision-textarea" id="now-insights" placeholder="מה זה אומר לך על עצמך? על הכסף שלך? יש זיכרון שעולה? משהו שמפתיע?" style="min-height:70px;"></textarea>
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveSection('now')">שמרי את ההווה</button>
+      <div class="saved-note" id="saved-now">✓ נשמר</div>
+    </div>
+
+    <!-- Section 2: Vision -->
+    <div class="vision-section" style="background:rgba(212,175,55,0.07); border-color:#D4AF37;">
+      <div class="vision-title" style="color:#D4AF37;">✨ לאן אני רוצה להגיע?</div>
+      <div class="vision-subtitle">לא "מה שנראה הגיוני" — אלא מה שהלב שלך באמת רוצה. תני לעצמך לחלום בגדול.</div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.82rem; letter-spacing:0.06em; color:var(--text-faint); margin-bottom:10px;">עוד שנה — איך נראות החיים שלי?</div>
+        <textarea class="vision-textarea" id="vision-1y" placeholder="כמה אני מרוויחה? איפה אני עובדת? איך אני מרגישה כשאני מסתכלת על החשבון? מה השתנה?"></textarea>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.82rem; letter-spacing:0.06em; color:var(--text-faint); margin-bottom:10px;">עוד 3 שנים — התמונה הגדולה</div>
+        <textarea class="vision-textarea" id="vision-3y" placeholder="מה אני עושה? איפה אני גרה? מה ילדיי רואים? איך יום רגיל שלי נראה?"></textarea>
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <div style="font-size:0.82rem; letter-spacing:0.06em; color:var(--text-faint); margin-bottom:10px;">איך החזון הזה מרגיש בגוף? 👇</div>
+        <div class="body-scale" id="body-vision">
+          <button class="body-btn" onclick="selectBody('vision','התרחבות')">התרחבות</button>
+          <button class="body-btn" onclick="selectBody('vision','חום')">חום</button>
+          <button class="body-btn" onclick="selectBody('vision','עוצמה')">עוצמה</button>
+          <button class="body-btn" onclick="selectBody('vision','שמחה')">שמחה</button>
+          <button class="body-btn" onclick="selectBody('vision','שלווה')">שלווה</button>
+          <button class="body-btn" onclick="selectBody('vision','ספק')">ספק</button>
+          <button class="body-btn" onclick="selectBody('vision','פחד')">פחד</button>
+          <button class="body-btn" onclick="selectBody('vision','ריגוש')">ריגוש</button>
+        </div>
+        <textarea class="vision-textarea" id="vision-body" placeholder="המילים שסימנת יופיעו כאן — ומה עוד מגיע לך?" style="min-height:80px; margin-top:12px;"></textarea>
+        <div style="font-size:0.8rem; color:#D4AF37; margin-top:10px; line-height:1.7;">ומה עוד מגיע — מעבר למה שסימנת?</div>
+      </div>
+
+      <div style="padding:20px; background:rgba(212,175,55,0.04); border-radius:10px; border:1px solid rgba(212,175,55,0.14); margin-bottom:20px;">
+        <div style="font-size:0.78rem; color:#D4AF37; letter-spacing:0.06em; margin-bottom:16px;">תישארי עם זה עוד רגע —</div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:0.82rem; color:var(--text-faint); margin-bottom:8px;">רגשות — מה עולה בך?</div>
+          <textarea class="vision-textarea" id="vision-emotions" placeholder="שמחה? ריגוש? פחד? ספק? תקווה? אולי כמה ביחד — הכל בסדר." style="min-height:70px;"></textarea>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:0.82rem; color:var(--text-faint); margin-bottom:8px;">דימויים, מטאפורות, מחשבות שמגיעות</div>
+          <textarea class="vision-textarea" id="vision-images" placeholder="יש תמונה, צבע, מחשבה שמגיחה כשאת מדמיינת את החיים האלה?" style="min-height:70px;"></textarea>
+        </div>
+
+        <div>
+          <div style="font-size:0.82rem; color:var(--text-faint); margin-bottom:8px;">דימוי עצמי, תובנות, זיכרונות</div>
+          <textarea class="vision-textarea" id="vision-insights" placeholder="מה זה אומר לך על מי שאת? יש זיכרון שעולה? תובנה שמגיחה? משהו שמפתיע?" style="min-height:70px;"></textarea>
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveSection('vision')">שמרי את החזון</button>
+      <div class="saved-note" id="saved-vision">✓ נשמר</div>
+    </div>
+
+    <!-- Section 3: Bridge -->
+    <div class="vision-section" style="background:rgba(109,191,138,0.07); border-color:#6DBF8A;">
+      <div class="vision-title" style="color:#6DBF8A;">🌉 תרגיל הגשר</div>
+      <div class="vision-subtitle">
+        עצמי עיניים לרגע. דמייני גשר — בצד אחד עומדת את של היום. בצד השני עומדת את של עוד 3 שנים.<br/>
+        עברי לאט על הגשר. שימי לב מה מרגיש בגוף בדרך.
+      </div>
+
+      <div class="bridge-step">
+        <div class="bridge-number" style="background:rgba(109,191,138,0.2); color:#6DBF8A;">1</div>
+        <div style="font-weight:600; color:#6DBF8A; margin-bottom:8px;">מה האני העתידית רוצה לומר לך — עכשיו?</div>
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">היא כבר עברה את מה שאת חוששת ממנו. מה היא רוצה שתדעי?</div>
+        <textarea class="vision-textarea" id="bridge-future-to-now" placeholder='למשל: "את לא יודעת כמה את חזקה. תפסיקי לצמצם את עצמך..."'></textarea>
+      </div>
+
+      <div class="bridge-step">
+        <div class="bridge-number" style="background:rgba(109,191,138,0.2); color:#6DBF8A;">2</div>
+        <div style="font-weight:600; color:#6DBF8A; margin-bottom:8px;">מה את של היום רוצה לומר לאני העתידית?</div>
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">מה שאת של היום צריכה שהיא תדע? מה הפחדים? מה הרצונות?</div>
+        <textarea class="vision-textarea" id="bridge-now-to-future" placeholder='למשל: "אני כל כך עייפה. אני מקווה שעבדת קשה כדי שאנחנו נוכל לנוח..."'></textarea>
+      </div>
+
+      <div class="bridge-step">
+        <div class="bridge-number" style="background:rgba(109,191,138,0.2); color:#6DBF8A;">3</div>
+        <div style="font-weight:600; color:#6DBF8A; margin-bottom:8px;">מה הגשר עצמו מרגיש?</div>
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">מה ה"מרחק" בין עכשיו לשם? נראה ארוך? קרוב? מפחיד? מסעיר?</div>
+        <textarea class="vision-textarea" id="bridge-feeling" placeholder="תתארי את תחושת הגשר — בגוף ובמחשבה..." style="min-height:80px;"></textarea>
+      </div>
+
+      <button class="save-btn" onclick="saveSection('bridge')">שמרי את תרגיל הגשר</button>
+      <div class="saved-note" id="saved-bridge">✓ נשמר</div>
+    </div>
+
+    <!-- Section 4: What's in the way -->
+    <div class="vision-section" style="background:rgba(224,112,144,0.07); border-color:#E07090;">
+      <div class="vision-title" style="color:#E07090;">🌀 מה עומד בדרך?</div>
+      <div class="vision-subtitle">לא ברמה של "אין לי מספיק לקוחות". ברמה הפנימית — מה בתוכך מתנגד? מה מפחיד? מה מזכיר לעצמה הישנה?</div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.82rem; letter-spacing:0.06em; color:var(--text-faint); margin-bottom:10px;">יש חלק ממך שמתנגד לחזון הזה?</div>
+        <textarea class="vision-textarea" id="block-part" placeholder='למשל: "יש בי משהו שחושב שאני לא ראויה לזה" / "חלק ממני מפחד שאם אצליח, אחרות יקנאו"...'></textarea>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.82rem; letter-spacing:0.06em; color:var(--text-faint); margin-bottom:10px;">תגידי שלום לחלק הזה — מה הוא צריך?</div>
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px; line-height:1.7;">
+          בגישת ההתמקדות אנחנו לא נלחמות בחלקים שמתנגדים — אנחנו שואלות אותם על מה הם מנסים לשמור עלייך.
+        </div>
+        <textarea class="vision-textarea" id="block-need" placeholder='למשל: "הוא מנסה להגן עליי מפני אכזבה" / "הוא פוחד שאאבד את עצמי בתוך הרדיפה אחרי כסף"...'></textarea>
+      </div>
+
+      <button class="save-btn" onclick="saveSection('block')">שמרי</button>
+      <div class="saved-note" id="saved-block">✓ נשמר</div>
+    </div>
+
+    <!-- Section 5: Letter from future self -->
+    <div class="vision-section" style="background:rgba(176,127,224,0.07); border-color:#B07FE0;">
+      <div class="vision-title" style="color:#B07FE0;">💌 מכתב מהעצמי העתידית</div>
+      <div class="vision-subtitle">
+        כתבי מכתב — מהאני של עוד 3 שנים לאני של היום. בגוף ראשון, בלשון עבר ועתיד מעורבים.<br/>
+        תני לה לדבר. תני לה לעודד. תני לה גם להיות כנה.
+      </div>
+
+      <textarea class="vision-textarea" id="letter-future" style="min-height:200px;" placeholder='אהובתי,
+
+אני כותבת לך מאפריל 2027. הרבה השתנה מאז...
+
+'></textarea>
+
+      <button class="save-btn" onclick="saveSection('letter')">שמרי את המכתב</button>
+      <div class="saved-note" id="saved-letter">✓ נשמר</div>
+    </div>
+
+    <!-- Section 6: Vision declaration -->
+    <div class="vision-section" style="background:rgba(201,169,110,0.08); border-color:var(--accent);">
+      <div class="vision-title" style="color:var(--accent);">🌟 הצהרת הכיוון שלי</div>
+      <div class="vision-subtitle">משפט אחד, בלשון הווה, שמסכם מי את על הדרך להיות.</div>
+
+      <textarea class="vision-textarea" id="declaration" style="min-height:80px; font-size:1.1rem; text-align:center;"
+        placeholder='למשל: "אני אישה עצמאית שמרוויחה בשפע, שומרת על עצמה ונותנת לאחרות."'></textarea>
+
+      <button class="save-btn" onclick="saveSection('declaration')">שמרי את ההצהרה</button>
+      <div class="saved-note" id="saved-declaration">✓ נשמר</div>
+
+      <div style="margin-top:20px; padding:16px; background:rgba(245,240,235,0.03); border-radius:10px; text-align:center; font-size:0.82rem; color:var(--text-faint);">
+        כל מה שכתבת נשמר בדפדפן שלך ומחכה לך כשתחזרי.
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const bodySelections = { now: [], vision: [] };
+
+  function selectBody(section, val) {
+    const arr = bodySelections[section];
+    const ta = document.getElementById(section === 'now' ? 'now-body' : 'vision-body');
+    const idx = arr.indexOf(val);
+
+    if (idx === -1) {
+      arr.push(val);
+      ta.value = ta.value ? ta.value + ', ' + val : val;
+    } else {
+      arr.splice(idx, 1);
+      const esc = val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      ta.value = ta.value
+        .replace(new RegExp(',\\s*' + esc), '')
+        .replace(new RegExp(esc + '\\s*,\\s*'), '')
+        .replace(new RegExp('^' + esc + '$'), '')
+        .trim();
+    }
+
+    document.querySelectorAll(`#body-${section} .body-btn`).forEach(b => {
+      b.classList.toggle('selected', arr.includes(b.textContent.trim()));
+    });
+  }
+
+  function restoreBodyBtns(section, btns) {
+    if (!btns || !btns.length) return;
+    bodySelections[section] = btns;
+    document.querySelectorAll(`#body-${section} .body-btn`).forEach(b => {
+      b.classList.toggle('selected', btns.includes(b.textContent.trim()));
+    });
+  }
+
+  function saveSection(key) {
+    const data = JSON.parse(localStorage.getItem('ff_vision') || '{}');
+
+    if (key === 'now') {
+      data.nowFinancial = document.getElementById('now-financial').value;
+      data.nowBodyBtns = bodySelections.now.slice();
+      data.nowBody = document.getElementById('now-body').value;
+      data.nowEmotions = document.getElementById('now-emotions').value;
+      data.nowImages = document.getElementById('now-images').value;
+      data.nowInsights = document.getElementById('now-insights').value;
+    } else if (key === 'vision') {
+      data.vision1y = document.getElementById('vision-1y').value;
+      data.vision3y = document.getElementById('vision-3y').value;
+      data.visionBodyBtns = bodySelections.vision.slice();
+      data.visionBody = document.getElementById('vision-body').value;
+      data.visionEmotions = document.getElementById('vision-emotions').value;
+      data.visionImages = document.getElementById('vision-images').value;
+      data.visionInsights = document.getElementById('vision-insights').value;
+    } else if (key === 'bridge') {
+      data.bridgeFutureToNow = document.getElementById('bridge-future-to-now').value;
+      data.bridgeNowToFuture = document.getElementById('bridge-now-to-future').value;
+      data.bridgeFeeling = document.getElementById('bridge-feeling').value;
+    } else if (key === 'block') {
+      data.blockPart = document.getElementById('block-part').value;
+      data.blockNeed = document.getElementById('block-need').value;
+    } else if (key === 'letter') {
+      data.letterFuture = document.getElementById('letter-future').value;
+    } else if (key === 'declaration') {
+      data.declaration = document.getElementById('declaration').value;
+    }
+
+    localStorage.setItem('ff_vision', JSON.stringify(data));
+    const note = document.getElementById('saved-' + key);
+    note.style.display = 'block';
+    setTimeout(() => note.style.display = 'none', 2000);
+  }
+
+  function loadSaved() {
+    const data = JSON.parse(localStorage.getItem('ff_vision') || '{}');
+    if (data.nowFinancial) document.getElementById('now-financial').value = data.nowFinancial;
+    if (data.nowBody) document.getElementById('now-body').value = data.nowBody;
+    restoreBodyBtns('now', data.nowBodyBtns);
+    if (data.nowEmotions) document.getElementById('now-emotions').value = data.nowEmotions;
+    if (data.nowImages) document.getElementById('now-images').value = data.nowImages;
+    if (data.nowInsights) document.getElementById('now-insights').value = data.nowInsights;
+    if (data.vision1y) document.getElementById('vision-1y').value = data.vision1y;
+    if (data.vision3y) document.getElementById('vision-3y').value = data.vision3y;
+    if (data.visionBody) document.getElementById('vision-body').value = data.visionBody;
+    restoreBodyBtns('vision', data.visionBodyBtns);
+    if (data.visionEmotions) document.getElementById('vision-emotions').value = data.visionEmotions;
+    if (data.visionImages) document.getElementById('vision-images').value = data.visionImages;
+    if (data.visionInsights) document.getElementById('vision-insights').value = data.visionInsights;
+    if (data.bridgeFutureToNow) document.getElementById('bridge-future-to-now').value = data.bridgeFutureToNow;
+    if (data.bridgeNowToFuture) document.getElementById('bridge-now-to-future').value = data.bridgeNowToFuture;
+    if (data.bridgeFeeling) document.getElementById('bridge-feeling').value = data.bridgeFeeling;
+    if (data.blockPart) document.getElementById('block-part').value = data.blockPart;
+    if (data.blockNeed) document.getElementById('block-need').value = data.blockNeed;
+    if (data.letterFuture) document.getElementById('letter-future').value = data.letterFuture;
+    if (data.declaration) document.getElementById('declaration').value = data.declaration;
+  }
+
+  initNav('vision');
+  loadSaved();
+</script>
+</body>
+</html>

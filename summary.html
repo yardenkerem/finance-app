@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>סיכום — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container-sm">
+
+    <div class="page-header">
+      <div class="page-label" id="month-label"></div>
+      <h1 class="page-title">כמה לוקחת הביתה?</h1>
+      <p class="page-subtitle">פירוט מלא של מה שנכנס, מה יוצא, ומה שלך</p>
+    </div>
+
+    <!-- Income section -->
+    <div class="card">
+      <div class="card-title">הכנסות <a href="income.html" class="card-link">עדכני ←</a></div>
+
+      <div class="summary-row">
+        <span class="s-label">הכנסות מעסק עיקרי (ברוטו)</span>
+        <span class="s-value gold" id="s-gross">₪0</span>
+      </div>
+
+      <!-- Additional income sources -->
+      <div id="extra-incomes-list"></div>
+
+      <div class="summary-row" style="background:rgba(245,240,235,0.02); margin:0 -28px; padding:14px 28px;">
+        <span class="s-label" style="font-weight:600;">סה"כ הכנסות</span>
+        <span class="s-value gold" id="s-total-gross">₪0</span>
+      </div>
+
+      <!-- Add extra income -->
+      <div style="margin-top:16px;">
+        <button class="btn btn-ghost btn-sm" onclick="toggleExtraForm()" id="extra-btn">+ הוסיפי מקור הכנסה נוסף</button>
+        <div id="extra-form" style="display:none; margin-top:14px;">
+          <div class="form-grid" style="margin-bottom:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <input type="text" class="form-input" id="extra-name" placeholder="שם המקור (למשל: שכ"ד, קצבה...)"/>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <input type="number" class="form-input" id="extra-amount" placeholder="₪ לחודש" min="0"/>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addExtraIncome()">הוסיפי</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleExtraForm()">ביטול</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deductions -->
+    <div class="card mt-24">
+      <div class="card-title">ניכויים</div>
+
+      <div class="summary-row">
+        <span class="s-label">מע"מ (18%) — לרשות המיסים</span>
+        <span class="s-value red" id="s-vat">₪0</span>
+      </div>
+      <div class="summary-row">
+        <span class="s-label">מס הכנסה — להפרשה</span>
+        <span class="s-value red" id="s-tax">₪0</span>
+      </div>
+      <div class="summary-row" style="background:rgba(245,240,235,0.02); margin:0 -28px; padding:14px 28px;">
+        <span class="s-label" style="font-weight:600;">סה"כ מיסים</span>
+        <span class="s-value red" id="s-total-taxes">₪0</span>
+      </div>
+    </div>
+
+    <!-- Business expenses -->
+    <div class="card mt-24">
+      <div class="card-title">הוצאות עסק <a href="expenses.html" class="card-link">עדכני ←</a></div>
+
+      <div class="summary-row">
+        <span class="s-label">חובות המדינה</span>
+        <span class="s-value red" id="s-exp-state">₪0</span>
+      </div>
+      <div class="summary-row">
+        <span class="s-label">הוצאות עסק — חובה</span>
+        <span class="s-value red" id="s-exp-business">₪0</span>
+      </div>
+      <div class="summary-row">
+        <span class="s-label">הוצאות עסק — רשות</span>
+        <span class="s-value red" id="s-exp-optional">₪0</span>
+      </div>
+      <div class="summary-row" style="background:rgba(245,240,235,0.02); margin:0 -28px; padding:14px 28px;">
+        <span class="s-label" style="font-weight:600;">סה"כ הוצאות עסק</span>
+        <span class="s-value red" id="s-total-expenses">₪0</span>
+      </div>
+    </div>
+
+    <!-- Take home -->
+    <div class="card mt-24" style="border-color:rgba(124,185,160,0.3);">
+      <div class="card-title">💛 מה שלך</div>
+
+      <div class="summary-row" style="padding:20px 0;">
+        <span class="s-label" style="font-size:1.1rem; font-weight:600;">משכורת חודשית נטו</span>
+        <span class="s-value big" id="s-takehome">₪0</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="font-size:0.82rem; color:var(--text-muted); line-height:1.8;" id="s-calculation">
+        חישוב: 0 - 0 - 0 = 0
+      </div>
+    </div>
+
+    <div class="card mt-24" style="border-color:var(--border-accent); text-align:center; padding:28px;">
+      <div style="font-size:1.5rem; margin-bottom:8px;">🫙</div>
+      <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:14px;">רוצה לראות לאן הולך מה שנשאר?</div>
+      <a href="jars.html" class="btn btn-secondary btn-sm">לדף הכדים ←</a>
+    </div>
+
+    <!-- End of month expenses reflection -->
+    <div id="expenses-reflection" style="display:none;" class="mt-24">
+      <div class="card" style="border-color:rgba(232,201,126,0.2);">
+        <div style="text-align:center; margin-bottom:20px;">
+          <div style="font-size:1.6rem; margin-bottom:10px;">🌿</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.25rem; margin-bottom:10px;">לפני שסוגרות את החודש</div>
+          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.9; max-width:400px; margin:0 auto;">
+            הנה ההוצאות הגדולות של החודש.<br/>
+            האם את רוצה לשבת רגע עם אחת מהן?
+          </p>
+        </div>
+        <div id="top-expenses-list"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Extra income focusing moment -->
+<div class="focusing-overlay" id="xi-overlay" onclick="closeExtraIncomeFocusing()"></div>
+<div class="focusing-panel" id="xi-panel">
+  <div class="focusing-panel-inner">
+    <div class="fm-icon" id="xi-icon">🌿</div>
+    <div class="fm-amount" id="xi-amount"></div>
+    <div class="fm-title" id="xi-title">כסף הגיע אליך</div>
+    <div class="fm-text" id="xi-text"></div>
+    <div class="fm-actions" id="xi-actions"></div>
+  </div>
+</div>
+
+<!-- Expense focusing overlay -->
+<div id="exp-focusing-overlay" style="display:none; position:fixed; inset:0; background:rgba(9,21,37,0.92); z-index:200; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:var(--bg-card); border:1px solid var(--border-accent); border-radius:var(--radius); max-width:460px; width:100%; padding:40px 32px; text-align:center; animation:fadeUp 0.3s ease;">
+    <div style="font-size:2rem; margin-bottom:14px;" id="ef-icon">🌿</div>
+    <div style="font-family:'Cormorant Garamond',serif; font-size:1.35rem; margin-bottom:16px; color:var(--accent);" id="ef-title"></div>
+    <p style="color:var(--text-muted); font-size:0.92rem; line-height:2; margin-bottom:28px; white-space:pre-line;" id="ef-text"></p>
+    <div id="ef-actions"></div>
+  </div>
+</div>
+
+<script>
+  const MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
+  function getSettings() { return JSON.parse(localStorage.getItem('ff_settings') || '{"incomeTaxRate":0}'); }
+  function getIncomes() { return JSON.parse(localStorage.getItem('ff_incomes') || '[]'); }
+  function getExpenses() { return JSON.parse(localStorage.getItem('ff_expenses') || '{"state":[],"business":[],"optional":[]}'); }
+  function getExtraIncomes() { return JSON.parse(localStorage.getItem('ff_extra_incomes') || '[]'); }
+  function saveExtraIncomes(arr) { localStorage.setItem('ff_extra_incomes', JSON.stringify(arr)); }
+
+  function monthlyAmount(e) { return e.period === 'annual' ? e.amount / 12 : e.amount; }
+
+  function toggleExtraForm() {
+    const f = document.getElementById('extra-form');
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function addExtraIncome() {
+    const name = document.getElementById('extra-name').value.trim();
+    const amount = parseFloat(document.getElementById('extra-amount').value);
+    if (!name || !amount || amount <= 0) { alert('אנא מלאי את כל השדות'); return; }
+
+    const extras = getExtraIncomes();
+    extras.push({ id: Date.now().toString(), name, amount });
+    saveExtraIncomes(extras);
+
+    document.getElementById('extra-name').value = '';
+    document.getElementById('extra-amount').value = '';
+    document.getElementById('extra-form').style.display = 'none';
+
+    showExtraIncomeFocusing(name, amount);
+    render();
+  }
+
+  const EXTRA_INCOME_PROMPTS = [
+    (name, amount) => `${name} הביא/ה ${fmt(amount)} הביתה החודש.\n\nגם כסף שלא הרווחת ישירות מהעבודה שלך — מותר לו להרגיש טוב באותה מידה.\nמה עולה בך עכשיו?`,
+    (name, amount) => `${fmt(amount)} מ-${name}.\n\nהכסף הזה לא הגיע מהעסק, וגם הוא כאן בשבילך.\nאיפה בגוף את מרגישה אותו?`,
+  ];
+
+  function showExtraIncomeFocusing(name, amount) {
+    const prompt = EXTRA_INCOME_PROMPTS[Math.floor(Math.random() * EXTRA_INCOME_PROMPTS.length)](name, amount);
+    document.getElementById('xi-amount').textContent = fmt(amount);
+    document.getElementById('xi-icon').textContent = '🌿';
+    document.getElementById('xi-title').textContent = 'כסף הגיע אליך';
+    document.getElementById('xi-text').textContent = prompt;
+    document.getElementById('xi-actions').innerHTML = `
+      <button class="btn btn-primary" onclick="extraIncomeFocusingStep2()">המשיכי ←</button>
+      <button class="btn btn-ghost" onclick="closeExtraIncomeFocusing()">דלגי</button>
+    `;
+    document.getElementById('xi-overlay').classList.add('visible');
+    document.getElementById('xi-panel').classList.add('visible');
+  }
+
+  function extraIncomeFocusingStep2() {
+    document.getElementById('xi-icon').textContent = '🙏';
+    document.getElementById('xi-title').textContent = 'רגע אחד נוסף';
+    document.getElementById('xi-text').textContent = 'האם יש בך מקום — ולו קטן — להגיד תודה על הכסף הזה, גם אם הוא לא הגיע מהעסק?\n\nכל כסף שבא לתמוך בך ובחיים שלך ראוי לתודה, לא משנה מאיפה הגיע.';
+    document.getElementById('xi-actions').innerHTML = `
+      <button class="btn btn-primary" onclick="closeExtraIncomeFocusing()" style="font-size:1.1rem;">תודה 🙏</button>
+      <button class="btn btn-ghost" onclick="closeExtraIncomeFocusing()">עדיין קשה לי — והכל בסדר</button>
+    `;
+  }
+
+  function closeExtraIncomeFocusing() {
+    document.getElementById('xi-overlay').classList.remove('visible');
+    document.getElementById('xi-panel').classList.remove('visible');
+  }
+
+  function deleteExtra(id) {
+    saveExtraIncomes(getExtraIncomes().filter(e => e.id !== id));
+    render();
+  }
+
+  function render() {
+    const now = new Date();
+    document.getElementById('month-label').textContent = MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+
+    const settings = getSettings();
+    const taxRate = settings.incomeTaxRate || 0;
+
+    // Income from business this month
+    const monthIncomes = getIncomes().filter(i => {
+      const d = new Date(i.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    const grossBusiness = monthIncomes.reduce((s,i) => s + i.amount, 0);
+
+    // Extra incomes
+    const extras = getExtraIncomes();
+    const extraTotal = extras.reduce((s,e) => s + e.amount, 0);
+
+    const totalGross = grossBusiness + extraTotal;
+    const vat = grossBusiness * 0.18;
+    const base = grossBusiness - vat;
+    const tax = base * (taxRate / 100);
+    const totalTaxes = vat + tax;
+
+    // Expenses
+    const exp = getExpenses();
+    const expState = exp.state.reduce((s,e) => s + monthlyAmount(e), 0);
+    const expBusiness = exp.business.reduce((s,e) => s + monthlyAmount(e), 0);
+    const expOptional = exp.optional.reduce((s,e) => s + monthlyAmount(e), 0);
+    const totalExpenses = expState + expBusiness + expOptional;
+
+    const takeHome = base + extraTotal - tax - totalExpenses;
+
+    // Render
+    document.getElementById('s-gross').textContent = fmt(grossBusiness);
+    document.getElementById('s-total-gross').textContent = fmt(totalGross);
+    document.getElementById('s-vat').textContent = fmt(vat);
+    document.getElementById('s-tax').textContent = fmt(tax);
+    document.getElementById('s-total-taxes').textContent = fmt(totalTaxes);
+    document.getElementById('s-exp-state').textContent = fmt(expState);
+    document.getElementById('s-exp-business').textContent = fmt(expBusiness);
+    document.getElementById('s-exp-optional').textContent = fmt(expOptional);
+    document.getElementById('s-total-expenses').textContent = fmt(totalExpenses);
+    document.getElementById('s-takehome').textContent = fmt(Math.max(0, takeHome));
+    document.getElementById('s-calculation').textContent =
+      `${fmt(base)} (אחרי מע"מ) + ${fmt(extraTotal)} (הכנסות נוספות) − ${fmt(tax)} (מס הכנסה) − ${fmt(totalExpenses)} (הוצאות עסק) = ${fmt(Math.max(0,takeHome))}`;
+
+    // Extra incomes list
+    const extraList = document.getElementById('extra-incomes-list');
+    if (extras.length > 0) {
+      extraList.innerHTML = extras.map(e => `
+        <div class="summary-row">
+          <span class="s-label">${e.name} (מקור נוסף)</span>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="s-value gold">${fmt(e.amount)}</span>
+            <button class="btn btn-danger btn-sm" onclick="deleteExtra('${e.id}')">מחקי</button>
+          </div>
+        </div>`).join('');
+    } else {
+      extraList.innerHTML = '';
+    }
+
+    // End of month: top expenses reflection
+    renderExpensesReflection(totalExpenses);
+  }
+
+  function renderExpensesReflection(totalExpenses) {
+    const section = document.getElementById('expenses-reflection');
+    if (totalExpenses === 0) { section.style.display = 'none'; return; }
+
+    const exp = getExpenses();
+    const all = [
+      ...exp.state.map(e => ({ name: e.name, amount: monthlyAmount(e), cat: 'חובות המדינה' })),
+      ...exp.business.map(e => ({ name: e.name, amount: monthlyAmount(e), cat: 'הוצאות עסק' })),
+      ...exp.optional.map(e => ({ name: e.name, amount: monthlyAmount(e), cat: 'הוצאות רשות' })),
+    ].sort((a, b) => b.amount - a.amount).slice(0, 3);
+
+    if (all.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+
+    document.getElementById('top-expenses-list').innerHTML = all.map(e => `
+      <div onclick="startExpenseFocusing('${e.name.replace(/'/g,"\\'")}', ${e.amount})"
+           style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-top:1px solid var(--border); cursor:pointer; transition:opacity 0.2s;"
+           onmouseenter="this.style.opacity='0.75'" onmouseleave="this.style.opacity='1'">
+        <div>
+          <div style="font-size:0.92rem;">${e.name}</div>
+          <div style="font-size:0.78rem; color:var(--text-muted);">${e.cat}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="color:var(--red); font-size:0.95rem;">${fmt(e.amount)}</span>
+          <span style="font-size:0.8rem; color:var(--accent);">שבי עם זה ←</span>
+        </div>
+      </div>`).join('');
+  }
+
+  const EXP_PROMPTS = [
+    (name, amount) => `${fmt(amount)} על ${name}.\n\nשבי רגע עם המספר הזה.\nאיפה בגוף את מרגישה אותו?`,
+    (name, amount) => `${name} — ${fmt(amount)} בחודש.\n\nאין כאן שיפוט.\nרק: מה קורה בגוף כשאת רואה את זה?`,
+    (name, amount) => `הוצאה של ${fmt(amount)} על ${name}.\n\nעצרי שניה.\nמה עולה בך?`,
+  ];
+
+  function startExpenseFocusing(name, amount) {
+    const overlay = document.getElementById('exp-focusing-overlay');
+    overlay.style.display = 'flex';
+    const prompt = EXP_PROMPTS[Math.floor(Math.random() * EXP_PROMPTS.length)](name, amount);
+    document.getElementById('ef-icon').textContent = '🌿';
+    document.getElementById('ef-title').textContent = name;
+    document.getElementById('ef-text').textContent = prompt;
+    document.getElementById('ef-actions').innerHTML = `
+      <button class="btn btn-primary" style="width:100%;" onclick="expFocusingStep2()">אני כאן — המשיכי ←</button>
+      <button class="btn btn-ghost" style="width:100%; margin-top:10px;" onclick="closeExpFocusing()">דלגי</button>
+    `;
+  }
+
+  function expFocusingStep2() {
+    document.getElementById('ef-icon').textContent = '💛';
+    document.getElementById('ef-text').textContent = 'האם יש משהו שאת מבינה עכשיו על ההוצאה הזו?\n\nלא חייבת תשובה.\nרק להיות עם מה שעולה.';
+    document.getElementById('ef-actions').innerHTML = `
+      <button class="btn btn-primary" style="width:100%;" onclick="closeExpFocusing()">תודה על הרגע הזה</button>
+      <button class="btn btn-ghost" style="width:100%; margin-top:10px;" onclick="closeExpFocusing()">סיימתי</button>
+    `;
+  }
+
+  function closeExpFocusing() {
+    document.getElementById('exp-focusing-overlay').style.display = 'none';
+  }
+
+  initNav('summary');
+  render();
+</script>
+</body>
+</html>

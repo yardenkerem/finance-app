@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>תרגול יומי — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .practice-card {
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 20px;
+    }
+    .step-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .step-instruction {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.9;
+      margin-bottom: 18px;
+    }
+    .practice-textarea {
+      width: 100%;
+      background: rgba(245,240,235,0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      font-size: 0.93rem;
+      line-height: 1.8;
+      resize: vertical;
+      direction: rtl;
+      box-sizing: border-box;
+      min-height: 100px;
+    }
+    .practice-textarea:focus {
+      outline: none;
+      border-color: var(--border-accent);
+    }
+    .practice-textarea::placeholder { color: var(--text-faint); }
+
+    .quote-block {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      line-height: 2;
+      text-align: center;
+      padding: 32px 24px;
+      border-radius: var(--radius);
+      position: relative;
+    }
+    .quote-block::before {
+      content: '"';
+      font-size: 5rem;
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      line-height: 1;
+      opacity: 0.15;
+    }
+
+    .feeling-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .feeling-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Assistant', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .feeling-btn.selected {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .save-session-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent-light);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius);
+      color: var(--accent);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all var(--transition);
+    }
+    .save-session-btn:hover { background: rgba(201,169,110,0.2); }
+
+    .past-sessions { margin-top: 8px; }
+    .past-session-item {
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .past-session-item:hover { border-color: var(--border-accent); background: var(--bg-card); }
+    .past-session-item .date { font-size: 0.75rem; color: var(--text-faint); margin-bottom:4px; }
+    .past-session-item .preview { font-size: 0.85rem; color: var(--text-muted); }
+
+    .logic-box {
+      background: rgba(201,169,110,0.06);
+      border: 1px solid rgba(201,169,110,0.2);
+      border-right: 4px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+    }
+
+    .practice-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .practice-tab {
+      flex: 1;
+      padding: 13px 16px;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-family: 'Assistant', sans-serif;
+      font-size: 0.92rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all var(--transition);
+      text-align: center;
+    }
+    .practice-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 600;
+    }
+    .practice-tab:hover:not(.active) { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container-sm">
+
+    <div class="page-header">
+      <h1 class="page-title">תרגול יומי ושבועי</h1>
+      <p class="page-subtitle">כמה דקות בבוקר שמשנות את הכיוון של היום כולו</p>
+    </div>
+
+    <div class="practice-tabs">
+      <button class="practice-tab active" id="tab-daily" onclick="switchTab('daily')">☀️ תרגיל יומי</button>
+      <button class="practice-tab" id="tab-weekly" onclick="switchTab('weekly')">🌿 תרגיל שבועי</button>
+    </div>
+
+    <div id="section-daily">
+    <!-- Daily question -->
+    <div class="practice-card" style="background:var(--bg-card); border:1px solid var(--border-accent); margin-bottom:28px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:8px;">
+        <div id="dq-week" style="font-size:0.72rem; letter-spacing:0.1em; font-weight:700; text-transform:uppercase; color:var(--accent);"></div>
+        <div id="dq-daynum" style="font-size:0.78rem; color:var(--text-faint);"></div>
+      </div>
+      <div id="dq-question" style="font-family:'Cormorant Garamond',serif; font-size:1.45rem; color:var(--text); line-height:1.8; margin-bottom:20px; white-space:pre-line;"></div>
+      <div id="dq-saved" style="display:none; font-size:0.82rem; color:var(--green); margin-bottom:10px;">✓ התגובה של היום נשמרה</div>
+      <textarea class="practice-textarea" id="dq-text" placeholder="מה עולה בך כשאת קוראת את השאלה הזו? מה הגוף אומר?"></textarea>
+      <button class="save-session-btn" style="margin-top:12px;" onclick="saveDailyAnswer()">שמרי את התגובה של היום ✓</button>
+    </div>
+
+    </div><!-- /section-daily -->
+
+    <div id="section-weekly" style="display:none;">
+    <!-- Weekly practice intro -->
+    <div style="margin-bottom:32px;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--accent); margin-bottom:10px;">תרגיל שבועי — פגישה עם השפע וההתנגדות</div>
+      <div style="font-size:0.9rem; color:var(--text-muted); line-height:1.85;">
+        פעם בשבוע — לא כל יום — כדאי לשבת עם התרגיל הזה.<br/>
+        הוא עמוק יותר משאלת היום: הוא מזמין אותך לשמוע את הקול שאומר "כן" <em>ואת</em> הקול שאומר "לא" — ולהחזיק את שניהם יחד.
+      </div>
+    </div>
+
+    <div class="quote-block" style="background:rgba(201,169,110,0.08); border:1px solid rgba(201,169,110,0.25); margin-bottom:28px; color:var(--accent);">
+      "לא ניתן לחיות חיים שלמים ומוצלחים אמיתיים אלא אם כן האדם עשיר.
+      אף אחת לא יכולה לעלות לגובה המלא של הכישרון שלה ושל התפתחות הנשמה שלה,<br/>
+      אלא אם יש לה מספיק כסף."
+      <div style="font-size:0.78rem; color:var(--text-faint); margin-top:16px; font-family:'Assistant',sans-serif; font-style:normal;">
+        Wallace D. Wattles · The Science of Getting Rich
+      </div>
+    </div>
+
+    <!-- Logic explanation -->
+    <div class="logic-box">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:700; color:var(--accent); margin-bottom:12px;">
+        למה התרגיל הזה עובד?
+      </div>
+      <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.9; margin:0 0 12px;">
+        כשאנחנו שומעות שפע — חלק מאיתנו מתרחב. וחלק מאיתנו מתכווץ.<br/>
+        ההתכווצות הזו היא מידע יקר מפז.
+      </p>
+      <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.9; margin:0 0 12px;">
+        היא מגיעה מתוך <strong style="color:var(--text);">דימוי עצמי</strong> שנבנה עם השנים — מהמשפחה, מהחינוך, מחוויות שעיצבו את מי שאנחנו חושבות שמגיע לנו להיות.
+        לפעמים היא אומרת: <em>"נשים כמוני לא מרוויחות ככה."</em>
+        לפעמים: <em>"כסף מקלקל."</em>
+        לפעמים היא לא אומרת כלום — היא רק כבדות בחזה.
+      </p>
+      <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.9; margin:0 0 14px;">
+        <strong style="color:var(--text);">המטרה של התרגיל הזה אינה לבטל את ההתנגדות.</strong>
+        המטרה היא לפגוש אותה עם סקרנות — ולהבין מה היא מנסה לשמור עלייך.
+        כשאנחנו מכירות בה, היא מתרחבת. כשאנחנו לומדות להכיל גם שפע וגם התנגדות —
+        הגוף מתחיל ללמוד שמותר.
+      </p>
+      <p style="font-size:0.85rem; color:var(--text-faint); line-height:1.9; margin:0; border-top:1px solid var(--border); padding-top:12px;">
+        <strong style="color:var(--text-muted);">התרגיל הזה מיועד לחזרה — כל בוקר, כמה פעמים בשבוע, כמה שמרגיש נכון.</strong><br/>
+        כל סשן נשמר. לאורך זמן תוכלי לגלול מטה ולראות את הסשנים הקודמים — ולהבחין איך משהו בפנים מתחיל לזוז, גם אם בהתחלה זה לא מורגש.
+      </p>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="practice-card" style="background:rgba(201,169,110,0.07); border:1px solid rgba(201,169,110,0.2);">
+      <div class="step-label" style="color:var(--accent);">שלב א׳ — הזמנה לשפע</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--accent); margin-bottom:16px; line-height:1.8;">
+        קראי את המשפט הזה — ותני לו להיכנס. לא לנתח. לא להסכים או לא להסכים.<br/>
+        רק לשמוע ולהרגיש מה קורה בגוף:
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:700; color:var(--accent); text-align:center; padding:20px; background:rgba(201,169,110,0.1); border-radius:12px; margin-bottom:20px;">
+        "חובה עליי להיות בשפע.<br/>זה לא מותרות — זה הבסיס לחיים מלאים."
+      </div>
+      <div class="step-label" style="color:var(--accent);">מה קורה בגוף עכשיו?</div>
+      <div class="feeling-btns" id="step1-btns">
+        <button class="feeling-btn" onclick="toggleFeeling('s1','התרחבות')">🌿 התרחבות</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s1','חום')">☀️ חום</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s1','ריגוש')">✨ ריגוש</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s1','שלווה')">🕊️ שלווה</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s1','כבדות')">🌑 כבדות</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s1','לחץ')">🌀 לחץ</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s1','ספק')">❓ ספק</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s1','קיפאון')">🧊 קיפאון</button>
+      </div>
+      <textarea class="practice-textarea" id="step1-text" placeholder="איפה בגוף? מה המרקם? מה הצבע? תישארי עם זה..."></textarea>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="practice-card" style="background:rgba(224,112,144,0.06); border:1px solid rgba(224,112,144,0.2);">
+      <div class="step-label" style="color:#E07090;">שלב ב׳ — פגישה עם ההתנגדות</div>
+      <div class="step-instruction">
+        עכשיו תזמיני פנימה את כל מה שאומר <strong style="color:var(--text);">"לא"</strong> — את כל הקולות, הספקות, הכבדויות.<br/>
+        אל תדחי אותם. אל תילחמי בהם. פשוט שאלי אותם:
+        <em style="color:#E07090;">"מה אתה מנסה לשמור עליי?"</em>
+      </div>
+
+      <div style="font-size:0.82rem; color:#E07090; margin-bottom:10px; font-weight:600;">מה עולה? (ניתן לסמן כמה)</div>
+      <div class="feeling-btns" id="step2-btns">
+        <button class="feeling-btn" onclick="toggleFeeling('s2','נשים כמוני לא מרוויחות ככה')">נשים כמוני לא מרוויחות ככה</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s2','כסף מקלקל')">כסף מקלקל</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s2','אני לא ראויה')">אני לא ראויה</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s2','זה לא צנוע')">זה לא צנוע</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s2','אחרות יקנאו')">אחרות יקנאו</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s2','מי אני בכלל')">מי אני בכלל</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s2','כסף גורם לבעיות')">כסף גורם לבעיות</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s2','אם ארוויח יותר אאבד משהו')">אם ארוויח יותר אאבד משהו</button>
+      </div>
+
+      <textarea class="practice-textarea" id="step2-identity" placeholder="מה הדימוי העצמי שעולה? מה המשפטים שאת שומעת על עצמך?..." style="margin-top:14px;"></textarea>
+
+      <div style="font-size:0.82rem; color:#E07090; margin:14px 0 8px; font-weight:600;">מה מרגישה בגוף?</div>
+      <textarea class="practice-textarea" id="step2-body" placeholder="איפה ישנה ההתנגדות? חזה? בטן? גרון? איך היא מרגישה שם?"></textarea>
+
+      <div style="font-size:0.82rem; color:#E07090; margin:14px 0 8px; font-weight:600;">מה ההתנגדות הזו מנסה לשמור עלייך?</div>
+      <textarea class="practice-textarea" id="step2-protect" placeholder='למשל: "היא מנסה להגן עליי מפני אכזבה" / "היא לא רוצה שאאבד את הפשטות"...'></textarea>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="practice-card" style="background:rgba(109,191,138,0.06); border:1px solid rgba(109,191,138,0.2);">
+      <div class="step-label" style="color:#6DBF8A;">שלב ג׳ — חזרה לשפע</div>
+      <div class="step-instruction">
+        תחזרי עכשיו למשפט של וואלס. קראי אותו שוב — <strong style="color:var(--text);">הפעם כשאת יודעת מה עומד מולו</strong>.<br/>
+        לא לדחות את ההתנגדות, לא להתעלם ממנה — אלא להחזיק את שניהם יחד:
+        גם השפע, גם הפחד.
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:#6DBF8A; text-align:center; padding:20px; background:rgba(109,191,138,0.08); border-radius:12px; margin-bottom:20px; line-height:1.8;">
+        "חובה עליי להיות בשפע.<br/>זה לא מותרות — זה הבסיס לחיים מלאים."
+      </div>
+      <div class="step-instruction">מה קורה עכשיו בגוף — לאחר שנפגשת עם ההתנגדות?</div>
+      <div class="feeling-btns" id="step3-btns">
+        <button class="feeling-btn" onclick="toggleFeeling('s3','יותר מקום')">יותר מקום</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s3','עדיין קשה')">עדיין קשה</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s3','סקרנות')">סקרנות</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s3','חמלה לעצמי')">חמלה לעצמי</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s3','תנועה')">תנועה</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s3','עייפות טובה')">עייפות טובה</button>
+        <button class="feeling-btn" onclick="toggleFeeling('s3','שקט')">שקט</button>
+      </div>
+      <textarea class="practice-textarea" id="step3-text" placeholder="מה הרגשת? מה השתנה, אפילו במעט? כל שינוי קטן נחשב..."></textarea>
+    </div>
+
+    <!-- Step 4 - Close -->
+    <div class="practice-card" style="background:rgba(201,169,110,0.07); border:1px solid rgba(201,169,110,0.25);">
+      <div class="step-label" style="color:var(--accent);">סגירה — משפט אחד</div>
+      <div class="step-instruction">משפט אחד שתקחי מהתרגיל הזה להמשך היום.</div>
+      <textarea class="practice-textarea" id="step4-takeaway" style="min-height:70px;"
+        placeholder='למשל: "היום אני שמה לב מתי אני מקטינה את עצמי בנושא כסף."'></textarea>
+
+      <button class="save-session-btn" onclick="saveSession()">שמרי את התרגיל של היום ✓</button>
+    </div>
+
+    </div><!-- /section-weekly -->
+
+    <div id="section-daily-past">
+    <!-- Past sessions -->
+    <div id="past-sessions-section" style="display:none;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--text-muted); margin:28px 0 14px;">
+        תרגולים קודמים
+      </div>
+      <div id="past-sessions-list" class="past-sessions"></div>
+    </div>
+    </div><!-- /section-daily-past -->
+
+  </div>
+</main>
+
+<script>
+  const MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  const selections = { s1: [], s2: [], s3: [] };
+
+  function toggleFeeling(group, val) {
+    const idx = selections[group].indexOf(val);
+    if (idx === -1) selections[group].push(val);
+    else selections[group].splice(idx, 1);
+
+    document.querySelectorAll(`#step${group.slice(1)}-btns .feeling-btn`).forEach(b => {
+      b.classList.toggle('selected', selections[group].includes(b.textContent.replace(/^[^\w֐-׿]+/,'').trim()));
+    });
+  }
+
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function saveSession() {
+    const session = {
+      date: new Date().toISOString(),
+      step1: { feelings: [...selections.s1], text: document.getElementById('step1-text').value },
+      step2: { feelings: [...selections.s2], identity: document.getElementById('step2-identity').value, body: document.getElementById('step2-body').value, protect: document.getElementById('step2-protect').value },
+      step3: { feelings: [...selections.s3], text: document.getElementById('step3-text').value },
+      takeaway: document.getElementById('step4-takeaway').value
+    };
+
+    const all = JSON.parse(localStorage.getItem('ff_daily_practice') || '[]');
+    all.unshift(session);
+    localStorage.setItem('ff_daily_practice', JSON.stringify(all));
+
+    // Reset
+    ['step1-text','step2-identity','step2-body','step2-protect','step3-text','step4-takeaway'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    selections.s1 = []; selections.s2 = []; selections.s3 = [];
+    document.querySelectorAll('.feeling-btn').forEach(b => b.classList.remove('selected'));
+
+    renderPast();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderPast() {
+    const all = JSON.parse(localStorage.getItem('ff_daily_practice') || '[]');
+    const section = document.getElementById('past-sessions-section');
+    const list = document.getElementById('past-sessions-list');
+
+    if (all.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+
+    list.innerHTML = all.map((s, i) => `
+      <div class="past-session-item" onclick="togglePastDetail(${i})">
+        <div class="date">${fmtDate(s.date)}</div>
+        <div class="preview">${s.takeaway || s.step3.text || '—'}</div>
+        <div id="past-detail-${i}" style="display:none; margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+          ${s.step1.feelings.length ? `<div style="font-size:0.78rem;color:var(--text-faint);margin-bottom:4px;">תחושה ראשונית: ${s.step1.feelings.join(' · ')}</div>` : ''}
+          ${s.step1.text ? `<div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:10px;">${s.step1.text}</div>` : ''}
+          ${s.step2.feelings.length ? `<div style="font-size:0.78rem;color:var(--text-faint);margin-bottom:4px;">התנגדות: ${s.step2.feelings.join(' · ')}</div>` : ''}
+          ${s.step2.identity ? `<div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">${s.step2.identity}</div>` : ''}
+          ${s.step2.protect ? `<div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:10px;font-style:italic;">${s.step2.protect}</div>` : ''}
+          ${s.step3.text ? `<div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">אחרי: ${s.step3.text}</div>` : ''}
+          ${s.takeaway ? `<div style="font-size:0.9rem;color:var(--accent);font-weight:600;">${s.takeaway}</div>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  function togglePastDetail(i) {
+    const el = document.getElementById('past-detail-' + i);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+
+  // ── 90 DAILY QUESTIONS ──
+  const DQ = [
+    // שבוע 1 — היכרות עם הכסף
+    {w:'שבוע 1 — היכרות עם הכסף', q:'כשאת שומעת את המילה "כסף" — מה קורה בגוף שלך?\nפשוט שימי לב. אין תשובה נכונה.'},
+    {w:'שבוע 1 — היכרות עם הכסף', q:'מהי המחשבה הראשונה שעולה כשאת פותחת את חשבון הבנק?\nלא מה שאת "אמורה" לחשוב — מה שבאמת עולה.'},
+    {w:'שבוע 1 — היכרות עם הכסף', q:'יש חלק בך שנמנע מלהסתכל במספרים.\nמה הוא מנסה להגן עליך ממנו?'},
+    {w:'שבוע 1 — היכרות עם הכסף', q:'כשאת חושבת על "מספיק כסף" —\nמה הגוף מרגיש? מה המשפט שעולה?'},
+    {w:'שבוע 1 — היכרות עם הכסף', q:'מה הייתה הדמות בחייך שדיברה הכי הרבה על כסף?\nמה היא אמרה — ומה היא לא אמרה?'},
+    {w:'שבוע 1 — היכרות עם הכסף', q:'אם הכסף שלך היה יכול לדבר —\nמה הוא היה אומר לך עכשיו?'},
+    {w:'שבוע 1 — היכרות עם הכסף', q:'שבי עם הכסף שיש לך עכשיו.\nלא עם מה שחסר — עם מה שיש.\nמה עולה?'},
+    // שבוע 2 — הגוף והכסף
+    {w:'שבוע 2 — הגוף והכסף', q:'איפה בגוף את "שומרת" את הדאגות הכלכליות שלך?\nכתפיים? בטן? לסת?'},
+    {w:'שבוע 2 — הגוף והכסף', q:'כשמגיע תשלום — לפני שאת לוחצת אישור —\nמה הגוף עושה?'},
+    {w:'שבוע 2 — הגוף והכסף', q:'כשאת חושבת על להרוויח יותר —\nמה הגוף מרגיש? נוח? מפוחד? כלום?'},
+    {w:'שבוע 2 — הגוף והכסף', q:'יש הבדל בין גוף שמחכה לכסף לבין גוף שמקבל כסף.\nמה ההבדל אצלך?'},
+    {w:'שבוע 2 — הגוף והכסף', q:'מה התנועה שהגוף רוצה לעשות כשיש כסף בחשבון?'},
+    {w:'שבוע 2 — הגוף והכסף', q:'כשיש חוסר — מה הגוף מכווץ?\nמה הוא רוצה לפתוח?'},
+    {w:'שבוע 2 — הגוף והכסף', q:'קחי נשימה עמוקה.\nשלחי אותה לאותו מקום בגוף שמחזיק את הכסף.\nמה שם?'},
+    // שבוע 3 — ילדות וכסף
+    {w:'שבוע 3 — ילדות וכסף', q:'מה למדת על כסף בבית שגדלת בו — ללא מילים?'},
+    {w:'שבוע 3 — ילדות וכסף', q:'האם כסף היה מקור למריבות בבית שלך?\nמה עולה כשאת זוכרת?'},
+    {w:'שבוע 3 — ילדות וכסף', q:'כשהיית ילדה — האם הרגשת שיש מספיק?\nמה זה עשה לך?'},
+    {w:'שבוע 3 — ילדות וכסף', q:'האם הייתה דמות בילדות שלך שהייתה "טובה בכסף"?\nמה הרגשת כלפיה?'},
+    {w:'שבוע 3 — ילדות וכסף', q:'יש לך זיכרון אחד סביב כסף מהילדות שעדיין איתך.\nמה הוא?'},
+    {w:'שבוע 3 — ילדות וכסף', q:'אם הילדה שהיית הייתה יכולה לדעת משהו אחד על כסף —\nמה היא הייתה צריכה לשמוע?'},
+    {w:'שבוע 3 — ילדות וכסף', q:'איזה חלק מהגישה שלך לכסף עדיין מגיע מהבית שגדלת בו?\nלא כדי לשנות — רק לראות.'},
+    // שבוע 4 — אמונות
+    {w:'שבוע 4 — אמונות', q:'"כסף זה לא בשבילי" —\nכשאת אומרת את זה לעצמך, מה הגוף עושה?'},
+    {w:'שבוע 4 — אמונות', q:'"אם אבקש יותר — אני חמדנית" —\nמאיפה הגיעה האמונה הזו?'},
+    {w:'שבוע 4 — אמונות', q:'"נשים לא טובות במספרים" —\nמי אמר את זה ראשון בחייך?'},
+    {w:'שבוע 4 — אמונות', q:'"כסף משחית" — יש חלק בך שמאמין בזה?\nמה הוא מנסה לשמור עליך ממנו?'},
+    {w:'שבוע 4 — אמונות', q:'מהי האמונה אחת על כסף שאת הכי רוצה לשחרר?'},
+    {w:'שבוע 4 — אמונות', q:'מהי האמונה אחת על כסף שאת רוצה לאמץ —\nאבל עדיין לא ממש מאמינה בה?'},
+    {w:'שבוע 4 — אמונות', q:'אם כסף לא היה "משהו רע" —\nמה היה משתנה בחייך?'},
+    // שבוע 5 — פחד ובושה
+    {w:'שבוע 5 — פחד ובושה', q:'מה הפחד הכי גדול שלך סביב כסף?\nתני לו להיאמר — בשקט, בלי לפתור.'},
+    {w:'שבוע 5 — פחד ובושה', q:'מהו הרגע שבו את הכי מתביישת בקשר לכסף?'},
+    {w:'שבוע 5 — פחד ובושה', q:'כשמישהי שואלת כמה את מרוויחה —\nמה קורה בגוף?'},
+    {w:'שבוע 5 — פחד ובושה', q:'יש חלק בך שמפחד שיגלו "כמה באמת" —\nמה הוא מגן עליך ממנו?'},
+    {w:'שבוע 5 — פחד ובושה', q:'הבושה סביב כסף — איפה היא גרה בגוף שלך?'},
+    {w:'שבוע 5 — פחד ובושה', q:'אם הפחד סביב כסף היה דמות —\nמה היא הייתה נראית כמו?'},
+    {w:'שבוע 5 — פחד ובושה', q:'מה הפחד סביב כסף מנסה להגיד לך?\nהוא לא שם כדי להזיק — מה הוא שומר?'},
+    // שבוע 6 — נתינה וקבלה
+    {w:'שבוע 6 — נתינה וקבלה', q:'כמה קל לך לקבל כסף?\nלקבל תשלום על מה שאת עושה?'},
+    {w:'שבוע 6 — נתינה וקבלה', q:'כשמישהי אומרת "את יקרה מדי" —\nמה הגוף עושה?'},
+    {w:'שבוע 6 — נתינה וקבלה', q:'האם יש לך קושי לבקש את המחיר שלך?\nמה קורה ברגע הזה?'},
+    {w:'שבוע 6 — נתינה וקבלה', q:'כמה קל לך לתת כסף לעצמך —\nעל משהו שאת צריכה?'},
+    {w:'שבוע 6 — נתינה וקבלה', q:'יש הבדל בין לתת לאחרים לבין לתת לעצמך.\nמה ההבדל אצלך?'},
+    {w:'שבוע 6 — נתינה וקבלה', q:'כשאת מקבלת תשלום —\nהאם את מאפשרת לעצמך להרגיש את זה?\nמה קורה?'},
+    {w:'שבוע 6 — נתינה וקבלה', q:'מה היחס בין כמה שאת נותנת לכמה שאת מרשה לעצמך לקבל?'},
+    // שבוע 7 — שווי עצמי
+    {w:'שבוע 7 — שווי עצמי', q:'כמה שווה שעה מהזמן שלך?\nמה הגוף אומר — לא מה הכלכלה אומרת?'},
+    {w:'שבוע 7 — שווי עצמי', q:'"אני שווה יותר ממה שאני גובה" —\nמה עולה כשאת אומרת את זה?'},
+    {w:'שבוע 7 — שווי עצמי', q:'מתי הרגשת בפעם האחרונה שהוערכת כלכלית כפי שמגיע לך?'},
+    {w:'שבוע 7 — שווי עצמי', q:'האם יש קשר בין כמה שאת אוהבת את עצמך לכמה שאת גובה?\nמה עולה?'},
+    {w:'שבוע 7 — שווי עצמי', q:'יש חלק בך שמאמין שלא מגיע לך להרוויח הרבה —\nמה הוא אומר?'},
+    {w:'שבוע 7 — שווי עצמי', q:'מה היית גובה אם לא פחדת שיגידו שזה יקר מדי?'},
+    {w:'שבוע 7 — שווי עצמי', q:'"אני מספיקה" —\nכשאת אומרת את זה, מה הגוף מרגיש?'},
+    // שבוע 8 — הוצאות
+    {w:'שבוע 8 — הוצאות', q:'מהי ההוצאה האחרונה שגרמה לך להרגיש אשמה?\nמה קורה שם?'},
+    {w:'שבוע 8 — הוצאות', q:'יש הוצאות שאת נמנעת לרשום.\nלמה? מה קשה לראות?'},
+    {w:'שבוע 8 — הוצאות', q:'כשאת קונה משהו לעצמך — לעומת לאחרים —\nמה ההרגשה?'},
+    {w:'שבוע 8 — הוצאות', q:'מהי ההוצאה שאת הכי גאה בה?\nמה היא מייצגת?'},
+    {w:'שבוע 8 — הוצאות', q:'מהי הוצאה שאת יודעת שאינה בשבילך — אבל ממשיכה בה?\nמה היא ממלאת?'},
+    {w:'שבוע 8 — הוצאות', q:'ההוצאות שלך מספרות סיפור על מה חשוב לך.\nמה הסיפור?'},
+    {w:'שבוע 8 — הוצאות', q:'אם היית צריכה לחסוך — מה הדבר הראשון שהיית מוותרת עליו?\nמה זה מרגיש?'},
+    // שבוע 9 — הכנסות
+    {w:'שבוע 9 — הכנסות', q:'כשאת חושבת על להכניס יותר כסף —\nמה הגוף מרגיש קודם כל?'},
+    {w:'שבוע 9 — הכנסות', q:'יש חלק בך שמפחד מהצלחה כלכלית —\nמה הוא חושש שישתנה?'},
+    {w:'שבוע 9 — הכנסות', q:'מה תעשי עם הכסף הנוסף —\nאם תרוויחי פי שניים ממה שאת מרוויחה עכשיו?'},
+    {w:'שבוע 9 — הכנסות', q:'האם יש לך "תקרה פנימית" — סכום שמעבר לו מרגיש "יותר מדי"?\nאיפה היא?'},
+    {w:'שבוע 9 — הכנסות', q:'מה מונע ממך לגבות יותר עכשיו —\nלא רציונלית, אלא מה הגוף אומר?'},
+    {w:'שבוע 9 — הכנסות', q:'כשחודש מסתיים עם פחות ממה שצפית —\nמה הסיפור שאת מספרת לעצמך?'},
+    {w:'שבוע 9 — הכנסות', q:'מה הייתה ההכנסה שגרמה לך להרגיש הכי גאה?\nמה היה שם?'},
+    // שבוע 10 — חלומות וכסף
+    {w:'שבוע 10 — חלומות וכסף', q:'אם כסף לא היה מגבלה —\nמה היית עושה אחרת מחר בבוקר?'},
+    {w:'שבוע 10 — חלומות וכסף', q:'מהו החלום הכלכלי שלך שמרגיש "גדול מדי לבקש"?'},
+    {w:'שבוע 10 — חלומות וכסף', q:'יש חלק בך שמאמין שהחלום הכלכלי שלך אפשרי —\nמה הוא אומר?'},
+    {w:'שבוע 10 — חלומות וכסף', q:'מה ההבדל בין מה שאת רוצה לבין מה שאת מאפשרת לעצמך לרצות?'},
+    {w:'שבוע 10 — חלומות וכסף', q:'אם היית כותבת מכתב לכסף שתרצי שיהיה לך בעוד 3 שנים —\nמה היית כותבת?'},
+    {w:'שבוע 10 — חלומות וכסף', q:'החלום שלך דורש מה ממך שעדיין לא נתת?\nמה הגוף אומר על זה?'},
+    {w:'שבוע 10 — חלומות וכסף', q:'כשאת מדמיינת את עצמך כלכלית חופשית —\nמה הגוף מרגיש? מה מפריע לתמונה?'},
+    // שבוע 11 — גבולות
+    {w:'שבוע 11 — גבולות', q:'האם יש לקוחות שאת נמנעת לגבות מהם את המחיר המלא?\nמה קורה שם?'},
+    {w:'שבוע 11 — גבולות', q:'מתי אמרת כן לעבודה בגלל פחד — ולא בגלל רצון?'},
+    {w:'שבוע 11 — גבולות', q:'מה קורה בגוף כשאת אומרת "המחיר שלי הוא X"?'},
+    {w:'שבוע 11 — גבולות', q:'יש גבול כלכלי שאת יודעת שאת צריכה להציב ועדיין לא הצבת —\nמה מונע?'},
+    {w:'שבוע 11 — גבולות', q:'כשמישהי מתמקחת על המחיר שלך —\nמה הגוף עושה?'},
+    {w:'שבוע 11 — גבולות', q:'הגבולות הכלכליים שלך מגנים על מה?\nמה הם אומרים על הערכים שלך?'},
+    {w:'שבוע 11 — גבולות', q:'מה היה משתנה אם היית גובה בדיוק מה שאת מרגישה שמגיע לך?'},
+    // שבוע 12 — שפע
+    {w:'שבוע 12 — שפע', q:'"שפע" — מה המילה הזו עושה לגוף שלך?'},
+    {w:'שבוע 12 — שפע', q:'מתי הרגשת שפע — לא בהכרח בכסף?\nמה היה שם?'},
+    {w:'שבוע 12 — שפע', q:'יש חלק בך שמאמין שלאחרים מגיע יותר ממה שמגיע לך —\nמה הוא אומר?'},
+    {w:'שבוע 12 — שפע', q:'מה צריך לקרות בפנים כדי שתרשי לעצמך לקבל יותר?'},
+    {w:'שבוע 12 — שפע', q:'"יש מספיק לכולן" —\nמה הגוף מרגיש כשאת שומעת את זה?'},
+    {w:'שבוע 12 — שפע', q:'תחשבי על אישה שאת מכירה שחיה בשפע.\nמה את מרגישה כלפיה? מה זה אומר עליך?'},
+    {w:'שבוע 12 — שפע', q:'מה עוצר את הזרימה — לא בחוץ, אלא בפנים?'},
+    // שבוע 13 — מסע וסיכום
+    {w:'שבוע 13 — מסע וסיכום', q:'מה השתנה בך בשלושת החודשים האחרונים ביחס לכסף?'},
+    {w:'שבוע 13 — מסע וסיכום', q:'איזה חלק בך הכי גדל?\nאיזה חלק עדיין זקוק לתשומת לב?'},
+    {w:'שבוע 13 — מסע וסיכום', q:'מה למדת על עצמך דרך המספרים?'},
+    {w:'שבוע 13 — מסע וסיכום', q:'אם היית כותבת מכתב לעצמך לפני שלושה חודשים —\nמה היית כותבת?'},
+    {w:'שבוע 13 — מסע וסיכום', q:'מה הצעד הבא שהגוף שלך יודע שאת צריכה לעשות —\nעם הכסף, עם עצמך?'},
+    {w:'שבוע 13 — מסע וסיכום', q:'שבי עם כל מה שעשית.\nאל תנתחי.\nפשוט תרגישי.\nמה יש?'},
+    // שבוע 14 — כסף כשותף לדרך
+    {w:'שבוע 14 — כסף כשותף לדרך', q:'אם הכסף שלך היה דמות —\nמה היא הייתה נראית כמו? יש לה שם?'},
+    {w:'שבוע 14 — כסף כשותף לדרך', q:'מה הכסף שלך צריך ממך עכשיו?\nמה הוא מבקש שתעשי אחרת?'},
+    {w:'שבוע 14 — כסף כשותף לדרך', q:'מה את צריכה מהכסף שלך?\nמה היית רוצה לבקש ממנו — בלי להתנצל?'},
+    {w:'שבוע 14 — כסף כשותף לדרך', q:'כתבי משפט אחד לכסף שלך —\nמשהו שמעולם לא אמרת לו.'},
+    {w:'שבוע 14 — כסף כשותף לדרך', q:'מה הכסף היה עונה לך?\nכתבי את תשובתו — תני לו לדבר.'},
+    {w:'שבוע 14 — כסף כשותף לדרך', q:'מה צריך לקרות בפנים כדי שהיחסים שלך עם הכסף\nיהפכו ליחסי שותפות אמיתית?'},
+    {w:'שבוע 14 — כסף כשותף לדרך', q:'דמייני שהכסף שלך כותב לך מכתב —\nמה הוא היה כותב? מה הוא רוצה שתדעי?'},
+  ];
+
+  function getDayIndex() {
+    let start = localStorage.getItem('ff_practice_start');
+    if (!start) {
+      start = new Date().toISOString().split('T')[0];
+      localStorage.setItem('ff_practice_start', start);
+    }
+    const diff = Math.floor((Date.now() - new Date(start)) / 86400000);
+    return diff % DQ.length;
+  }
+
+  function initDailyQuestion() {
+    const idx = getDayIndex();
+    const item = DQ[idx];
+    document.getElementById('dq-week').textContent = item.w;
+    document.getElementById('dq-daynum').textContent = 'יום ' + (idx + 1) + ' מתוך ' + DQ.length;
+    document.getElementById('dq-question').textContent = item.q;
+
+    const todayKey = new Date().toISOString().split('T')[0];
+    const answers = JSON.parse(localStorage.getItem('ff_daily_answers') || '[]');
+    const todayAnswer = answers.find(a => a.date === todayKey);
+    if (todayAnswer) {
+      document.getElementById('dq-text').value = todayAnswer.text;
+      document.getElementById('dq-saved').style.display = 'block';
+    }
+  }
+
+  function saveDailyAnswer() {
+    const text = document.getElementById('dq-text').value.trim();
+    if (!text) return;
+    const todayKey = new Date().toISOString().split('T')[0];
+    const answers = JSON.parse(localStorage.getItem('ff_daily_answers') || '[]');
+    const i = answers.findIndex(a => a.date === todayKey);
+    const entry = { date: todayKey, day: getDayIndex() + 1, text };
+    if (i !== -1) answers[i] = entry; else answers.unshift(entry);
+    localStorage.setItem('ff_daily_answers', JSON.stringify(answers));
+    document.getElementById('dq-saved').style.display = 'block';
+  }
+
+  function switchTab(tab) {
+    const isDaily = tab === 'daily';
+    document.getElementById('section-daily').style.display      = isDaily ? 'block' : 'none';
+    document.getElementById('section-daily-past').style.display = isDaily ? 'block' : 'none';
+    document.getElementById('section-weekly').style.display     = isDaily ? 'none'  : 'block';
+    document.getElementById('tab-daily').classList.toggle('active', isDaily);
+    document.getElementById('tab-weekly').classList.toggle('active', !isDaily);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  initNav('daily-practice');
+  initDailyQuestion();
+  renderPast();
+  if (new URLSearchParams(window.location.search).get('tab') === 'weekly') {
+    switchTab('weekly');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focusing Finance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Assistant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1b2e;
+      --accent: #E8C97E;
+      --accent2: #c97eb4;
+      --text: #f5f0eb;
+      --text-muted: rgba(245,240,235,0.65);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .video-wrap {
+      position: absolute;
+      inset: 0;
+    }
+
+    .video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.55;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(13,27,46,0.3) 0%,
+        rgba(13,27,46,0.15) 40%,
+        rgba(13,27,46,0.65) 80%,
+        rgba(13,27,46,1) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 24px;
+      max-width: 780px;
+    }
+
+    .hero-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 1s 0.4s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 1s 0.6s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+      max-width: 580px;
+      margin: 0 auto 48px;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 1s 0.8s forwards;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 16px 44px;
+      background: var(--accent);
+      color: #0d1b2e;
+      font-family: 'Assistant', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      transition: transform 0.2s, box-shadow 0.2s;
+      opacity: 0;
+      animation: fadeUp 1s 1s forwards;
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(232,201,126,0.3);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 1s 1.4s forwards;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(232,201,126,0.8), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── ABOUT SECTION ── */
+    #about {
+      padding: 100px 0;
+      background: #091525;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 32px;
+    }
+
+    .section-title em { font-style: italic; color: var(--accent); }
+
+    .about-text p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.95;
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+
+    /* ── FEATURES ── */
+    #features {
+      padding: 100px 0;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      margin-top: 48px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(245,240,235,0.07);
+      padding: 36px 32px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(232,201,126,0.2);
+      background: rgba(232,201,126,0.03);
+    }
+
+    .feature-num {
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .feature-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .feature-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* ── CTA SECTION ── */
+    #cta {
+      padding: 100px 0;
+      background: #091525;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 20px;
+    }
+
+    .cta-title em { font-style: italic; color: var(--accent); }
+
+    .cta-sub {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 520px;
+      margin: 0 auto 48px;
+      font-weight: 300;
+    }
+
+    .btn-enter {
+      display: inline-block;
+      padding: 16px 44px;
+      background: var(--accent);
+      color: #0d1b2e;
+      font-family: 'Assistant', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-enter:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(232,201,126,0.3);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(245,240,235,0.07);
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: rgba(245,240,235,0.3);
+    }
+
+    footer a {
+      color: rgba(245,240,235,0.3);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    /* ── REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .features-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <div class="video-wrap">
+      <video autoplay muted loop playsinline>
+        <source src="video woman and gold.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p class="hero-label">Focusing for Freedom</p>
+      <h1 class="hero-title">
+        Focusing Finance<br/>
+        <em>ניהול כסף מבפנים החוצה</em>
+      </h1>
+      <p class="hero-sub">
+        כי יש המון אפליקציות לניהול כסף — אבל אף אחת מהן לא מדברת על הקפאון, על המצוקה, על זה שלא משנה כמה את יודעת שצריך לעשות משהו — את לא עושה אותו.
+      </p>
+      <a href="home.html" class="hero-cta">כנסי למסע היומי ←</a>
+      <p style="margin-top:28px; font-size:0.95rem; color:rgba(245,240,235,0.62); line-height:2; max-width:560px; margin-left:auto; margin-right:auto;">
+        הסיפור שלנו עם כסף הוא סיפור של מערכת העצבים, של דימוי עצמי ושל הרבה רגשות, מחשבות, זכרונות, תפיסת עצמי ותפיסת העולם — ההתמקדות היא הגישה היחידה שתיתן לך היכרות מהירה ומאוד מעמיקה עם הסיפור שלך, לצד כלים עדינים ועוצמתיים לשנות אותו — צעד אחרי צעד, לא בדחיפה אלא בהקשבה לכל החלקים שקשה להם עם כסף.
+      </p>
+    </div>
+
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section id="about">
+    <div class="container">
+      <span class="section-label reveal">למה Focusing Finance שונה</span>
+      <h2 class="section-title reveal">כי הבעיה היא לא שאת<br/><em>לא יודעת מה לעשות</em></h2>
+      <div class="about-text">
+        <p class="reveal" style="transition-delay:0.1s">
+          יש המון תוכניות, קורסים, ואפליקציות לניהול כסף. כולן מניחות שאם תדעי מה לעשות — תעשי. אבל את כבר יודעת. הבעיה היא שמשהו בפנים קפא. ולא משנה כמה את רוצה — הוא לא זז.
+        </p>
+        <p class="reveal" style="transition-delay:0.2s">
+          Focusing Finance רוצה להיות החברה הכי טובה שלך, המטפלת, והקואצ'רית. המקום שבו מותר לך — וכדאי לך — להביא את הכל: את הבושה, הכעס, המרמור, התסכול, היאוש, חוסר האונים, הקנאה, המצב הכלכלי כפי שהוא באמת.
+        </p>
+        <p class="reveal" style="transition-delay:0.3s">
+          כי רק מתוך המוכנות לשתף בקושי ולהיות איתו דרך החוויה הגופנית — צומחים. לא מתוך ידיעה. לא מתוך תוכנית. מתוך נגיעה.
+        </p>
+        <p class="reveal" style="transition-delay:0.4s">
+          אני אהיה איתך שם. ואת תראי, שתוך כמה חודשים — יהיה שינוי עמוק.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ── -->
+  <section id="features">
+    <div class="container">
+      <span class="section-label reveal">מה יש באפליקציה</span>
+      <h2 class="section-title reveal">ארבעה כלים<br/><em>שעובדים יחד</em></h2>
+      <div class="features-grid">
+        <div class="feature-card reveal" style="transition-delay:0s">
+          <div class="feature-num">01</div>
+          <div class="feature-title">יומן הכנסות</div>
+          <div class="feature-desc">כל תשלום שמגיע נרשם — עם חישוב אוטומטי של מע"מ ומס הכנסה. ורגע קטן של עצירה עם כל רישום: הכרת תודה. הכרת תודה אחת ועוד אחת ועוד אחת — משנה את מערכת העצבים שלך.</div>
+        </div>
+        <div class="feature-card reveal" style="transition-delay:0.1s">
+          <div class="feature-num">02</div>
+          <div class="feature-title">ניהול הוצאות העסק</div>
+          <div class="feature-desc">תמונה ברורה של הרווחים שלך אל מול ההוצאות. ממלאים פעם אחת את הוצאות העסק ומקבלים תמונה מלאה של המצב — רווחים מול כל ההוצאות. גם אם זה קשה — יש חשיבות לתמונה הברורה, ויש כאן מקום להתמודד עם זה גם רגשית.</div>
+        </div>
+        <div class="feature-card reveal" style="transition-delay:0.2s">
+          <div class="feature-num">03</div>
+          <div class="feature-title">מערכת הכדים — ניהול נכון של הוצאות הבית / חיים פרטיים</div>
+          <div class="feature-desc">
+            לא הסכום שמרוויחים קובע את העושר — אלא המודעות לאן כל שקל הולך.
+            שיטת הכדים מחלקת את הוצאות החיים ל-10 תחומים: דיור, בריאות, חיסכון, חינוך, פינוקים, נדיבות ועוד —
+            כדי שתוכלי לראות בדיוק את הדפוס שלך, ולהתחיל לשנות אותו מתוך בחירה ולא מתוך פחד.<br/>
+            <span style="color:rgba(232,201,126,0.7); font-size:0.88em;">הסבר מפורט על כל כד מחכה לך בתוך האפליקציה ←</span>
+          </div>
+        </div>
+        <div class="feature-card reveal" style="transition-delay:0.3s">
+          <div class="feature-num">04</div>
+          <div class="feature-title">תרגולים קצרים לאורך היום</div>
+          <div class="feature-desc">המערכת תזמין אותך לתרגולים קצרים מאוד שמטרתם להעלות למודע את הדימוי העצמי, הפנימי, והיחס לכסף — ובעדינות להפוך אותו לדימוי של מישהי שיודעת להרוויח, יודעת לשמור על הכסף, ונהנית מהתהליך.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── JOURNEY ── -->
+  <section style="padding:100px 0; background:#091525;">
+    <div class="container">
+      <span class="section-label reveal">המסע</span>
+      <h2 class="section-title reveal">ארבעה חודשים —<br/><em>ארבעה שלבים</em></h2>
+      <div style="display:flex; flex-direction:column; gap:0; margin-top:48px;">
+        <div class="reveal" style="display:flex; gap:28px; align-items:flex-start; padding:32px 0; border-bottom:1px solid rgba(245,240,235,0.07); transition-delay:0.1s;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:600; color:rgba(232,201,126,0.25); flex-shrink:0; width:60px; line-height:1;">01</div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; margin-bottom:10px;">חודש ראשון — היכרות</div>
+            <div style="font-size:0.95rem; color:var(--text-muted); line-height:1.85; font-weight:300;">רושמים. מסתכלים. מרגישים. בלי לשפוט ובלי לתקן. המטרה היחידה היא להיות נוכחת עם מה שיש.</div>
+          </div>
+        </div>
+        <div class="reveal" style="display:flex; gap:28px; align-items:flex-start; padding:32px 0; border-bottom:1px solid rgba(245,240,235,0.07); transition-delay:0.2s;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:600; color:rgba(232,201,126,0.25); flex-shrink:0; width:60px; line-height:1;">02</div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; margin-bottom:10px;">חודש שני — דפוסים</div>
+            <div style="font-size:0.95rem; color:var(--text-muted); line-height:1.85; font-weight:300;">האפליקציה מתחילה לראות את הדפוסים שלך. לאן הולך הכסף. מה חוזר. מה מרגיש תקוע. עדיין לא משנים — רק מכירים.</div>
+          </div>
+        </div>
+        <div class="reveal" style="display:flex; gap:28px; align-items:flex-start; padding:32px 0; transition-delay:0.3s;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:600; color:rgba(232,201,126,0.4); flex-shrink:0; width:60px; line-height:1;">03</div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; margin-bottom:10px; color:var(--accent);">חודש שלישי — שלמי לעצמך קודם</div>
+            <div style="font-size:0.95rem; color:var(--text-muted); line-height:1.85; font-weight:300;">העיקרון הגדול מ"האיש העשיר בבבל": לפני כולם — לפני החשבונות, לפני ההוצאות — שלמי לעצמך. לא כי יש לך יותר, אלא כי את שווה להיות ראשונה. נעשה את זה יחד, עם כלי ההתמקדות, ממקום פנימי.</div>
+          </div>
+        </div>
+        <div class="reveal" style="display:flex; gap:28px; align-items:flex-start; padding:32px 0; border-top:1px solid rgba(232,201,126,0.12); transition-delay:0.4s;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:600; color:rgba(232,201,126,0.4); flex-shrink:0; width:60px; line-height:1;">04</div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; margin-bottom:10px; color:var(--accent);">ניהול נכון ונעים של הוצאות הבית והחיים הפרטיים</div>
+            <div style="font-size:0.95rem; color:var(--text-muted); line-height:1.85; font-weight:300;">
+              חלוקה ברורה של הוצאות הבית לפי הכדים — לפי הבנה אמיתית של כמה את רוצה להוציא לכל תחום בחיים.<br/><br/>
+              המערכת תאפשר לך לעשות את זה גם כתהליך של עבודה פנימית. אנחנו לא דוחפים בכוח לשום מקום ולשום תוצאה — אלא מקשיבים לכל מה שיש: לרצון, לתקווה, ובאותה מידה לקושי, לפחד, לנטייה להמשיך הרגלים ישנים.<br/><br/>
+              כל חלק בתוכנו זקוק להקשבה — ואם הוא מקבל אותה, תנועה חדשה מגיעה.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOCUSING TOOLS ── -->
+  <section style="padding:80px 0; background:#060f1c;">
+    <div style="max-width:920px; margin:0 auto; padding:0 24px;">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div style="font-size:0.75rem; letter-spacing:0.14em; color:rgba(232,201,126,0.6); text-transform:uppercase; margin-bottom:14px;">עבודה פנימית</div>
+        <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(1.7rem,3vw,2.4rem); font-weight:600; margin-bottom:16px;">ההתמקדות נוכחת בכל שלב — כל יום את בוחרת</h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.9; max-width:560px; margin:0 auto;">
+          העבודה הפנימית לא נפרדת מהמספרים — היא שזורה לתוכם.<br/>
+          בכל פעולה פיננסית יש הזמנה לעצור ולהקשיב. כל יום את בוחרת מה מתאים.
+        </p>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px;">
+
+        <div class="reveal" style="background:rgba(91,168,212,0.07); border:1px solid rgba(91,168,212,0.2); border-radius:14px; padding:26px 22px;">
+          <div style="font-size:1.6rem; margin-bottom:10px;">🌿</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:#5BA8D4; margin-bottom:8px;">שיח התמקדות</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.85;">שיח פנימי פתוח — על כסף, על עצמך, על כל מה שעולה. לא לפתור — לשמוע.</div>
+        </div>
+
+        <div class="reveal" style="background:rgba(212,175,55,0.07); border:1px solid rgba(212,175,55,0.2); border-radius:14px; padding:26px 22px; transition-delay:0.05s;">
+          <div style="font-size:1.6rem; margin-bottom:10px;">✨</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:#D4AF37; margin-bottom:8px;">לאן אני הולכת</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.85;">לשבת עם החזון. לכתוב לעצמי מהעתיד. מה הגוף מרגיש כשמדמיינים את החיים שרוצים?</div>
+        </div>
+
+        <div class="reveal" style="background:rgba(109,191,138,0.07); border:1px solid rgba(109,191,138,0.2); border-radius:14px; padding:26px 22px; transition-delay:0.1s;">
+          <div style="font-size:1.6rem; margin-bottom:10px;">☀️</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:#6DBF8A; margin-bottom:8px;">תרגיל יומי</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.85;">90 שאלות התמקדות — אחת לכל יום. לשבת דקה, לכתוב מה עולה, ולצאת ליום אחרת.</div>
+        </div>
+
+        <div class="reveal" style="background:rgba(155,143,212,0.07); border:1px solid rgba(155,143,212,0.2); border-radius:14px; padding:26px 22px; transition-delay:0.15s;">
+          <div style="font-size:1.6rem; margin-bottom:10px;">🌀</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:#9B8FD4; margin-bottom:8px;">תרגיל שבועי</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.85;">פגישה עם השפע ועם ההתנגדות לשפע — לשמוע את שני הקולות ולהחזיק אותם יחד בלי לדחות אף אחד.</div>
+        </div>
+
+        <div class="reveal" style="background:rgba(201,123,123,0.07); border:1px solid rgba(201,123,123,0.2); border-radius:14px; padding:26px 22px; transition-delay:0.2s;">
+          <div style="font-size:1.6rem; margin-bottom:10px;">🌡️</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:#C97B7B; margin-bottom:8px;">ברומטר הכסף</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.85;">שאלה קצרה אחת בכל כניסה — איפה הגוף עם הכסף היום? לאורך זמן נבנית תמונה שלמה.</div>
+        </div>
+
+        <div class="reveal" style="background:rgba(232,201,126,0.07); border:1px solid rgba(232,201,126,0.2); border-radius:14px; padding:26px 22px; transition-delay:0.25s;">
+          <div style="font-size:1.6rem; margin-bottom:10px;">🙏</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:#E8C97E; margin-bottom:8px;">הכרת תודה לכל הכנסה</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.85;">אחרי כל רישום הכנסה — רגע קצר לעצור, להרגיש, ולשאול: מה הגוף מרגיש עם הכסף הזה? והאם אפשר להכיר תודה?</div>
+        </div>
+
+        <div class="reveal" style="background:rgba(91,180,180,0.07); border:1px solid rgba(91,180,180,0.2); border-radius:14px; padding:26px 22px; transition-delay:0.3s;">
+          <div style="font-size:1.6rem; margin-bottom:10px;">🫧</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:#5BB4B4; margin-bottom:8px;">קשה לי להסתכל על המספרים</div>
+          <div style="font-size:0.85rem; color:var(--text-muted); line-height:1.85;">בכל עמוד הוצאות — אפשרות לעצור ולשאול מה קורה בגוף לפני שממשיכים. הקושי הוא לא כישלון.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── VIDEO 2 ── -->
+  <section style="position:relative; height:60vh; overflow:hidden;">
+    <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; opacity:0.6;">
+      <source src="video 2 - walking woman.mp4" type="video/mp4">
+    </video>
+    <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(13,27,46,0.4) 0%, rgba(13,27,46,0.2) 50%, rgba(13,27,46,0.7) 100%);"></div>
+  </section>
+
+  <!-- ── DAILY QUESTION TEASER ── -->
+  <section style="padding:80px 0; background:#060f1c;">
+    <div style="max-width:640px; margin:0 auto; padding:0 24px; text-align:center;">
+      <div style="font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(109,191,138,0.7); margin-bottom:20px;">תרגול יומי — שאלת ההתמקדות של היום</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:#f5f0eb; line-height:1.8; margin-bottom:10px; font-style:italic;" id="home-dq">
+        כל יום שאלה חדשה מחכה לך —<br/>כדי לשבת דקה עם עצמך לפני שמתחיל היום.
+      </div>
+      <div style="font-size:0.82rem; color:rgba(245,240,235,0.4); margin-bottom:32px;">90 שאלות · מתחלפות אוטומטית · שאלה אחת ביום</div>
+      <a href="daily-practice.html" style="display:inline-block; font-family:'Cormorant Garamond',serif; font-size:1.05rem; color:#6DBF8A; border:1px solid rgba(109,191,138,0.35); border-radius:40px; padding:13px 36px; text-decoration:none; transition:all 0.25s ease;" onmouseover="this.style.background='rgba(109,191,138,0.1)'" onmouseout="this.style.background='transparent'">
+        קראי את שאלת היום ←
+      </a>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section id="cta">
+    <div class="container">
+      <h2 class="cta-title reveal">את לא צריכה<br/><em>להיות מוכנה</em></h2>
+      <p class="cta-sub reveal" style="transition-delay:0.1s">
+        את צריכה רק להיות מוכנה להיות עם מה שיש. זה מספיק. מכאן מתחיל השינוי.
+      </p>
+      <a href="home.html" class="btn-enter reveal" style="transition-delay:0.2s">כנסי למסע היומי ←</a>
+    </div>
+  </section>
+
+  <!-- ── PRIVATE SESSIONS ── -->
+  <section style="padding:80px 0; background:#060f1c; text-align:center;">
+    <div style="max-width:600px; margin:0 auto; padding:0 24px;">
+      <div style="font-size:1.6rem; margin-bottom:20px;">🌿</div>
+      <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,3vw,2.2rem); font-weight:600; color:var(--accent); margin-bottom:20px; line-height:1.4;">
+        סשן פרטי בגישת ההתמקדות
+      </h2>
+      <p style="color:var(--text-muted); font-size:1rem; line-height:2; margin-bottom:36px;">
+        באם נתקלת בחוויה קשה — או ההיפך, בתחושה שאת לקראת פריצה —<br/>
+        ואת רוצה להתקדם ולעבד את אחת מהחוויות האלו,<br/>
+        מוזמנת לתאם איתי סשן פרטי בגישת ההתמקדות.
+      </p>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+        <a href="tel:0544250910"
+           style="display:inline-flex; align-items:center; gap:10px; padding:14px 32px; border:1px solid rgba(232,201,126,0.35); border-radius:40px; color:var(--text); text-decoration:none; font-size:1rem; transition:border-color 0.2s;"
+           onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='rgba(232,201,126,0.35)'">
+          <span style="font-size:1.1rem;">📞</span> 054-425-0910
+        </a>
+        <a href="mailto:yardenkerem@gmail.com"
+           style="display:inline-flex; align-items:center; gap:10px; padding:14px 32px; border:1px solid rgba(232,201,126,0.35); border-radius:40px; color:var(--text); text-decoration:none; font-size:1rem; transition:border-color 0.2s;"
+           onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='rgba(232,201,126,0.35)'">
+          <span style="font-size:1.1rem;">✉️</span> yardenkerem@gmail.com
+        </a>
+      </div>
+      <p style="margin-top:28px; font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--text-muted); font-style:italic;">
+        תמיד איתך, ירדן כרם
+      </p>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <span>Focusing Finance · Focusing for Freedom</span>
+    <a href="home.html">כנסי למסע היומי ←</a>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

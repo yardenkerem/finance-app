@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focusing Finance — לוח בקרה</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .income-log-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 130px 120px 120px 110px 100px;
+      align-items: center;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+      gap: 8px;
+    }
+    .income-log-row:last-child { border-bottom: none; }
+    .income-log-row:hover { background: rgba(245,240,235,0.02); }
+
+    .income-log-row.editing { background: rgba(201,169,110,0.05); }
+
+    .income-log-header {
+      display: grid;
+      grid-template-columns: 110px 1fr 130px 120px 120px 110px 100px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .edit-input {
+      width: 100%; background: rgba(245,240,235,0.08);
+      border: 1px solid var(--border-accent); border-radius: 6px;
+      padding: 6px 10px; color: var(--text);
+      font-family: 'Assistant', sans-serif; font-size: 0.85rem;
+      direction: rtl;
+    }
+    .edit-input:focus { outline: none; border-color: var(--accent); }
+
+    .edit-select {
+      width: 100%; background: #1a2e22;
+      border: 1px solid var(--border-accent); border-radius: 6px;
+      padding: 6px 10px; color: var(--text);
+      font-family: 'Assistant', sans-serif; font-size: 0.82rem;
+      -webkit-appearance: none;
+    }
+    .edit-select:focus { outline: none; border-color: var(--accent); }
+
+    .fm-textarea {
+      width: 100%;
+      background: rgba(245,240,235,0.05);
+      border: 1px solid rgba(232,201,126,0.2);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      resize: none;
+      min-height: 96px;
+      margin-bottom: 20px;
+      direction: rtl;
+      text-align: right;
+    }
+    .fm-textarea::placeholder { color: rgba(245,240,235,0.28); }
+    .fm-textarea:focus { outline: none; border-color: rgba(232,201,126,0.45); }
+
+    .log-date { font-size: 0.83rem; color: var(--text-muted); }
+    .log-desc { font-size: 0.92rem; font-weight: 500; }
+    .log-method { }
+    .log-gross { font-size: 0.88rem; color: var(--text-muted); }
+    .log-vat { font-size: 0.85rem; color: var(--red); }
+    .log-tax { font-size: 0.85rem; color: var(--red); }
+    .log-net { font-size: 0.95rem; font-weight: 700; color: var(--green); }
+
+    .quick-add-bar {
+      background: var(--bg-card-2);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: 110px 1fr 160px 130px 1fr auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .income-log-header { display: none; }
+      .income-log-row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .quick-add-bar {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="page-label" id="month-label"></div>
+      <h1 class="page-title">יומן ההכנסות שלי</h1>
+      <p class="page-subtitle">כל תשלום שמגיע — נרשם כאן</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" style="margin-bottom:24px;">
+      <div class="stat-card">
+        <div class="stat-label">הכנסה ברוטו החודש</div>
+        <div class="stat-value accent" id="stat-gross">₪0</div>
+        <div class="stat-sub" id="stat-count">0 תשלומים</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">18% מע"מ</div>
+        <div class="stat-value danger" id="stat-vat">₪0</div>
+        <div class="stat-sub">לא שלך</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" id="stat-tax-label">0% מס הכנסה</div>
+        <div class="stat-value danger" id="stat-tax">₪0</div>
+        <div class="stat-sub">להפרשה</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">נטו שלך החודש</div>
+        <div class="stat-value positive" id="stat-net">₪0</div>
+        <div class="stat-sub">אחרי מיסים</div>
+      </div>
+    </div>
+
+    <!-- Tax rate setting — always visible -->
+    <div id="setup-prompt" style="margin-bottom:20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:rgba(201,169,110,0.05); border:1px solid rgba(201,169,110,0.2); border-radius:10px; padding:12px 18px;">
+      <span style="font-size:0.8rem; color:var(--text-faint); white-space:nowrap;">הגדרה חד-פעמית — מס הכנסה:</span>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <input type="number" id="tax-rate-input" min="0" max="50" placeholder="0"
+          style="width:64px; background:rgba(245,240,235,0.08); border:1px solid var(--border-accent); border-radius:6px; padding:6px 10px; color:var(--text); font-family:'Assistant',sans-serif; font-size:0.88rem; text-align:center; direction:ltr;"/>
+        <span style="color:var(--text-muted); font-size:0.88rem;">%</span>
+      </div>
+      <button onclick="saveTaxRate()" class="btn btn-primary" style="padding:6px 18px; font-size:0.82rem;">שמרי</button>
+      <span style="font-size:0.75rem; color:var(--text-faint);">לא בטוחה? שמי 0 — תמיד אפשר לשנות</span>
+    </div>
+
+    <!-- Quick add -->
+    <div style="margin-bottom:12px;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:600; color:var(--text); margin-bottom:4px;">רישום הכנסה חדשה</div>
+      <div style="font-size:0.83rem; color:var(--text-muted);">כל תשלום שמגיע — רשמי אותו כאן. האפליקציה תחשב אוטומטית את המע"מ ומס ההכנסה ותראה כמה באמת נשאר לך.</div>
+    </div>
+    <div class="quick-add-bar">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">תאריך</label>
+        <input type="date" class="form-input" id="q-date"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">תיאור</label>
+        <input type="text" class="form-input" id="q-desc" placeholder="למשל: שם הלקוח, סוג השירות"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">אמצעי תשלום</label>
+        <select class="form-select" id="q-method">
+          <option value="">בחרי...</option>
+          <option value="bit">ביט</option>
+          <option value="paybox">פייבוקס</option>
+          <option value="credit">כרטיס אשראי</option>
+          <option value="cash">מזומן</option>
+          <option value="check">שיק</option>
+          <option value="transfer">העברה בנקאית</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">סכום (₪)</label>
+        <input type="number" class="form-input" id="q-amount" placeholder="0" min="0" oninput="previewNet()"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">נטו משוער</label>
+        <div style="padding:12px 0; font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:var(--green);" id="q-preview">₪0</div>
+      </div>
+      <div style="padding-bottom:2px;">
+        <button class="btn btn-primary" onclick="addIncome()" style="height:46px; padding:0 24px;">+ רשמי</button>
+      </div>
+    </div>
+
+    <!-- Income log -->
+    <div class="card" style="padding:0; overflow:hidden;">
+
+      <!-- Filter bar -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--border);">
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost btn-sm active-filter" id="filter-month" onclick="setFilter('month')">החודש</button>
+          <button class="btn btn-ghost btn-sm" id="filter-all" onclick="setFilter('all')">כל הזמן</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">ייצוא CSV</button>
+      </div>
+
+      <!-- Table header -->
+      <div class="income-log-header">
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint);">תאריך</div>
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint);">תיאור</div>
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint);">אמצעי תשלום</div>
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint);">ברוטו</div>
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint);">מע"מ</div>
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint);">מס הכנסה</div>
+        <div style="font-size:0.72rem; letter-spacing:0.07em; color:var(--text-faint);">נטו</div>
+      </div>
+
+      <!-- Rows -->
+      <div id="income-rows"></div>
+
+      <!-- Empty state -->
+      <div id="income-empty" style="display:none;" class="empty-state">
+        <div class="empty-icon">💛</div>
+        <p>עדיין אין הכנסות רשומות.<br/>כשיגיע תשלום — רשמי אותו למעלה.</p>
+      </div>
+
+      <!-- Totals row -->
+      <div id="totals-row" style="display:none; background:rgba(201,169,110,0.05); border-top:1px solid var(--border-accent);">
+        <div class="income-log-row" style="border-bottom:none;">
+          <div style="font-size:0.78rem; color:var(--text-faint);">סה"כ</div>
+          <div></div>
+          <div></div>
+          <div style="font-weight:700; color:var(--accent);" id="total-gross-row">₪0</div>
+          <div style="font-weight:600; color:var(--red);" id="total-vat-row">₪0</div>
+          <div style="font-weight:600; color:var(--red);" id="total-tax-row">₪0</div>
+          <div style="font-weight:700; color:var(--green); font-size:1.05rem;" id="total-net-row">₪0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reflection section (previous month) -->
+    <div id="reflection-section" style="display:none; margin-top:28px;"></div>
+
+    <!-- Monthly goal section -->
+    <div class="card" style="margin-top:28px; border-color:rgba(201,169,110,0.3);">
+      <div id="goal-section"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Focusing Moment -->
+<div class="focusing-overlay" id="fo-overlay" onclick="closeFocusing()"></div>
+<div class="focusing-panel" id="fo-panel">
+  <div class="focusing-panel-inner">
+    <div class="fm-icon" id="fo-icon">🌿</div>
+    <div class="fm-amount" id="fo-amount"></div>
+    <div class="fm-title" id="fo-title">כסף הגיע אליך</div>
+    <div class="fm-text" id="fo-text"></div>
+    <div id="fo-response-wrap" style="display:none;">
+      <textarea class="fm-textarea" id="fo-response" placeholder="כתבי כאן — מה עולה בך? מה הגוף מרגיש?"></textarea>
+    </div>
+    <div class="fm-actions" id="fo-actions"></div>
+  </div>
+</div>
+
+<script>
+  const MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  const METHOD_LABELS = { bit:'ביט', paybox:'פייבוקס', credit:'כרטיס אשראי', cash:'מזומן', check:'שיק', transfer:'העברה בנקאית' };
+  const FOCUSING_PROMPTS_STEP1 = [
+    'שבי רגע עם הסכום הזה.\n\nאיפה בגוף את מרגישה אותו עכשיו?\nמה עולה בך?',
+    'הכסף הזה הגיע — עצרי שניה.\n\nמה מרגיש הגוף שלך עכשיו?\nיש שם שמחה? הקלה? חשש? הכל בסדר.',
+    'לפני שממשיכים —\n\nמה עולה בך עם הסכום הזה?\nתני לתחושה להיות שם, בלי לשפוט אותה.',
+    'כל שקל שמגיע אליך הוא ביטוי לערך שנתת.\n\nמה הגוף שלך מרגיש עכשיו, עם המספר הזה?',
+  ];
+
+  let currentFilter = 'month';
+
+  function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
+  function fmtDate(d) {
+    const dt = new Date(d);
+    return dt.getDate() + ' ' + MONTHS[dt.getMonth()];
+  }
+
+  function getSettings() { return JSON.parse(localStorage.getItem('ff_settings') || '{"incomeTaxRate":0}'); }
+  function getIncomes() { return JSON.parse(localStorage.getItem('ff_incomes') || '[]'); }
+  function saveIncomes(arr) { localStorage.setItem('ff_incomes', JSON.stringify(arr)); }
+
+  function calcNet(amount, taxRate) {
+    const vat = amount * 0.18;
+    const base = amount - vat;
+    const tax = base * (taxRate / 100);
+    return { gross: amount, vat, base, tax, net: base - tax };
+  }
+
+  // Set today's date
+  document.getElementById('q-date').value = new Date().toLocaleDateString('en-CA');
+
+  function saveTaxRate() {
+    const val = parseInt(document.getElementById('tax-rate-input').value) || 0;
+    const settings = getSettings();
+    settings.incomeTaxRate = val;
+    localStorage.setItem('ff_settings', JSON.stringify(settings));
+    render();
+  }
+
+  function previewNet() {
+    const amount = parseFloat(document.getElementById('q-amount').value) || 0;
+    const settings = getSettings();
+    const c = calcNet(amount, settings.incomeTaxRate || 0);
+    document.getElementById('q-preview').textContent = fmt(c.net);
+  }
+
+  function addIncome() {
+    const date = document.getElementById('q-date').value;
+    const desc = document.getElementById('q-desc').value.trim();
+    const method = document.getElementById('q-method').value;
+    const amount = parseFloat(document.getElementById('q-amount').value);
+
+    if (!date) { alert('אנא בחרי תאריך'); return; }
+    if (!amount || amount <= 0) { alert('אנא הכניסי סכום'); return; }
+    if (!method) { alert('אנא בחרי אמצעי תשלום'); return; }
+
+    const income = {
+      id: Date.now().toString(),
+      date, amount, method,
+      description: desc || 'תשלום',
+      createdAt: new Date().toISOString()
+    };
+
+    const incomes = getIncomes();
+    incomes.push(income);
+    saveIncomes(incomes);
+
+    // Reset
+    document.getElementById('q-desc').value = '';
+    document.getElementById('q-method').value = '';
+    document.getElementById('q-amount').value = '';
+    document.getElementById('q-preview').textContent = '₪0';
+    document.getElementById('q-date').value = new Date().toLocaleDateString('en-CA');
+
+    showFocusingMoment(amount);
+    render();
+  }
+
+  function showFocusingMoment(amount) {
+    const prompt = FOCUSING_PROMPTS_STEP1[Math.floor(Math.random() * FOCUSING_PROMPTS_STEP1.length)];
+    document.getElementById('fo-amount').textContent = fmt(amount);
+    document.getElementById('fo-icon').textContent = '🌿';
+    document.getElementById('fo-title').textContent = 'כסף הגיע אליך';
+    document.getElementById('fo-text').textContent = prompt;
+    document.getElementById('fo-response').value = '';
+    document.getElementById('fo-response-wrap').style.display = 'block';
+    document.getElementById('fo-actions').innerHTML = `
+      <button class="btn btn-primary" onclick="showFocusingStep2()">המשיכי ←</button>
+      <button class="btn btn-ghost" onclick="closeFocusing()">דלגי</button>
+    `;
+    document.getElementById('fo-overlay').classList.add('visible');
+    document.getElementById('fo-panel').classList.add('visible');
+  }
+
+  function showFocusingStep2() {
+    const text = (document.getElementById('fo-response')?.value || '').trim();
+    if (text) {
+      const reflections = JSON.parse(localStorage.getItem('ff_income_reflections') || '[]');
+      reflections.unshift({ date: new Date().toISOString(), text });
+      localStorage.setItem('ff_income_reflections', JSON.stringify(reflections));
+    }
+    document.getElementById('fo-response-wrap').style.display = 'none';
+    document.getElementById('fo-icon').textContent = '🙏';
+    document.getElementById('fo-title').textContent = 'רגע אחד נוסף';
+    document.getElementById('fo-text').textContent = 'האם יש בך מקום — ולו קטן — להגיד תודה על הכסף הזה?\n\nלא חייבת להרגיש את זה בשלמות. גם תודה קטנה, מהמקום שיכול — מספיקה.';
+    document.getElementById('fo-actions').innerHTML = `
+      <button class="btn btn-primary" onclick="closeFocusing()" style="font-size:1.1rem;">תודה 🙏</button>
+      <button class="btn btn-ghost" onclick="closeFocusing()">עדיין קשה לי — והכל בסדר</button>
+    `;
+  }
+
+  function closeFocusing() {
+    document.getElementById('fo-response-wrap').style.display = 'none';
+    document.getElementById('fo-overlay').classList.remove('visible');
+    document.getElementById('fo-panel').classList.remove('visible');
+  }
+
+  function deleteIncome(id) {
+    if (!confirm('למחוק תשלום זה?')) return;
+    saveIncomes(getIncomes().filter(i => i.id !== id));
+    render();
+  }
+
+  function editIncome(id) {
+    const inc = getIncomes().find(i => i.id === id);
+    if (!inc) return;
+
+    const row = document.getElementById('row-' + id);
+    if (!row) return;
+
+    row.classList.add('editing');
+    row.innerHTML = `
+      <input class="edit-input" type="date" id="edit-date-${id}" value="${inc.date}"/>
+      <input class="edit-input" type="text" id="edit-desc-${id}" value="${inc.description}"/>
+      <select class="edit-select" id="edit-method-${id}">
+        <option value="bit" ${inc.method==='bit'?'selected':''}>ביט</option>
+        <option value="paybox" ${inc.method==='paybox'?'selected':''}>פייבוקס</option>
+        <option value="credit" ${inc.method==='credit'?'selected':''}>כרטיס אשראי</option>
+        <option value="cash" ${inc.method==='cash'?'selected':''}>מזומן</option>
+        <option value="check" ${inc.method==='check'?'selected':''}>שיק</option>
+        <option value="transfer" ${inc.method==='transfer'?'selected':''}>העברה בנקאית</option>
+      </select>
+      <input class="edit-input" type="number" id="edit-amount-${id}" value="${inc.amount}" min="0" style="direction:ltr;"/>
+      <div style="font-size:0.78rem; color:var(--text-faint); grid-column:span 2;">המחשב יחשב מחדש אחרי שמירה</div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button class="btn btn-primary btn-sm" onclick="saveEdit('${id}')">שמרי</button>
+        <button class="btn btn-ghost btn-sm" onclick="cancelEdit('${id}')">ביטול</button>
+      </div>
+    `;
+    document.getElementById('edit-date-' + id).focus();
+  }
+
+  function saveEdit(id) {
+    const date = document.getElementById('edit-date-' + id).value;
+    const desc = document.getElementById('edit-desc-' + id).value.trim();
+    const method = document.getElementById('edit-method-' + id).value;
+    const amount = parseFloat(document.getElementById('edit-amount-' + id).value);
+
+    if (!date || !amount || amount <= 0 || !method) {
+      alert('אנא מלאי את כל השדות');
+      return;
+    }
+
+    const incomes = getIncomes().map(i => {
+      if (i.id !== id) return i;
+      return { ...i, date, description: desc || 'תשלום', method, amount };
+    });
+    saveIncomes(incomes);
+    render();
+  }
+
+  function cancelEdit(id) {
+    render();
+  }
+
+  function setFilter(f) {
+    currentFilter = f;
+    document.getElementById('filter-month').style.background = f === 'month' ? 'var(--accent-light)' : '';
+    document.getElementById('filter-month').style.color = f === 'month' ? 'var(--accent)' : '';
+    document.getElementById('filter-all').style.background = f === 'all' ? 'var(--accent-light)' : '';
+    document.getElementById('filter-all').style.color = f === 'all' ? 'var(--accent)' : '';
+
+    const now = new Date();
+    document.getElementById('month-label').textContent = f === 'month'
+      ? MONTHS[now.getMonth()] + ' ' + now.getFullYear()
+      : 'כל הזמן';
+    render();
+  }
+
+  function getFilteredIncomes() {
+    const all = getIncomes().sort((a,b) => new Date(b.date) - new Date(a.date));
+    if (currentFilter === 'all') return all;
+    const now = new Date();
+    return all.filter(i => {
+      const d = new Date(i.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+  }
+
+  function render() {
+    const settings = getSettings();
+    const taxRate = settings.incomeTaxRate || 0;
+    const incomes = getFilteredIncomes();
+    const allIncomes = getIncomes();
+
+    // Always show tax rate field, pre-filled with current value
+    document.getElementById('tax-rate-input').value = taxRate || '';
+
+    // Stats (always current month)
+    const now = new Date();
+    const monthIncomes = allIncomes.filter(i => {
+      const d = new Date(i.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    const monthGross = monthIncomes.reduce((s,i) => s+i.amount, 0);
+    const mc = calcNet(monthGross, taxRate);
+    document.getElementById('stat-gross').textContent = fmt(mc.gross);
+    document.getElementById('stat-vat').textContent = fmt(mc.vat);
+    document.getElementById('stat-tax').textContent = fmt(mc.tax);
+    document.getElementById('stat-net').textContent = fmt(mc.net);
+    document.getElementById('stat-count').textContent = monthIncomes.length + ' תשלומים';
+    document.getElementById('stat-tax-label').textContent = taxRate + '% מס הכנסה';
+
+    // Rows
+    const container = document.getElementById('income-rows');
+    const empty = document.getElementById('income-empty');
+    const totalsRow = document.getElementById('totals-row');
+
+    if (incomes.length === 0) {
+      container.innerHTML = '';
+      empty.style.display = 'block';
+      totalsRow.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+    totalsRow.style.display = 'block';
+
+    let totalGross = 0, totalVat = 0, totalTax = 0, totalNet = 0;
+
+    container.innerHTML = incomes.map(inc => {
+      const c = calcNet(inc.amount, taxRate);
+      totalGross += c.gross;
+      totalVat += c.vat;
+      totalTax += c.tax;
+      totalNet += c.net;
+
+      return `<div class="income-log-row" id="row-${inc.id}">
+        <div class="log-date">${fmtDate(inc.date)}</div>
+        <div class="log-desc">${inc.description}</div>
+        <div class="log-method"><span class="badge badge-gold">${METHOD_LABELS[inc.method]||inc.method}</span></div>
+        <div class="log-gross">${fmt(c.gross)}</div>
+        <div class="log-vat">-${fmt(c.vat)}</div>
+        <div class="log-tax">-${fmt(c.tax)}</div>
+        <div class="log-net">${fmt(c.net)}</div>
+        <div style="display:flex; gap:4px; align-items:center;">
+          <button onclick="editIncome('${inc.id}')" title="ערכי" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:0.9rem;padding:4px 6px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-faint)'">✎</button>
+          <button onclick="deleteIncome('${inc.id}')" title="מחקי" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:1rem;padding:4px 6px;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-faint)'">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    renderGoalSection();
+    document.getElementById('total-gross-row').textContent = fmt(totalGross);
+    document.getElementById('total-vat-row').textContent = fmt(totalVat);
+    document.getElementById('total-tax-row').textContent = fmt(totalTax);
+    document.getElementById('total-net-row').textContent = fmt(totalNet);
+  }
+
+  function exportCSV() {
+    const settings = getSettings();
+    const taxRate = settings.incomeTaxRate || 0;
+    const incomes = getFilteredIncomes();
+    const rows = [['תאריך','תיאור','אמצעי תשלום','ברוטו','מעמ','מס הכנסה','נטו']];
+    incomes.forEach(inc => {
+      const c = calcNet(inc.amount, taxRate);
+      rows.push([inc.date, inc.description, METHOD_LABELS[inc.method]||inc.method,
+        Math.round(c.gross), Math.round(c.vat), Math.round(c.tax), Math.round(c.net)]);
+    });
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob(['﻿'+csv], { type:'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'הכנסות.csv';
+    a.click();
+  }
+
+  // ── Monthly goal & reflection ──────────────────────────────
+
+  function getMonthKey(d) {
+    const dt = d || new Date();
+    return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0');
+  }
+  function getGoals() { return JSON.parse(localStorage.getItem('ff_monthly_goals') || '{}'); }
+  function saveGoals(g) { localStorage.setItem('ff_monthly_goals', JSON.stringify(g)); }
+
+  function setGoal() {
+    const val = parseFloat(document.getElementById('goal-input').value);
+    if (!val || val <= 0) return;
+    const goals = getGoals();
+    const key = getMonthKey();
+    if (!goals[key]) goals[key] = {};
+    goals[key].goal = val;
+    saveGoals(goals);
+    renderGoalSection();
+  }
+
+  function editGoal() {
+    const goals = getGoals();
+    const key = getMonthKey();
+    if (goals[key]) delete goals[key].goal;
+    saveGoals(goals);
+    renderGoalSection();
+  }
+
+  function renderGoalSection() {
+    const now = new Date();
+    const key = getMonthKey();
+    const goals = getGoals();
+    const currentGoal = goals[key];
+    const settings = getSettings();
+    const taxRate = settings.incomeTaxRate || 0;
+
+    const monthIncomes = getIncomes().filter(i => {
+      const d = new Date(i.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    const totalNet = monthIncomes.reduce((s,i) => s + calcNet(i.amount, taxRate).net, 0);
+
+    const container = document.getElementById('goal-section');
+
+    if (!currentGoal || !currentGoal.goal) {
+      container.innerHTML = `
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--accent); margin-bottom:6px;">מה היעד שלך לחודש ${MONTHS[now.getMonth()]}?</div>
+        <div style="font-size:0.85rem; color:var(--text-faint); margin-bottom:18px;">כמה נטו את מקווה להכניס החודש?</div>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="color:var(--text-muted);">₪</span>
+            <input type="number" id="goal-input" min="0" placeholder="למשל: 15000"
+              style="width:160px; background:rgba(245,240,235,0.08); border:1px solid var(--border-accent); border-radius:8px; padding:10px 14px; color:var(--text); font-family:'Assistant',sans-serif; font-size:1rem; direction:ltr;"
+              onkeydown="if(event.key==='Enter') setGoal()"/>
+          </div>
+          <button onclick="setGoal()" class="btn btn-primary" style="padding:10px 24px;">קבעי יעד</button>
+        </div>`;
+      return;
+    }
+
+    const goal = currentGoal.goal;
+    const pct = Math.min(100, Math.round((totalNet / goal) * 100));
+    const over = totalNet >= goal;
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--accent);">היעד שלי לחודש ${MONTHS[now.getMonth()]}</div>
+        <button onclick="editGoal()" style="background:none;border:1px solid rgba(232,201,126,0.3);border-radius:20px;cursor:pointer;color:var(--accent);font-size:0.88rem;padding:4px 14px;font-family:'Assistant',sans-serif;">קביעת היעד או שינויו</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-faint); margin-bottom:6px;">
+        <span>₪0</span>
+        <span style="color:var(--accent); font-weight:600;">${fmt(goal)}</span>
+      </div>
+      <div style="background:rgba(245,240,235,0.06); border-radius:20px; height:10px; overflow:hidden; margin-bottom:14px;">
+        <div style="height:100%; width:${pct}%; background:${over?'var(--green)':'var(--accent)'}; border-radius:20px; transition:width 0.6s ease;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div>
+          <span style="font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:600; color:${over?'var(--green)':'var(--text)'};">${fmt(totalNet)}</span>
+          <span style="font-size:0.8rem; color:var(--text-faint); margin-right:8px;">נטו עד עכשיו</span>
+        </div>
+        <div style="font-size:0.85rem; color:${over?'var(--green)':'var(--text-muted)'};">
+          ${over ? '🎉 עברת את היעד ב-' + fmt(totalNet - goal) : 'נשאר ' + fmt(goal - totalNet) + ' ליעד'}
+        </div>
+      </div>`;
+  }
+
+  // ── End-of-month reflection ──────────────────────────────
+
+  function renderReflection() {
+    const now = new Date();
+    const container = document.getElementById('reflection-section');
+    const goals = getGoals();
+    const settings = getSettings();
+    const taxRate = settings.incomeTaxRate || 0;
+
+    // Case 1: Last 3 days of current month
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const daysLeft = lastDay - now.getDate() + 1;
+    const currentKey = getMonthKey();
+    const currentGoal = goals[currentKey];
+
+    if (daysLeft <= 3 && currentGoal && currentGoal.goal && !currentGoal.reflectionDone) {
+      const currentIncomes = getIncomes().filter(i => {
+        const d = new Date(i.date);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      });
+      const currentNet = currentIncomes.reduce((s,i) => s + calcNet(i.amount, taxRate).net, 0);
+      showReflectionCard(container, {
+        key: currentKey,
+        goal: currentGoal.goal,
+        net: currentNet,
+        metGoal: currentNet >= currentGoal.goal,
+        header: `⏳ ${MONTHS[now.getMonth()]} מסתיים בעוד ${daysLeft === 1 ? 'יום אחד' : daysLeft + ' ימים'} — יש לך דקה?`,
+        note: 'המספרים עשויים עוד להשתנות עד סוף החודש'
+      });
+      return;
+    }
+
+    // Case 2: New month — previous month reflection
+    const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const prevKey = getMonthKey(prevDate);
+    const prevGoal = goals[prevKey];
+
+    if (!prevGoal || !prevGoal.goal || prevGoal.reflectionDone) {
+      container.style.display = 'none';
+      return;
+    }
+
+    const prevIncomes = getIncomes().filter(i => {
+      const d = new Date(i.date);
+      return d.getMonth() === prevDate.getMonth() && d.getFullYear() === prevDate.getFullYear();
+    });
+    const prevNet = prevIncomes.reduce((s,i) => s + calcNet(i.amount, taxRate).net, 0);
+
+    showReflectionCard(container, {
+      key: prevKey,
+      goal: prevGoal.goal,
+      net: prevNet,
+      metGoal: prevNet >= prevGoal.goal,
+      header: `🌙 ${MONTHS[prevDate.getMonth()]} — רגע של התבוננות`,
+      note: null
+    });
+  }
+
+  function showReflectionCard(container, { key, goal, net, metGoal, header, note }) {
+    const pct = Math.round((net / goal) * 100);
+    const ts = `width:100%;background:rgba(245,240,235,0.05);border:1px solid var(--border);border-radius:10px;padding:14px;color:var(--text);font-family:'Assistant',sans-serif;font-size:0.9rem;line-height:1.8;resize:vertical;direction:rtl;box-sizing:border-box;min-height:80px;`;
+
+    const missedExtra = !metGoal ? `
+      <div>
+        <div style="font-size:0.82rem;color:var(--text-faint);margin-bottom:6px;">מה מרגישה שעמד בינך לבין המספר הזה?</div>
+        <textarea id="refl-gap" style="${ts}" placeholder="לא היו מספיק לקוחות / פחדתי לבקש / היה חודש קשה... כל תשובה נכונה"></textarea>
+      </div>
+      <div>
+        <div style="font-size:0.82rem;color:var(--text-faint);margin-bottom:6px;">אם חברה טובה הייתה יושבת לידך עכשיו — מה היא הייתה אומרת?</div>
+        <textarea id="refl-kind" style="${ts}" placeholder="כתבי מה חברה אוהבת הייתה אומרת..."></textarea>
+      </div>` : '';
+
+    container.style.display = 'block';
+    container.innerHTML = `
+      <div class="card" style="border-color:rgba(201,169,110,0.3); background:rgba(201,169,110,0.04);">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--accent); margin-bottom:6px;">${header}</div>
+        <div style="display:flex; gap:24px; margin-bottom:${note?'6px':'20px'}; flex-wrap:wrap;">
+          <span style="font-size:0.85rem;color:var(--text-faint);">יעד: <strong style="color:var(--text);">${fmt(goal)}</strong></span>
+          <span style="font-size:0.85rem;color:var(--text-faint);">עד עכשיו: <strong style="color:${metGoal?'var(--green)':'var(--text)'};">${fmt(net)}</strong></span>
+          <span style="font-size:0.85rem;color:var(--text-faint);">${pct}% מהיעד</span>
+        </div>
+        ${note ? `<div style="font-size:0.78rem;color:var(--text-faint);margin-bottom:18px;font-style:italic;">${note}</div>` : ''}
+
+        ${metGoal
+          ? `<div style="background:rgba(109,191,138,0.08);border:1px solid rgba(109,191,138,0.25);border-radius:var(--radius);padding:18px 22px;margin-bottom:18px;">
+              <div style="font-size:1rem;color:#6DBF8A;margin-bottom:8px;">${net > goal ? '🎉 עברת את היעד!' : '✓ עמדת ביעד'}</div>
+              <div style="font-size:0.88rem;color:var(--text-muted);line-height:1.9;">
+                ${net > goal ? 'עברת את היעד ב-' + fmt(net - goal) + '.' : 'הגעת למה שתכננת.'} זה לא מובן מאליו.<br/>
+                נעצרת שניה — תני לגוף לקלוט את זה.
+              </div>
+            </div>`
+          : `<div style="font-size:0.88rem;color:var(--text-muted);line-height:1.9;margin-bottom:18px;">
+              הפער — <strong style="color:var(--text);">${fmt(goal - net)}</strong> — הוא לא כישלון. הוא מידע.<br/>
+              אנחנו רוצות לשבת איתו רגע, לא לשפוט אותו.
+            </div>`}
+
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px;">
+          <div>
+            <div style="font-size:0.82rem;color:var(--text-faint);margin-bottom:6px;">
+              איך מרגישה כשאת רואה את המספרים?${!metGoal ? ' (גם אם התרגיל הזה מרגיז — זה בסדר לגמרי לכתוב את זה)' : ''}
+            </div>
+            <textarea id="refl-feeling" style="${ts}" placeholder="כתבי מה עולה..."></textarea>
+          </div>
+          ${missedExtra}
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <button onclick="saveReflection('${key}', ${metGoal})" class="btn btn-primary btn-sm">שמרי וסיימי</button>
+          <button onclick="document.getElementById('reflection-section').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:0.8rem;text-decoration:underline;">אחר כך</button>
+        </div>
+      </div>`;
+  }
+
+  function saveReflection(monthKey, metGoal) {
+    const goals = getGoals();
+    if (!goals[monthKey]) goals[monthKey] = {};
+    goals[monthKey].reflectionDone = true;
+    goals[monthKey].metGoal = metGoal;
+    goals[monthKey].feeling = document.getElementById('refl-feeling')?.value || '';
+    if (!metGoal) {
+      goals[monthKey].gap = document.getElementById('refl-gap')?.value || '';
+      goals[monthKey].kind = document.getElementById('refl-kind')?.value || '';
+    }
+    saveGoals(goals);
+    document.getElementById('reflection-section').style.display = 'none';
+  }
+
+  // Init
+  initNav('income');
+  const now = new Date();
+  document.getElementById('month-label').textContent = MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+  render();
+  renderGoalSection();
+  renderReflection();
+</script>
+</body>
+</html>

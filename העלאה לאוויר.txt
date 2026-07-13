@@ -1,0 +1,3 @@
+הדבקי את השורה הזו בצ'אט (עם הסימן ! בהתחלה):
+
+! vercel "C:\Users\Yarden\OneDrive\שולחן העבודה\finance-app" --prod

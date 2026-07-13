@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .journey-intro {
+      text-align: center;
+      padding: 52px 0 44px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .journey-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .journey-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.7rem, 3vw, 2.2rem);
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 20px;
+    }
+    .journey-body {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.95;
+      font-weight: 300;
+    }
+
+    .steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 56px; }
+
+    /* Single-link step */
+    .step-card {
+      display: flex; align-items: center; gap: 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      text-decoration: none; color: var(--text);
+      transition: all var(--transition);
+    }
+    .step-card:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-card-2);
+      transform: translateX(-4px);
+    }
+
+    /* Multi-link step */
+    .step-group {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      transition: border-color var(--transition);
+    }
+    .step-group:hover { border-color: var(--border-accent); }
+    .step-group-top { display: flex; align-items: center; gap: 18px; margin-bottom: 16px; }
+    .step-pills {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+    .step-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all var(--transition);
+    }
+    .step-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    /* Shared */
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      color: rgba(232,201,126,0.22);
+      width: 32px; flex-shrink: 0; line-height: 1;
+    }
+    .step-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .step-body { flex: 1; }
+    .step-when {
+      font-size: 0.69rem; letter-spacing: 0.08em;
+      color: var(--text-faint); margin-bottom: 4px;
+    }
+    .step-title { font-size: 1rem; font-weight: 600; margin-bottom: 3px; }
+    .step-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+    .step-arrow { font-size: 1rem; color: var(--text-faint); flex-shrink: 0; transition: color var(--transition); }
+    .step-card:hover .step-arrow { color: var(--accent); }
+
+    .step-optional { opacity: 0.8; }
+    .step-optional:hover { opacity: 1; }
+
+    /* ── GUIDE SECTION ── */
+    .guide-wrap {
+      margin-bottom: 40px;
+      border: 1px solid rgba(232,201,126,0.2);
+      border-radius: var(--radius);
+      background: rgba(232,201,126,0.03);
+      overflow: hidden;
+    }
+
+    .guide-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text);
+      text-align: right;
+    }
+    .guide-toggle-label {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+    }
+    .guide-toggle-arrow {
+      font-size: 0.8rem;
+      color: var(--text-faint);
+      transition: transform 0.3s;
+    }
+    .guide-wrap.open .guide-toggle-arrow { transform: rotate(180deg); }
+
+    .guide-body {
+      display: none;
+      padding: 4px 28px 28px;
+      border-top: 1px solid rgba(232,201,126,0.12);
+    }
+    .guide-wrap.open .guide-body { display: block; }
+
+    .guide-intro {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.95;
+      font-weight: 300;
+      margin: 20px 0 28px;
+    }
+
+    .guide-step {
+      margin-bottom: 26px;
+      padding-bottom: 26px;
+      border-bottom: 1px solid rgba(245,240,235,0.07);
+    }
+    .guide-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .guide-step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .guide-step-body {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.95;
+      font-weight: 300;
+    }
+    .guide-step-body p { margin-bottom: 8px; }
+    .guide-step-body p:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container-sm">
+
+    <div class="journey-intro">
+      <div class="journey-eyebrow">Focusing Finance · המסע שלך</div>
+      <h1 class="journey-title">האפליקציה הזו היא לא רק<br/>לרשום מספרים</h1>
+      <p class="journey-body">
+        היא נבנתה כמסע — תהליך שבו, עם הזמן, משהו בפנים משתנה.<br/>
+        לא רק הנתונים הכלכליים — אלא היחס שלך לכסף ולעצמך.<br/>
+        הנה סדר מומלץ לכל כניסה:
+      </p>
+    </div>
+
+    <!-- ── GUIDE ── -->
+    <div class="guide-wrap" id="guide-wrap">
+      <button class="guide-toggle" onclick="toggleGuide()">
+        <div class="guide-toggle-label">
+          <span>🌿</span>
+          <span>מדריך לתחילת הדרך — מה עושים פה?</span>
+        </div>
+        <span class="guide-toggle-arrow">▼</span>
+      </button>
+      <div class="guide-body">
+        <p class="guide-intro">
+          אם הגעת לכאן, כנראה שאת כבר יודעת שיש הרבה אפליקציות שיודעות לחשב מספרים. אבל האפליקציה הזו נבנתה מתוך הבנה אחרת: המספרים הם רק התוצאה. הסיפור האמיתי קורה בגוף, ברגש, ובאמונות שלנו סביב כסף.<br/><br/>
+          יש כאן הרבה כלים, וזה יכול להרגיש קצת מציף בהתחלה. זה טבעי. את לא צריכה לעשות הכל ביום אחד. האפליקציה הזו היא לא רשימת מטלות שצריך לסמן עליהן וי — אלא מרחב בטוח לחזור אליו.<br/><br/>
+          כדי להתחיל ברכות, הנה ההמלצה שלנו לסדר הפעולות היומי. את מוזמנת לקחת ממנו רק את מה שמתאים לך היום.
+        </p>
+
+        <div class="guide-step">
+          <div class="guide-step-title">שלב 1 — איך את מרגישה היום? (דקה אחת)</div>
+          <div class="guide-step-body">
+            <p>בכל פעם שתיכנסי לאפליקציה, יקפוץ לך ברומטר הכסף. זו שאלה אחת פשוטה: "איך את מרגישה מול הכסף היום?".</p>
+            <p>אין כאן תשובה נכונה. אם את מרגישה קפאון או כבדות — זה בסדר גמור. אם את מרגישה זרימה ושמחה — זה נהדר. המטרה היא פשוט לשים לב. לפעמים עצם ההכרה בתחושה כבר מתחילה לשחרר אותה.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="guide-step-title">שלב 2 — שאלת היום (2–3 דקות)</div>
+          <div class="guide-step-body">
+            <p>בעמוד "תרגול ☀️🌿" מחכה לך שאלה אחת קצרה. בנינו מסע של 98 שאלות שילוו אותך יום אחרי יום — שאלות שנועדו לעזור לך להכיר את מערכת היחסים שלך עם כסף מקרוב.</p>
+            <p>קחי נשימה, קראי את השאלה, וכתבי את מה שעולה. לא צריך לנסח יפה, ולא צריך לחשוב יותר מדי. פשוט תני לידיים לכתוב. המערכת שומרת את התשובות שלך, ותוכלי לחזור אליהן תמיד.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="guide-step-title">שלב 3 — המציאות המספרית (כמה דקות)</div>
+          <div class="guide-step-body">
+            <p>עכשיו, כשהגוף נוכח, אפשר לגשת למספרים.</p>
+            <p>אם נכנס כסף — רשמי אותו בעמוד "הכנסות". שימי לב שאחרי הרישום, המערכת תציע לך רגע קטן של הכרת תודה.</p>
+            <p>אם יצא כסף — רשמי אותו ב"הוצאות עסק" או "הוצאות בית". אם קשה לך להסתכל על ההוצאות, חפשי את כפתור "קשה לי להסתכל" — הוא שם בדיוק בשביל הרגעים האלה, כדי לעזור לך להיות עם הקושי במקום לברוח ממנו.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="guide-step-title">שלב 4 — העמקה (כשמתחשק לך)</div>
+          <div class="guide-step-body">
+            <p>בימים שיש לך יותר זמן או פניות רגשית, את מוזמנת לחקור את שאר הכלים:</p>
+            <p><strong style="color:var(--text); font-weight:500;">התרגיל השבועי</strong> נמצא גם הוא תחת "תרגול ☀️🌿", ומזמין אותך לפגוש את ההתנגדות לשפע — לשבת עם החלק שמתכווץ כשמישהי מדברת על כסף גדול.</p>
+            <p><strong style="color:var(--text); font-weight:500;">לאן אני הולכת 🌟</strong> הוא עמוד החזון שלך — מקום לכתוב ולדמיין את העתיד הכלכלי שלך, ולבדוק בעדינות מה עומד בדרך.</p>
+            <p><strong style="color:var(--text); font-weight:500;">שיח התמקדות 🌿</strong> הוא כלי לשיחה פנימית עמוקה, לכל רגע שבו את מרגישה תקועה, מבולבלת, או שיש משהו שמחכה לתשומת לב.</p>
+            <p><strong style="color:var(--text); font-weight:500;">ספריה 📚</strong> מכילה תמציות של הספרים הטובים ביותר על כסף ותודעת שפע — לקרוא כשמתחשק, לא כחובה.</p>
+            <p style="margin-top:14px; font-style:italic; color:var(--text-faint);">קחי את הזמן. המסע הזה הוא שלך, והוא קורה בקצב שלך.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps">
+
+      <!-- 1: Barometer — always -->
+      <a href="barometer.html" class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">🌡️</div>
+        <div class="step-body">
+          <div class="step-when">תמיד — בכל כניסה</div>
+          <div class="step-title">ברומטר הכסף</div>
+          <div class="step-desc">דקה אחת עם עצמך — איך את מרגישה מול הכסף היום?</div>
+        </div>
+        <div class="step-arrow">←</div>
+      </a>
+
+      <!-- 2: Daily practice — if time -->
+      <a href="daily-practice.html" class="step-card step-optional">
+        <div class="step-num">02</div>
+        <div class="step-icon">☀️</div>
+        <div class="step-body">
+          <div class="step-when">אם יש כמה דקות</div>
+          <div class="step-title">תרגול יומי ושבועי</div>
+          <div class="step-desc">שאלת ההתמקדות של היום — ופגישה עם השפע וההתנגדות פעם בשבוע</div>
+        </div>
+        <div class="step-arrow">←</div>
+      </a>
+
+      <!-- 3: Financial tracking — multiple links -->
+      <div class="step-group">
+        <div class="step-group-top">
+          <div class="step-num">03</div>
+          <div class="step-icon">📊</div>
+          <div class="step-body">
+            <div class="step-when">המציאות הכלכלית</div>
+            <div class="step-title">הכנסות ו/או הוצאות</div>
+            <div class="step-desc">מה נכנס ומה יצא — לרשום ולהיות עם זה</div>
+          </div>
+        </div>
+        <div class="step-pills">
+          <a href="income.html"        class="step-pill">הכנסות</a>
+          <a href="expenses.html"      class="step-pill">הוצאות עסק</a>
+          <a href="home-expenses.html" class="step-pill">הוצאות בית</a>
+          <a href="summary.html"       class="step-pill">כמה נשאר?</a>
+        </div>
+      </div>
+
+      <!-- 4: Deep work — if more time -->
+      <div class="step-group step-optional">
+        <div class="step-group-top">
+          <div class="step-num">04</div>
+          <div class="step-icon">🌿</div>
+          <div class="step-body">
+            <div class="step-when">אם יש עוד זמן</div>
+            <div class="step-title">עבודה פנימית עמוקה</div>
+            <div class="step-desc">שיח, חזון, ספריית כסף — כל אחת מהן שונה ומשלימה</div>
+          </div>
+        </div>
+        <div class="step-pills">
+          <a href="focusing-chat.html" class="step-pill">שיח התמקדות 🌿</a>
+          <a href="vision.html"        class="step-pill">לאן אני הולכת 🌟</a>
+          <a href="books.html"         class="step-pill">ספריה 📚</a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<script>
+  initNav('home');
+
+  function toggleGuide() {
+    const wrap = document.getElementById('guide-wrap');
+    wrap.classList.toggle('open');
+    if (wrap.classList.contains('open')) {
+      localStorage.removeItem('ff_guide_seen');
+    } else {
+      localStorage.setItem('ff_guide_seen', '1');
+    }
+  }
+
+  // Open guide automatically on first visit
+  if (!localStorage.getItem('ff_guide_seen')) {
+    document.getElementById('guide-wrap').classList.add('open');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>הכדים שלי — Focusing Finance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js"></script>
+  <style>
+    .jar-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 80px;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .jar-row:last-child { border-bottom: none; }
+
+    .target-input {
+      width: 60px;
+      background: rgba(245,240,235,0.08);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      padding: 5px 8px;
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      font-size: 0.88rem;
+      text-align: center;
+      direction: ltr;
+    }
+    .target-input:focus { outline: none; border-color: var(--accent); }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 70px 70px 60px;
+      gap: 10px;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.84rem;
+    }
+    .compare-row:last-child { border-bottom: none; }
+
+    /* ── JARS GUIDE ── */
+    .jguide-wrap {
+      margin-bottom: 24px;
+      border: 1px solid rgba(232,201,126,0.2);
+      border-radius: var(--radius);
+      background: rgba(232,201,126,0.03);
+      overflow: hidden;
+    }
+    .jguide-toggle {
+      width: 100%; display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 16px 22px;
+      background: none; border: none; cursor: pointer;
+      color: var(--text); text-align: right;
+    }
+    .jguide-toggle-label {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.88rem; font-weight: 600;
+      letter-spacing: 0.03em; color: var(--accent);
+    }
+    .jguide-arrow {
+      font-size: 0.8rem; color: var(--text-faint);
+      transition: transform 0.3s;
+    }
+    .jguide-wrap.open .jguide-arrow { transform: rotate(180deg); }
+    .jguide-body {
+      display: none;
+      padding: 4px 26px 26px;
+      border-top: 1px solid rgba(232,201,126,0.12);
+    }
+    .jguide-wrap.open .jguide-body { display: block; }
+    .jguide-intro {
+      font-size: 0.9rem; color: var(--text-muted);
+      line-height: 1.95; font-weight: 300;
+      margin: 18px 0 22px;
+    }
+    .jguide-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--accent); margin: 22px 0 12px;
+    }
+    .jguide-jar-list {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .jguide-jar {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(245,240,235,0.06);
+      font-size: 0.87rem;
+    }
+    .jguide-jar:last-child { border-bottom: none; }
+    .jguide-jar-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 1px; }
+    .jguide-jar-name { font-weight: 600; margin-bottom: 3px; }
+    .jguide-jar-desc { color: var(--text-muted); line-height: 1.7; }
+    .jguide-tip {
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: rgba(109,191,138,0.07);
+      border: 1px solid rgba(109,191,138,0.2);
+      border-radius: 10px;
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar"></nav>
+
+<main class="main">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="page-label" id="month-label"></div>
+      <h1 class="page-title">הכדים שלי</h1>
+      <p class="page-subtitle">לאן הכסף באמת הולך?</p>
+    </div>
+
+    <!-- ── JARS GUIDE ── -->
+    <div class="jguide-wrap" id="jguide-wrap">
+      <button class="jguide-toggle" onclick="toggleJarGuide()">
+        <div class="jguide-toggle-label">
+          <span>🫙</span>
+          <span>מה זו שיטת הכדים — ואיך היא עובדת?</span>
+        </div>
+        <span class="jguide-arrow">▼</span>
+      </button>
+      <div class="jguide-body">
+        <p class="jguide-intro">
+          יש עיקרון אחד פשוט שמשנה הכל:
+          <strong style="color:var(--text);">לא מה שמרוויחים קובע את העושר — אלא המודעות לאן כל שקל הולך.</strong><br/><br/>
+          שיטת הכדים אומרת: תחלקי את ההוצאות שלך לתחומי חיים ברורים. לא כדי לשפוט את עצמך —
+          אלא כדי לראות את האמת. ומתוך ראייה, אפשר לבחור.
+        </p>
+
+        <div class="jguide-section-title">איך זה עובד?</div>
+        <p style="font-size:0.88rem; color:var(--text-muted); line-height:1.9; margin-bottom:6px;">
+          בכל פעם שאת רושמת הוצאת בית — את מקצה אותה לכד מתאים.
+          האפליקציה אוספת את כל ההוצאות ומציגה לך תמונה: כמה אחוז מהכסף הלך לכל תחום בחיים.<br/><br/>
+          אחרי כמה חודשים תוכלי לשאול: <em style="color:var(--text);">האם ככה רציתי לחלק את הכסף שלי?</em>
+          ואם לא — להתחיל לשנות, בעדינות ובמודעות.
+        </p>
+
+        <div class="jguide-section-title">10 הכדים שלנו</div>
+        <div class="jguide-jar-list">
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">🌱</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#6DBF8A;">הקרקע</div>
+              <div class="jguide-jar-desc">דיור, חשבונות, מזון — הצרכים הבסיסיים שמחזיקים את החיים. הכד הזה הוא הבסיס.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">🛤️</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#E8954A;">הדרך</div>
+              <div class="jguide-jar-desc">רכב, נסיעות, תחבורה — כל מה שמוביל אותך מנקודה לנקודה.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">🌟</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#B07FE0;">העתיד</div>
+              <div class="jguide-jar-desc">ילדים, חינוך — השקעה בעתיד שלהם ושלך.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">⚓</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#5BA8D4;">העוגן</div>
+              <div class="jguide-jar-desc">בריאות, ביטוחים — מה שמייצב ומגן. כשהעוגן חזק, אפשר לצאת לים.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">🧠</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#4DBFBF;">הראש</div>
+              <div class="jguide-jar-desc">לימודים, קורסים, ספרים, צמיחה אישית — כל שקל שמושקע פה חוזר כידע ויכולת.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">✨</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#D4AF37;">החלום</div>
+              <div class="jguide-jar-desc">חיסכון למטרות גדולות — טיול, דירה, פרויקט מיוחד. לשים בצד מעט מדי חודש בשביל משהו שמדליק.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">🦋</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#A78BCA;">החופש</div>
+              <div class="jguide-jar-desc">השקעות לטווח ארוך — הכסף שעובד בשבילך, אפילו כשאת ישנה.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">🔋</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#E07090;">המצבר</div>
+              <div class="jguide-jar-desc">בילויים, פינוקים, הנאה — חשוב לא פחות מהשאר. מצבר ריק לא מניע שום דבר.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">💛</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#E8C84A;">הלב</div>
+              <div class="jguide-jar-desc">מתנות, תרומות, נדיבות — כשנותנים ממקום של שפע, השפע מתרחב.</div>
+            </div>
+          </div>
+          <div class="jguide-jar">
+            <div class="jguide-jar-icon">🌬️</div>
+            <div>
+              <div class="jguide-jar-name" style="color:#7EC8D8;">האוויר</div>
+              <div class="jguide-jar-desc">קרן חירום — הכסף שלא נוגעים בו אלא כשממש צריך. האוויר שנושמים כשנסגר.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="jguide-tip">
+          💡 <strong style="color:var(--text);">לא חייבים להשתמש בכל הכדים.</strong>
+          אפשר להסתיר כדים שלא רלוונטיים עכשיו, ולהחזיר אותם אחר כך.
+          העיקר הוא להתחיל לראות — ולא לפחד ממה שרואים.
+        </div>
+      </div>
+    </div>
+
+    <!-- Personalization -->
+    <div style="margin-bottom:20px; text-align:left;">
+      <button onclick="toggleCustomize()" style="background:none; border:none; color:var(--accent); font-family:'Assistant',sans-serif; font-size:0.95rem; cursor:pointer; padding:4px 0; display:inline-flex; align-items:center; gap:6px; font-weight:600;">
+        ⚙️ התאמת הכדים אלייך
+      </button>
+      <div id="customize-panel" style="display:none; margin-top:12px; background:rgba(245,240,235,0.02); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px;">
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.9; margin-bottom:16px;">
+          כל חיים שונים, כל צרכים שונים.<br/>
+          אפשר להסתיר כד שלא מתאים לך כרגע — ולהחזיר אותו בכל עת.
+        </p>
+        <div id="customize-jars"></div>
+      </div>
+    </div>
+
+    <!-- Always: this month breakdown -->
+    <div class="card" style="margin-bottom:28px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:20px; flex-wrap:wrap; gap:8px;">
+        <div class="card-title" style="margin:0;">החודש הזה — לפי כדים</div>
+        <div style="font-size:0.82rem; color:var(--text-muted);">
+          סה"כ: <span id="total-spending" style="color:var(--accent); font-weight:600;">₪0</span>
+        </div>
+      </div>
+      <div id="no-data-msg" style="display:none; text-align:center; padding:28px 0; color:var(--text-muted); font-size:0.88rem;">
+        עדיין אין הוצאות בית רשומות החודש —<br/>
+        <a href="home-expenses.html" style="color:var(--accent); margin-top:8px; display:inline-block;">התחילי לרשום הוצאות בית ←</a>
+      </div>
+      <div id="jars-breakdown"></div>
+    </div>
+
+    <!-- After 3 months: reflection + targets -->
+    <div id="reflection-section" style="display:none; margin-bottom:28px;">
+
+      <!-- Pay yourself first -->
+      <div style="display:flex; align-items:flex-start; gap:16px; padding:24px 28px; background:rgba(232,201,126,0.06); border:1px solid rgba(232,201,126,0.25); border-radius:var(--radius); margin-bottom:24px;">
+        <div style="font-size:1.6rem; flex-shrink:0; margin-top:2px;">🏺</div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--accent); margin-bottom:8px;">שלמי לעצמך קודם</div>
+          <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.9;">
+            "האיש העשיר בבבל" לימד עיקרון אחד פשוט: <strong style="color:var(--text);">לפני כל הוצאה — שלמי לעצמך.</strong><br/>
+            לא כשיישאר. לא אחרי הכל. קודם.<br/><br/>
+            עכשיו, אחרי שראית את הדפוסים שלך, הגיע הזמן לשאול: <em style="color:var(--text);">יש פה כד אחד שאת מזניחה? כד אחד שאת שווה להתחיל לשלם לו קודם?</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:var(--border-accent);">
+        <div class="card-title">אחרי כמה חודשים — מה את רואה?</div>
+        <p style="color:var(--text-muted); font-size:0.87rem; line-height:1.8; margin-bottom:20px;">
+          זה הדפוס שלך לאורך זמן. לא שיפוט — מידע.<br/>
+          כדאי לשאול: <em style="color:var(--text);">האם ככה רציתי לחלק את הכסף?</em>
+        </p>
+        <div id="avg-breakdown"></div>
+      </div>
+
+      <!-- Set personal targets -->
+      <div class="card" style="margin-top:20px; border-color:rgba(201,169,110,0.3);">
+        <div class="card-title">היעדים שלי לכל כד</div>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px; line-height:1.8;">
+          עכשיו שאת רואה את הדפוס — מה היית רוצה שיהיה? הגדירי יעד אישי לכל כד.
+        </p>
+        <div id="target-rows"></div>
+        <div style="display:flex; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap;">
+          <button onclick="saveTargets()" class="btn btn-primary btn-sm">שמרי יעדים</button>
+          <span id="targets-sum-msg" style="font-size:0.82rem; color:var(--text-faint);"></span>
+        </div>
+      </div>
+
+      <!-- Comparison: target vs actual (only if targets set) -->
+      <div id="comparison-card" style="display:none;" class="card" style="margin-top:20px;">
+        <div class="card-title">יעד שלי vs. בפועל החודש</div>
+        <div id="comparison-rows"></div>
+      </div>
+    </div>
+
+    <!-- Philosophy note -->
+    <div class="card" style="border-color:var(--border-accent);">
+      <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div style="font-size:1.8rem; flex-shrink:0;">💡</div>
+        <div>
+          <div style="font-weight:600; margin-bottom:8px; font-family:'Cormorant Garamond',serif; font-size:1.15rem;">
+            למה הכדים עובדים?
+          </div>
+          <p style="color:var(--text-muted); font-size:0.87rem; line-height:1.85; margin:0;">
+            לא הסכום שמרוויחים קובע את העושר — אלא <strong style="color:var(--text);">המודעות</strong> לאן כל שקל הולך.
+            ברוח ההתמקדות — כשאנחנו רואות בבירור מה קורה עם הכסף, אנחנו מפסיקות להגיב מתוך פחד ומתחילות לפעול מתוך בחירה.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const JARS = [
+    { key:'ground',  icon:'🌱', name:'הקרקע',  color:'#6DBF8A', desc:'דיור, חשבונות, מזון' },
+    { key:'way',     icon:'🛤️', name:'הדרך',    color:'#E8954A', desc:'רכב, נסיעות, תחבורה' },
+    { key:'future',  icon:'🌟', name:'העתיד',   color:'#B07FE0', desc:'ילדים, חינוך' },
+    { key:'anchor',  icon:'⚓', name:'העוגן',   color:'#5BA8D4', desc:'בריאות, ביטוחים' },
+    { key:'head',    icon:'🧠', name:'הראש',    color:'#4DBFBF', desc:'לימודים, צמיחה' },
+    { key:'dream',   icon:'✨', name:'החלום',   color:'#D4AF37', desc:'חיסכון למטרות גדולות' },
+    { key:'freedom', icon:'🦋', name:'החופש',   color:'#A78BCA', desc:'השקעות ארוכות טווח' },
+    { key:'battery', icon:'🔋', name:'המצבר',   color:'#E07090', desc:'בילויים, פינוקים' },
+    { key:'heart',   icon:'💛', name:'הלב',     color:'#E8C84A', desc:'מתנות, תרומות' },
+    { key:'air',     icon:'🌬️', name:'האוויר',  color:'#7EC8D8', desc:'קרן חירום' },
+  ];
+
+  function fmt(n) { return '₪' + Math.round(n).toLocaleString('he-IL'); }
+  function getIncomes()     { return JSON.parse(localStorage.getItem('ff_incomes')      || '[]'); }
+  function getHomeExpenses(){ return JSON.parse(localStorage.getItem('ff_home_expenses')|| '[]'); }
+  function getTargets()     { return JSON.parse(localStorage.getItem('ff_jar_targets')  || '{}'); }
+  function saveTargetsData(t){ localStorage.setItem('ff_jar_targets', JSON.stringify(t)); }
+
+  function monthsSinceFirst() {
+    const incomes = getIncomes();
+    if (incomes.length === 0) return 0;
+    const first = new Date([...incomes].sort((a,b) => new Date(a.date)-new Date(b.date))[0].date);
+    const now = new Date();
+    return (now.getFullYear()-first.getFullYear())*12 + (now.getMonth()-first.getMonth());
+  }
+
+  // Spending by jar for a given month (0-indexed month, year)
+  function spendingForMonth(month, year) {
+    const totals = {};
+    JARS.forEach(j => totals[j.key] = 0);
+    getHomeExpenses().filter(e => {
+      const d = new Date(e.date);
+      return d.getMonth() === month && d.getFullYear() === year;
+    }).forEach(e => {
+      if (e.jarKey && totals[e.jarKey] !== undefined) totals[e.jarKey] += e.amount;
+    });
+    const total = Object.values(totals).reduce((s,v) => s+v, 0);
+    return { totals, total };
+  }
+
+  // Average spending % per jar over all months that have data
+  function avgSpendingPct() {
+    const all = getHomeExpenses();
+    if (all.length === 0) return {};
+
+    // Collect unique month keys
+    const monthSet = new Set(all.map(e => {
+      const d = new Date(e.date);
+      return d.getFullYear() + '-' + d.getMonth();
+    }));
+
+    const sumPct = {};
+    JARS.forEach(j => sumPct[j.key] = 0);
+    let count = 0;
+
+    monthSet.forEach(mk => {
+      const [yr, mo] = mk.split('-').map(Number);
+      const { totals, total } = spendingForMonth(mo, yr);
+      if (total > 0) {
+        JARS.forEach(j => sumPct[j.key] += Math.round(totals[j.key] / total * 100));
+        count++;
+      }
+    });
+
+    const avg = {};
+    JARS.forEach(j => avg[j.key] = count > 0 ? Math.round(sumPct[j.key] / count) : 0);
+    return avg;
+  }
+
+  function getHiddenJars()      { return JSON.parse(localStorage.getItem('ff_hidden_jars') || '[]'); }
+  function saveHiddenJars(arr)  { localStorage.setItem('ff_hidden_jars', JSON.stringify(arr)); }
+  function getVisibleJars()     { const h = getHiddenJars(); return JARS.filter(j => !h.includes(j.key)); }
+
+  function toggleHiddenJar(key) {
+    const hidden = getHiddenJars();
+    const idx = hidden.indexOf(key);
+    if (idx === -1) hidden.push(key); else hidden.splice(idx, 1);
+    saveHiddenJars(hidden);
+    renderCustomizePanel();
+    render();
+  }
+
+  function toggleCustomize() {
+    const p = document.getElementById('customize-panel');
+    p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function renderCustomizePanel() {
+    const hidden = getHiddenJars();
+    document.getElementById('customize-jars').innerHTML = JARS.map(j => {
+      const isHidden = hidden.includes(j.key);
+      return `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.15rem; opacity:${isHidden?0.35:1};">${j.icon}</span>
+            <span style="font-size:0.88rem; color:${isHidden?'var(--text-faint)':j.color}; ${isHidden?'text-decoration:line-through;':''}">${j.name}</span>
+            <span style="font-size:0.75rem; color:var(--text-faint);">${j.desc}</span>
+          </div>
+          <button onclick="toggleHiddenJar('${j.key}')"
+            style="background:none; border:1px solid ${isHidden?'rgba(245,240,235,0.12)':'rgba(232,201,126,0.25)'}; border-radius:20px; padding:4px 14px; color:${isHidden?'var(--text-muted)':'var(--accent)'}; font-family:'Assistant',sans-serif; font-size:0.78rem; cursor:pointer; white-space:nowrap;">
+            ${isHidden ? '+ הציגי' : '— הסתירי'}
+          </button>
+        </div>`;
+    }).join('');
+  }
+
+  function render() {
+    const now = new Date();
+    document.getElementById('month-label').textContent = MONTHS_HE[now.getMonth()] + ' ' + now.getFullYear();
+
+    const { totals, total } = spendingForMonth(now.getMonth(), now.getFullYear());
+    document.getElementById('total-spending').textContent = fmt(total);
+
+    // This month breakdown
+    if (total === 0) {
+      document.getElementById('no-data-msg').style.display = 'block';
+      document.getElementById('jars-breakdown').innerHTML = '';
+    } else {
+      document.getElementById('no-data-msg').style.display = 'none';
+      document.getElementById('jars-breakdown').innerHTML = getVisibleJars().map(j => {
+        const amount = totals[j.key];
+        const pct = Math.round(amount / total * 100);
+        return `
+          <div class="jar-row">
+            <div style="font-size:1.4rem;">${j.icon}</div>
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="font-size:0.9rem; font-weight:600; color:${amount>0?j.color:'var(--text-muted)'};">${j.name}</span>
+                <span style="font-size:0.75rem; color:var(--text-faint);">${j.desc}</span>
+              </div>
+              <div style="width:100%; height:6px; background:var(--border); border-radius:3px; overflow:hidden;">
+                <div style="height:100%; width:${pct}%; background:${j.color}; border-radius:3px; transition:width 0.5s ease; opacity:${amount>0?0.85:0};"></div>
+              </div>
+            </div>
+            <div style="text-align:left;">
+              <div style="font-size:0.95rem; font-weight:700; color:${amount>0?j.color:'var(--text-faint)'};">${amount>0?pct+'%':'—'}</div>
+              <div style="font-size:0.72rem; color:var(--text-faint);">${amount>0?fmt(amount):''}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // After 3 months: reflection + targets
+    const months = monthsSinceFirst();
+    if (months >= 3) {
+      document.getElementById('reflection-section').style.display = 'block';
+      renderAvgBreakdown();
+      renderTargetRows();
+      renderComparison(totals, total);
+    }
+  }
+
+  function renderAvgBreakdown() {
+    const avg = avgSpendingPct();
+    document.getElementById('avg-breakdown').innerHTML = getVisibleJars().map(j => {
+      const pct = avg[j.key] || 0;
+      return `
+        <div class="jar-row">
+          <div style="font-size:1.3rem;">${j.icon}</div>
+          <div>
+            <div style="font-size:0.88rem; font-weight:600; margin-bottom:5px; color:${pct>0?j.color:'var(--text-muted)'};">${j.name}</div>
+            <div style="width:100%; height:5px; background:var(--border); border-radius:3px; overflow:hidden;">
+              <div style="height:100%; width:${pct}%; background:${j.color}; border-radius:3px; opacity:${pct>0?0.8:0};"></div>
+            </div>
+          </div>
+          <div style="text-align:left; font-size:0.9rem; font-weight:700; color:${pct>0?j.color:'var(--text-faint)'};">
+            ${pct>0?pct+'%':'—'}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderTargetRows() {
+    const targets = getTargets();
+    const avg = avgSpendingPct();
+    document.getElementById('target-rows').innerHTML = getVisibleJars().map(j => {
+      const val = targets[j.key] ?? avg[j.key] ?? 0;
+      return `
+        <div style="display:grid; grid-template-columns:32px 1fr auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+          <div style="font-size:1.2rem;">${j.icon}</div>
+          <div style="font-size:0.88rem; font-weight:500; color:${j.color};">${j.name}</div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <input type="number" class="target-input" id="target-${j.key}" value="${val}" min="0" max="100" oninput="updateTargetsSum()"/>
+            <span style="font-size:0.82rem; color:var(--text-faint);">%</span>
+          </div>
+        </div>`;
+    }).join('');
+    updateTargetsSum();
+  }
+
+  function updateTargetsSum() {
+    const total = getVisibleJars().reduce((s,j) => {
+      return s + (parseInt(document.getElementById('target-'+j.key)?.value)||0);
+    }, 0);
+    const msg = document.getElementById('targets-sum-msg');
+    if (total === 100) {
+      msg.textContent = '✓ מסתכם ל-100%';
+      msg.style.color = 'var(--green)';
+    } else {
+      msg.textContent = `סה"כ: ${total}% ${total < 100 ? '(חסרים '+(100-total)+'%)' : '(עודף '+(total-100)+'%)'}`;
+      msg.style.color = total > 100 ? 'var(--red)' : 'var(--accent)';
+    }
+  }
+
+  function saveTargets() {
+    const t = {};
+    getVisibleJars().forEach(j => t[j.key] = parseInt(document.getElementById('target-'+j.key)?.value)||0);
+    saveTargetsData(t);
+    const msg = document.getElementById('targets-sum-msg');
+    msg.textContent = 'נשמר ✓';
+    msg.style.color = 'var(--green)';
+    render();
+  }
+
+  function renderComparison(totals, total) {
+    const targets = getTargets();
+    const hasTargets = Object.keys(targets).length > 0;
+    const compCard = document.getElementById('comparison-card');
+
+    if (!hasTargets || total === 0) {
+      compCard.style.display = 'none';
+      return;
+    }
+
+    compCard.style.display = 'block';
+    document.getElementById('comparison-rows').innerHTML = `
+      <div class="compare-row" style="font-size:0.72rem; color:var(--text-faint); padding-bottom:8px; border-bottom:1px solid var(--border);">
+        <div></div><div></div>
+        <div style="text-align:center;">יעד שלי</div>
+        <div style="text-align:center;">בפועל</div>
+        <div style="text-align:center;">פער</div>
+      </div>
+      ${getVisibleJars().map(j => {
+        const target = targets[j.key] ?? 0;
+        const actual = total > 0 ? Math.round(totals[j.key] / total * 100) : 0;
+        const diff = actual - target;
+        const diffColor = Math.abs(diff) <= 3 ? 'var(--green)' : diff > 0 ? 'var(--red)' : 'var(--text-muted)';
+        const diffText = diff === 0 ? '✓' : (diff > 0 ? '+' : '') + diff + '%';
+        return `
+          <div class="compare-row">
+            <div style="font-size:1.1rem;">${j.icon}</div>
+            <div style="font-weight:500; color:${j.color};">${j.name}</div>
+            <div style="text-align:center; color:var(--text-muted);">${target}%</div>
+            <div style="text-align:center; font-weight:700; color:${j.color};">${actual}%</div>
+            <div style="text-align:center; font-weight:600; color:${diffColor};">${diffText}</div>
+          </div>`;
+      }).join('')}`;
+  }
+
+  function toggleJarGuide() {
+    const wrap = document.getElementById('jguide-wrap');
+    wrap.classList.toggle('open');
+    localStorage.setItem('ff_jars_guide_seen', wrap.classList.contains('open') ? '0' : '1');
+  }
+
+  if (!localStorage.getItem('ff_jars_guide_seen')) {
+    document.getElementById('jguide-wrap').classList.add('open');
+  }
+
+  initNav('jars');
+  renderCustomizePanel();
+  render();
+</script>
+</body>
+</html>
