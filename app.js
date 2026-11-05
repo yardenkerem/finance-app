@@ -178,7 +178,8 @@ function checkNewMonth() {
 
 function showNewMonthModal(prevYear, prevMonthIdx) {
   const incomes   = getIncomes();
-  const expenses  = JSON.parse(localStorage.getItem('ff_expenses')      || '[]');
+  // ff_expenses is a monthly budget split into sections (not dated entries)
+  const expenses  = JSON.parse(localStorage.getItem('ff_expenses') || '{"state":[],"business":[],"optional":[]}');
   const homeExp   = JSON.parse(localStorage.getItem('ff_home_expenses') || '[]');
   const taxRate   = getSettings().incomeTaxRate || 0;
   const fmt = n => '₪' + Math.round(Math.abs(n)).toLocaleString('he-IL');
@@ -190,7 +191,9 @@ function showNewMonthModal(prevYear, prevMonthIdx) {
 
   const gross       = inMonth(incomes).reduce((s, i) => s + (i.amount || 0), 0);
   const netIncome   = gross / 1.18 * (1 - taxRate / 100);
-  const bizTotal    = inMonth(expenses).reduce((s, e) => s + (e.amount || 0), 0);
+  const bizTotal    = ['state', 'business', 'optional']
+    .flatMap(k => expenses[k] || [])
+    .reduce((s, e) => s + (e.period === 'annual' ? (e.amount || 0) / 12 : (e.amount || 0)), 0);
   const homeTotal   = inMonth(homeExp).reduce((s, e) => s + (e.amount || 0), 0);
   const leftover    = netIncome - bizTotal - homeTotal;
   const monthName   = MONTHS_HE[prevMonthIdx];
